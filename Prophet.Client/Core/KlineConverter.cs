@@ -15,36 +15,47 @@ public static class KlineConverter
 {
     private const string DllName = "prophet_core.dll";
 
-    #region P/Invoke 声明
+    #region P/Invoke 声明（与 Prophet.Core/include/prophet/c_api.h 保持一致）
 
     /// <summary>
-    /// K线数据结构（C互操作）
+    /// K线数据结构（字段顺序必须与 NativeKline 一致：先 5 个 double，再 2 个 int64）
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
     private struct ProphetKline
     {
-        public long OpenTime;    // Unix毫秒时间
-        public long CloseTime;   // Unix毫秒时间
         public double Open;
         public double High;
         public double Low;
         public double Close;
         public double Volume;
+        public long OpenTime;    // UTC毫秒
+        public long CloseTime;   // UTC毫秒
     }
 
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int prophet_kline_convert(
-        [In] ProphetKline[] input,
-        int inputCount,
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    private struct KlineConversionResult
+    {
+        public IntPtr Klines;    // NativeKline*（C++分配，需 Free）
+        public int Length;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string ErrorMessage;
+    }
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Prophet_ConvertKlines")]
+    private static extern int ProphetConvertKlines(
+        [In] ProphetKline[] klines,
+        int count,
         int fromMinutes,
         int toMinutes,
-        [Out] ProphetKline[] output,
-        out int outputCount,
-        int PERIOD
+        int PERIOD,
+        ref KlineConversionResult outResult
     );
 
-    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    private static extern int prophet_kline_timeframe_to_minutes(
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Prophet_FreeKlineResult")]
+    private static extern void ProphetFreeKlineResult(ref KlineConversionResult result);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Prophet_TimeframeToMinutes")]
+    private static extern int ProphetTimeframeToMinutes(
         [MarshalAs(UnmanagedType.LPStr)] string timeframe
     );
 
@@ -85,18 +96,15 @@ public static class KlineConverter
                 Volume = k.Volume
             }).ToArray();
 
-            // 准备输出数组
-            var outputArray = new ProphetKline[klines.Count];
-
-            // 调用C++实现
-            int result = prophet_kline_convert(
-                inputArray, 
+            // 调用C++实现（结果由C++分配，需释放）
+            var nativeResult = new KlineConversionResult();
+            int result = ProphetConvertKlines(
+                inputArray,
                 inputArray.Length,
                 fromMinutes,
                 toMinutes,
-                outputArray,
-                out int outputCount,
-                PERIOD
+                PERIOD,
+                ref nativeResult
             );
 
             if (result != 0)
@@ -104,23 +112,32 @@ public static class KlineConverter
                 return new List<Candlestick>();
             }
 
-            // 转换回C#对象
-            var resultList = new List<Candlestick>();
-            for (int i = 0; i < outputCount; i++)
+            try
             {
-                var k = outputArray[i];
-                resultList.Add(new Candlestick
+                // 转换回C#对象（管线使用 UTC 时间，避免 LocalDateTime 混入）
+                var resultList = new List<Candlestick>(nativeResult.Length);
+                int stride = Marshal.SizeOf<ProphetKline>();
+                for (int i = 0; i < nativeResult.Length; i++)
                 {
-                    Time = DateTimeOffset.FromUnixTimeMilliseconds(k.OpenTime).LocalDateTime,
-                    Open = k.Open,
-                    High = k.High,
-                    Low = k.Low,
-                    Close = k.Close,
-                    Volume = k.Volume
-                });
-            }
+                    var k = Marshal.PtrToStructure<ProphetKline>(
+                        IntPtr.Add(nativeResult.Klines, i * stride));
+                    resultList.Add(new Candlestick
+                    {
+                        Time = DateTimeOffset.FromUnixTimeMilliseconds(k.OpenTime).UtcDateTime,
+                        Open = k.Open,
+                        High = k.High,
+                        Low = k.Low,
+                        Close = k.Close,
+                        Volume = k.Volume
+                    });
+                }
 
-            return resultList;
+                return resultList;
+            }
+            finally
+            {
+                ProphetFreeKlineResult(ref nativeResult);
+            }
         }
         catch (Exception ex)
         {
@@ -137,7 +154,7 @@ public static class KlineConverter
         if (string.IsNullOrEmpty(timeframe))
             throw new ArgumentException("时间框架不能为空", nameof(timeframe));
 
-        int result = prophet_kline_timeframe_to_minutes(timeframe);
+        int result = ProphetTimeframeToMinutes(timeframe);
         if (result < 0)
             throw new ArgumentException($"无效的时间框架 {timeframe}", nameof(timeframe));
 

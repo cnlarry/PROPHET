@@ -192,6 +192,7 @@ public class LiveOrderManager : IOrderManager
         {
             Id = result.OrderId,
             BacktestId = _config.TradingSessionId,
+            Symbol = _config.Symbol,
             Side = Prophet.Client.Models.OrderSide.BUY,
             Type = Prophet.Client.Models.OrderType.MARKET,
             Status = Prophet.Client.Models.OrderStatus.FILLED,
@@ -298,6 +299,7 @@ public class LiveOrderManager : IOrderManager
         {
             Id = result.OrderId,
             BacktestId = _config.TradingSessionId,
+            Symbol = _config.Symbol,
             Side = Prophet.Client.Models.OrderSide.SELL,
             Type = Prophet.Client.Models.OrderType.MARKET,
             Status = Prophet.Client.Models.OrderStatus.FILLED,
@@ -414,6 +416,12 @@ public class LiveOrderManager : IOrderManager
     /// </summary>
     private async Task<decimal> CalculateOrderQuantityAsync(decimal price)
     {
+        // 脏信号或错误配置可能给出 0/负价格与 0 精度，直接除零会炸，归零并由调用方按资金不足处理
+        if (price <= 0 || _config.QuantityPrecision <= 0)
+        {
+            return await Task.FromResult(0m);
+        }
+
         // 基于可用资金和配置的仓位比例计算
         var availableCash = _currentCash;
         var positionValue = availableCash * _config.PositionSizePercent;

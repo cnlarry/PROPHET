@@ -186,7 +186,8 @@ Value Context::getIndicatorField(const std::string& indicator_name,
     auto it = result.field_series.find(field);
     if (it != result.field_series.end()) {
         const auto& series = it->second;
-        int required_size = -offset;  // 需要的数据量（例如 offset=-5 需要至少5个数据点）
+        // offset=0 取最后一个，需 >=1 个点；offset=-1 取倒数第二个，需 >=2 个点
+        int required_size = -offset + 1;
         
         if (static_cast<int>(series.size()) < required_size) {
             throw EvaluatorException(

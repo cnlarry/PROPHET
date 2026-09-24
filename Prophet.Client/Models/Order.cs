@@ -10,6 +10,7 @@ public class Order
     // ========== 基础信息 ==========
     public string Id { get; set; } = string.Empty;
     public string BacktestId { get; set; } = string.Empty; // 所属回测ID
+    public string Symbol { get; set; } = string.Empty; // 交易对（如 BTCUSDT），仓位按此归集
     public OrderSide Side { get; set; }
     public OrderType Type { get; set; }
     public OrderStatus Status { get; set; }

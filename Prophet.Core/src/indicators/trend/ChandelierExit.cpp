@@ -51,11 +51,10 @@ IndicatorResult Calculator::ChandelierExit(
         return result;
     }
     
-    // 提取ATR有效数据
+    // 提取ATR有效数据（TA-Lib 将有效值写在输出数组开头，outBegIdx 是价格对齐偏移）
     std::vector<double> atr_valid(atr_outNbElement);
     for (int i = 0; i < atr_outNbElement; ++i) {
-        int idx = atr_outBegIdx + i;
-        atr_valid[i] = atr_values[idx];
+        atr_valid[i] = atr_values[i];
     }
     
     // 计算Chandelier Exit序列

@@ -390,7 +390,7 @@ PROPHET_API int Prophet_SetFearGreedSeries(
             series.emplace_back(
                 date_timestamps[i],
                 values[i],
-                std::string(classifications[i])
+                classifications[i] ? std::string(classifications[i]) : std::string()
             );
         }
         

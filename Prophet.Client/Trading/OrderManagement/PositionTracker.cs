@@ -143,13 +143,11 @@ public class PositionTracker
     }
     
     /// <summary>
-    /// 从订单中提取交易对
+    /// 从订单中提取交易对（按 Symbol 归集；缺失时回退 UNKNOWN，避免多币种坍缩到同一仓位）
     /// </summary>
     private string GetSymbolFromOrder(Order order)
     {
-        // 假设订单的BacktestId或Remarks中包含交易对信息
-        // 实际实现时需要根据实际情况调整
-        return order.BacktestId ?? "UNKNOWN";
+        return string.IsNullOrWhiteSpace(order.Symbol) ? "UNKNOWN" : order.Symbol;
     }
 }
 

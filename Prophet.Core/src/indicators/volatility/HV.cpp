@@ -40,6 +40,11 @@ IndicatorResult Calculator::HV(
         for (int j = 0; j < HV_PERIOD; ++j) {
             int idx = i + j + 1;
             if (idx < static_cast<int>(close.size())) {
+                // 价格必须为正，否则 log 无定义（脏数据直接跳过该窗口）
+                if (close[idx] <= 0.0 || close[idx - 1] <= 0.0) {
+                    log_returns.clear();
+                    break;
+                }
                 double ret = std::log(close[idx] / close[idx - 1]);
                 log_returns.push_back(ret);
             }

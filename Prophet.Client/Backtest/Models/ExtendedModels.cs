@@ -122,8 +122,7 @@ public class SignalEventExtended : SignalEvent
 /// </summary>
 public class OrderExtended : Order
 {
-    /// <summary>交易对</summary>
-    public string Symbol { get; set; } = string.Empty;
+    // Symbol 已在基类 Order 中定义，此处不再重复
     
     /// <summary>保证金（与Python对齐，使用double）</summary>
     public new double? Margin { get; set; }

@@ -167,7 +167,9 @@ Value BytecodeVM::executeImpl(const std::vector<Instruction>& code,
             
             // ========== 控制流指令 ==========
             case Opcode::RETURN:
-                if (stack_.empty()) {
+                // 注意：stack_ 是复用存储（容量常驻），逻辑栈顶是 stack_top_，
+                // 必须用 stack_top_ 判空，否则复用时会读到上一轮残留。
+                if (stack_top_ == 0) {
                     return Value::fromBoolean(false);
                 }
                 return pop();
@@ -466,7 +468,8 @@ void BytecodeVM::exec_all(int count) {
         throw VMException("ALL: invalid count");
     }
     
-    if (static_cast<size_t>(count) > stack_.size()) {
+    // 用逻辑栈顶 stack_top_（而非容器容量 stack_.size()）做下溢检查
+    if (static_cast<size_t>(count) > stack_top_) {
         throw VMException("ALL: stack underflow");
     }
     
@@ -488,7 +491,7 @@ void BytecodeVM::exec_any(int count) {
         throw VMException("ANY: invalid count");
     }
     
-    if (static_cast<size_t>(count) > stack_.size()) {
+    if (static_cast<size_t>(count) > stack_top_) {
         throw VMException("ANY: stack underflow");
     }
     
@@ -510,7 +513,7 @@ void BytecodeVM::exec_none(int count) {
         throw VMException("NONE: invalid count");
     }
     
-    if (static_cast<size_t>(count) > stack_.size()) {
+    if (static_cast<size_t>(count) > stack_top_) {
         throw VMException("NONE: stack underflow");
     }
     

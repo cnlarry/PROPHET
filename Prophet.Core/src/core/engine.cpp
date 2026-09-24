@@ -1116,6 +1116,18 @@ std::unique_ptr<Engine> Engine::clone() const {
     cloned->timeframes_ = timeframes_;
     cloned->rules_ = rules_;
     cloned->assignments_ = assignments_;
+    // 全局变量/执行顺序/函数注册表也必须拷贝，否则含 @var 或自定义函数的
+    // 策略在克隆引擎上恒返回 HOLD 或报函数未注册（AST 节点 parse 后不可变，浅拷贝安全）
+    cloned->global_var_decls_ = global_var_decls_;
+    cloned->global_var_assigns_ = global_var_assigns_;
+    cloned->execution_order_ = execution_order_;
+    // FunctionRegistry 禁止拷贝：逐个重注册（定义节点为 shared_ptr，浅拷贝安全）
+    for (const auto& name : function_registry_.list_functions()) {
+        auto def = function_registry_.get_function(name);
+        if (def) {
+            cloned->function_registry_.register_function(name, def);
+        }
+    }
     cloned->bytecode_enabled_ = bytecode_enabled_;
     cloned->bytecode_ = bytecode_;
     cloned->jit_enabled_ = jit_enabled_;
