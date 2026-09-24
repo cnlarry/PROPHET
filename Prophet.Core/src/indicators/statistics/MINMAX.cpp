@@ -49,9 +49,10 @@ IndicatorResult Calculator::MINMAX(
     result.set("max", Value::fromNumber(max_value));
     result.set("range", Value::fromNumber(max_value - min_value));
     
-    // 当前价格在范围内的位置（0-1）
+    // 当前价格在范围内的位置（0-1）；横盘时 max==min，除零会产生 inf/NaN 并污染后续比较
     double current_price = close.back();
-    double position = (current_price - min_value) / (max_value - min_value);
+    double range = max_value - min_value;
+    double position = (range == 0.0) ? 0.5 : (current_price - min_value) / range;
     result.set("position", Value::fromNumber(position));
     
     return result;

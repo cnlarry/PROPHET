@@ -584,13 +584,13 @@ public class BinanceExchange : IExchange
     
     // ========== 止盈止损 ==========
     
-    public async Task<bool> SetStopLossAsync(string symbol, decimal price, decimal quantity)
+    public async Task<bool> SetStopLossAsync(string symbol, decimal price, decimal quantity, bool isShortPosition = false)
     {
         try
         {
             await _restClient.PlaceOrderAsync(
                 symbol,
-                "SELL", // 多头止损用SELL
+                isShortPosition ? "BUY" : "SELL", // 空头止损用BUY平仓，多头用SELL
                 "STOP_MARKET",
                 quantity: quantity,
                 price: price);
@@ -602,13 +602,13 @@ public class BinanceExchange : IExchange
         }
     }
     
-    public async Task<bool> SetTakeProfitAsync(string symbol, decimal price, decimal quantity)
+    public async Task<bool> SetTakeProfitAsync(string symbol, decimal price, decimal quantity, bool isShortPosition = false)
     {
         try
         {
             await _restClient.PlaceOrderAsync(
                 symbol,
-                "SELL", // 多头止盈用SELL
+                isShortPosition ? "BUY" : "SELL", // 空头止盈用BUY平仓，多头用SELL
                 "TAKE_PROFIT_MARKET",
                 quantity: quantity,
                 price: price);

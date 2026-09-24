@@ -326,15 +326,15 @@ public class LiveOrderManager : IOrderManager
         Console.WriteLine($"   数量: {order.Quantity:F8}");
         Console.WriteLine($"   成交价: {order.OpenPrice:F2}");
         
-        // 设置止盈止损
+        // 设置止盈止损（空头用 BUY 平仓）
         if (signal.StopLoss.HasValue)
         {
-            await _exchange.SetStopLossAsync(_config.Symbol, signal.StopLoss.Value, order.Quantity);
+            await _exchange.SetStopLossAsync(_config.Symbol, signal.StopLoss.Value, order.Quantity, isShortPosition: true);
         }
         
         if (signal.TakeProfit.HasValue)
         {
-            await _exchange.SetTakeProfitAsync(_config.Symbol, signal.TakeProfit.Value, order.Quantity);
+            await _exchange.SetTakeProfitAsync(_config.Symbol, signal.TakeProfit.Value, order.Quantity, isShortPosition: true);
         }
         
         // 触发事件
@@ -436,7 +436,8 @@ public class LiveOrderManager : IOrderManager
     public async Task UpdateStopLossAsync(Order order, decimal newStopLoss)
     {
         order.StopLoss = newStopLoss;
-        await _exchange.SetStopLossAsync(_config.Symbol, newStopLoss, order.Quantity);
+        bool isShort = order.Side == Prophet.Client.Models.OrderSide.SELL;
+        await _exchange.SetStopLossAsync(_config.Symbol, newStopLoss, order.Quantity, isShort);
         Console.WriteLine($"✅ [LiveOrderManager] 更新止损: {newStopLoss:F2}");
     }
     
@@ -451,7 +452,8 @@ public class LiveOrderManager : IOrderManager
     public async Task UpdateTakeProfitAsync(Order order, decimal newTakeProfit)
     {
         order.TakeProfit = newTakeProfit;
-        await _exchange.SetTakeProfitAsync(_config.Symbol, newTakeProfit, order.Quantity);
+        bool isShort = order.Side == Prophet.Client.Models.OrderSide.SELL;
+        await _exchange.SetTakeProfitAsync(_config.Symbol, newTakeProfit, order.Quantity, isShort);
         Console.WriteLine($"✅ [LiveOrderManager] 更新止盈: {newTakeProfit:F2}");
     }
     

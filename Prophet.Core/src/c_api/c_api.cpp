@@ -193,7 +193,7 @@ static int ConvertIndicatorResultToC(
  * @param low 最低价数组（可为NULL）
  * @param volume 成交量数组（可为NULL）
  * @param length 数据长度
- * @param params 参数字典（key-value对，如"period"=14）
+ * @param params 参数字典（key-value对，如"PERIOD"=14，键名须与 indicator_registrations.cpp 一致）
  * @param param_count 参数数量
  * @param field_name 要提取的字段名（如"value", "macd"等）
  * @param outResult 输出结果
@@ -302,7 +302,7 @@ PROPHET_API int Prophet_SMA(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"MA_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -331,7 +331,7 @@ PROPHET_API int Prophet_EMA(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"EMA_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -360,7 +360,7 @@ PROPHET_API int Prophet_WMA(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"WMA_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -389,7 +389,7 @@ PROPHET_API int Prophet_DEMA(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"DEMA_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -418,7 +418,7 @@ PROPHET_API int Prophet_TEMA(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"TEMA_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -455,7 +455,7 @@ PROPHET_API int Prophet_BBANDS(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"BOLL_PERIOD", "BOLL_STD_DEV"};
+    const char* param_keys[] = {"PERIOD", "STD_DEV"};
     double param_values[] = {
         static_cast<double>(period),
         stdDev
@@ -534,7 +534,7 @@ PROPHET_API int Prophet_KELTNER(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"KELTNER_PERIOD", "KELTNER_MULTIPLIER"};
+    const char* param_keys[] = {"PERIOD", "MULTIPLIER"};
     double param_values[] = {
         static_cast<double>(period),
         multiplier
@@ -622,7 +622,7 @@ PROPHET_API int Prophet_ICHIMOKU(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"ICHIMOKU_TENKAN_PERIOD", "ICHIMOKU_KIJUN_PERIOD", "ICHIMOKU_SENKOU_PERIOD"};
+    const char* param_keys[] = {"TENKAN", "KIJUN", "SENKOU"};
     double param_values[] = {
         static_cast<double>(tenkanPeriod),
         static_cast<double>(kijunPeriod),
@@ -730,7 +730,7 @@ PROPHET_API int Prophet_SAR(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"SAR_ACCELERATION", "SAR_MAXIMUM"};
+    const char* param_keys[] = {"ACCELERATION", "MAXIMUM"};
     double param_values[] = {acceleration, maximum};
     
     // 需要构造close数组（SAR只需要high/low，但统一函数需要close）
@@ -765,7 +765,7 @@ PROPHET_API int Prophet_TRIX(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"period"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -799,7 +799,7 @@ PROPHET_API int Prophet_VWAP(
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
     // VWAP使用PERIOD参数（PERIOD=0表示累积VWAP，PERIOD>0表示滑动窗口VWAP）
-    const char* param_keys[] = {"period"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -831,7 +831,7 @@ PROPHET_API int Prophet_ATR(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"period"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -935,7 +935,8 @@ PROPHET_API int Prophet_RSI(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"RSI_PERIOD"};
+    // RSI 注册表读取 "PERIOD"（见 indicator_registrations.cpp），此处必须同名
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -972,7 +973,7 @@ PROPHET_API int Prophet_MFI(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"MFI_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1036,7 +1037,8 @@ PROPHET_API int Prophet_STOCH(
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
     // STOCH对应KDJ指标
-    const char* param_keys[] = {"FASTK_PERIOD", "SLOWK_PERIOD", "SLOWD_PERIOD"};
+    // STOCH 对应 KDJ 指标，注册表读取 N_PERIOD/M1_PERIOD/M2_PERIOD
+    const char* param_keys[] = {"N_PERIOD", "M1_PERIOD", "M2_PERIOD"};
     double param_values[] = {
         static_cast<double>(FASTK_PERIOD),
         static_cast<double>(SLOWK_PERIOD),
@@ -1152,7 +1154,7 @@ PROPHET_API int Prophet_CCI(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"CCI_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1187,7 +1189,7 @@ PROPHET_API int Prophet_DMI(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"DMI_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     // 提取adx字段
@@ -1257,7 +1259,7 @@ PROPHET_API int Prophet_WILLR(
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
     // WILLR对应WR指标
-    const char* param_keys[] = {"WR_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1290,7 +1292,7 @@ PROPHET_API int Prophet_CMF(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"CMF_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1319,7 +1321,7 @@ PROPHET_API int Prophet_ROC(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"ROC_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1357,7 +1359,7 @@ PROPHET_API int Prophet_EMV(
         close_vec[i] = (inHigh[i] + inLow[i]) / 2.0;
     }
     
-    const char* param_keys[] = {"EMV_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1386,7 +1388,7 @@ PROPHET_API int Prophet_MTM(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"MTM_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1415,7 +1417,7 @@ PROPHET_API int Prophet_CMO(
     }
 
     // 统一调用通用计算函数（通过IndicatorRegistry）
-    const char* param_keys[] = {"CMO_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     return CalculateIndicatorUnified(
@@ -1453,7 +1455,7 @@ PROPHET_API int Prophet_AROON(
         close_vec[i] = (inHigh[i] + inLow[i]) / 2.0;
     }
     
-    const char* param_keys[] = {"AROON_PERIOD"};
+    const char* param_keys[] = {"PERIOD"};
     double param_values[] = {static_cast<double>(period)};
     
     // 提取aroon_down字段

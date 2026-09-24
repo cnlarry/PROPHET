@@ -132,14 +132,14 @@ public interface IExchange : IDisposable
     // ========== 止盈止损 ==========
     
     /// <summary>
-    /// 设置止损价
+    /// 设置止损价（空头持仓传 isShortPosition=true，此时用 BUY 平仓；多头用 SELL）
     /// </summary>
-    Task<bool> SetStopLossAsync(string symbol, decimal price, decimal quantity);
+    Task<bool> SetStopLossAsync(string symbol, decimal price, decimal quantity, bool isShortPosition = false);
     
     /// <summary>
-    /// 设置止盈价
+    /// 设置止盈价（方向规则同止损）
     /// </summary>
-    Task<bool> SetTakeProfitAsync(string symbol, decimal price, decimal quantity);
+    Task<bool> SetTakeProfitAsync(string symbol, decimal price, decimal quantity, bool isShortPosition = false);
     
     // ========== 杠杆设置 ==========
     

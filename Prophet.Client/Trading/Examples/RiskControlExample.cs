@@ -276,7 +276,7 @@ public class RiskControlExample
         var riskController = new RiskController(exchange, riskConfig);
         
         // 订阅紧急停止事件
-        riskController.EmergencyStopTriggered += async (sender, e) =>
+        riskController.EmergencyStopTriggered += (sender, e) =>
         {
             Console.WriteLine($"🚨🚨🚨 紧急停止已触发!");
             Console.WriteLine($"   原因: {e.Reason}");

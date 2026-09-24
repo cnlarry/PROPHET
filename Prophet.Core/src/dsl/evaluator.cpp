@@ -1053,28 +1053,36 @@ Signal RuleNode::evaluateRule(const Context& ctx) const {
     
     // 计算止盈止损（如果提供了表达式）
     // 支持：BUY, BUY(tp), BUY(tp, sl)
+    // 注意：Signal 同时保留 tp/sl 与兼容字段 take_profit/stop_loss，两组必须同步，
+    // strategy_api 读取的是 take_profit/stop_loss。
     if (tp_expr_) {
         try {
             Value tp_val = tp_expr_->evaluate(ctx);
             signal.tp = tp_val.toNumber();
+            signal.take_profit = signal.tp;
         } catch (const std::exception&) {
             // 计算失败，使用默认值 0（Python层会重新计算）
             signal.tp = 0.0;
+            signal.take_profit = 0.0;
         }
     } else {
         signal.tp = 0.0;  // 未提供止盈表达式，使用默认值0
+        signal.take_profit = 0.0;
     }
     
     if (sl_expr_) {
         try {
             Value sl_val = sl_expr_->evaluate(ctx);
             signal.sl = sl_val.toNumber();
+            signal.stop_loss = signal.sl;
         } catch (const std::exception&) {
             // 计算失败，使用默认值 0
             signal.sl = 0.0;
+            signal.stop_loss = 0.0;
         }
     } else {
         signal.sl = 0.0;  // 未提供止损表达式，使用默认值0
+        signal.stop_loss = 0.0;
     }
     
     return signal;

@@ -167,7 +167,7 @@ public partial class BacktestView : UserControl
         }
     }
 
-    private async Task LoadHistoricalBacktestDataAsync(BacktestSessionViewModel session, BacktestResult result)
+    private Task LoadHistoricalBacktestDataAsync(BacktestSessionViewModel session, BacktestResult result)
     {
         // 设置完成状态
         session.IsRunning = false;
@@ -201,6 +201,8 @@ public partial class BacktestView : UserControl
         session.AppendLog($"总收益率: {result.TotalReturn:P2}");
         session.AppendLog($"最大回撤: {result.MaxDrawdown:P2}");
         session.AppendLog($"总交易数: {result.TotalTrades}");
+
+        return Task.CompletedTask;
     }
 
     private void OnRunningTaskCardClicked(object? sender, PointerPressedEventArgs e)

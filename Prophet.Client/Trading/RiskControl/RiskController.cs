@@ -187,18 +187,18 @@ public class RiskController
     /// <summary>
     /// 检查最大回撤
     /// </summary>
-    private async Task<CheckResult> CheckMaxDrawdownAsync(decimal currentEquity)
+    private Task<CheckResult> CheckMaxDrawdownAsync(decimal currentEquity)
     {
         _drawdownTracker.Update(currentEquity);
         var drawdown = _drawdownTracker.CurrentDrawdown;
         
         if (drawdown > _config.MaxDrawdown)
         {
-            return new CheckResult
+            return Task.FromResult(new CheckResult
             {
                 Passed = false,
                 Message = $"回撤超过限制: {drawdown:P2} > {_config.MaxDrawdown:P2}"
-            };
+            });
         }
         
         // 发出警告（回撤超过80%限制时）
@@ -207,23 +207,23 @@ public class RiskController
             RaiseRiskWarning("回撤接近限制", $"当前回撤: {drawdown:P2}, 限制: {_config.MaxDrawdown:P2}");
         }
         
-        return new CheckResult { Passed = true };
+        return Task.FromResult(new CheckResult { Passed = true });
     }
     
     /// <summary>
     /// 检查单笔交易风险
     /// </summary>
-    private async Task<CheckResult> CheckSingleTradeRiskAsync(Signal signal, decimal currentEquity)
+    private Task<CheckResult> CheckSingleTradeRiskAsync(Signal signal, decimal currentEquity)
     {
         // 计算潜在损失
         if (!signal.StopLoss.HasValue)
         {
             // 如果没有止损，使用默认风险比例
-            return new CheckResult
+            return Task.FromResult(new CheckResult
             {
                 Passed = false,
                 Message = "信号缺少止损价，无法评估风险"
-            };
+            });
         }
         
         var riskDistance = Math.Abs(signal.SignalPrice - signal.StopLoss.Value);
@@ -236,14 +236,14 @@ public class RiskController
         
         if (riskPercentOfEquity > _config.MaxRiskPerTrade)
         {
-            return new CheckResult
+            return Task.FromResult(new CheckResult
             {
                 Passed = false,
                 Message = $"单笔风险过高: {riskPercentOfEquity:P2} > {_config.MaxRiskPerTrade:P2}"
-            };
+            });
         }
         
-        return new CheckResult { Passed = true };
+        return Task.FromResult(new CheckResult { Passed = true });
     }
     
     /// <summary>

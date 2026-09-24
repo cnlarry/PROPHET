@@ -21,7 +21,8 @@ public static class ProphetCoreNative
         public IntPtr Values;        // double* 指针
         public int Length;           // 数组长度
         public int OutBegin;         // 输出起始索引
-        public int ReturnCode;       // 返回码（0=成功）
+        // 注意：与 C++ IndicatorResult 保持二进制一致（values/length/out_begin/error_message[256]）。
+        // Native 函数的 int 返回值即返回码，不要在此结构体中另加字段，否则错位。
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string ErrorMessage;  // 错误信息
     }

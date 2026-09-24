@@ -101,7 +101,7 @@ public class AccountMonitor : IDisposable
     /// <summary>
     /// 检查异常情况
     /// </summary>
-    private async Task CheckForAnomaliesAsync(AccountStatus last, AccountStatus current)
+    private Task CheckForAnomaliesAsync(AccountStatus last, AccountStatus current)
     {
         // 1. 检查余额突然大幅下降
         var balanceChange = current.TotalBalance - last.TotalBalance;
@@ -143,6 +143,8 @@ public class AccountMonitor : IDisposable
                 Timestamp = DateTime.UtcNow
             });
         }
+
+        return Task.CompletedTask;
     }
     
     private void RaiseAnomaly(string type, string description, AnomalySeverity severity)

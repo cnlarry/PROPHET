@@ -53,13 +53,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_RSI(
+                int code = ProphetCoreNative.Prophet_RSI(
                     closes,
                     closes.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"  // RSI使用"value"作为输出key
         );
@@ -144,7 +144,7 @@ public static class SubChartCalculator
             "MACD",
             (results) =>
             {
-                ProphetCoreNative.Prophet_MACD(
+                return ProphetCoreNative.Prophet_MACD(
                     closes,
                     closes.Length,
                     fastPeriod,
@@ -209,13 +209,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_ATR(
+                int code = ProphetCoreNative.Prophet_ATR(
                     highs, lows, closes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -251,13 +251,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_MFI(
+                int code = ProphetCoreNative.Prophet_MFI(
                     highs, lows, closes, volumes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -335,12 +335,12 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_OBV(
+                int code = ProphetCoreNative.Prophet_OBV(
                     closes, volumes,
                     closes.Length,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -376,7 +376,7 @@ public static class SubChartCalculator
             "KDJ",
             (results) =>
             {
-                ProphetCoreNative.Prophet_STOCH(
+                return ProphetCoreNative.Prophet_STOCH(
                     highs, lows, closes,
                     highs.Length,
                     PERIOD,      // fastK
@@ -436,7 +436,7 @@ public static class SubChartCalculator
             "StochRSI",
             (results) =>
             {
-                ProphetCoreNative.Prophet_STOCHRSI(
+                return ProphetCoreNative.Prophet_STOCHRSI(
                     closes,
                     closes.Length,
                     rsiPeriod,
@@ -484,13 +484,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_CCI(
+                int code = ProphetCoreNative.Prophet_CCI(
                     highs, lows, closes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -569,7 +569,7 @@ public static class SubChartCalculator
             "DMI",
             (results) =>
             {
-                ProphetCoreNative.Prophet_DMI(
+                return ProphetCoreNative.Prophet_DMI(
                     highs, lows, closes,
                     highs.Length,
                     PERIOD,
@@ -611,13 +611,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_WILLR(
+                int code = ProphetCoreNative.Prophet_WILLR(
                     highs, lows, closes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -698,13 +698,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_CMF(
+                int code = ProphetCoreNative.Prophet_CMF(
                     highs, lows, closes, volumes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -736,13 +736,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_ROC(
+                int code = ProphetCoreNative.Prophet_ROC(
                     closes,
                     closes.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -778,13 +778,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_EMV(
+                int code = ProphetCoreNative.Prophet_EMV(
                     highs, lows, volumes,
                     highs.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -816,13 +816,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_MTM(
+                int code = ProphetCoreNative.Prophet_MTM(
                     closes,
                     closes.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -854,13 +854,13 @@ public static class SubChartCalculator
             () =>
             {
                 var result = new ProphetCoreNative.IndicatorResult();
-                result.ReturnCode = ProphetCoreNative.Prophet_CMO(
+                int code = ProphetCoreNative.Prophet_CMO(
                     closes,
                     closes.Length,
                     PERIOD,
                     ref result
                 );
-                return result;
+                return (code, result);
             },
             "value"
         );
@@ -892,7 +892,7 @@ public static class SubChartCalculator
             "Aroon",
             (results) =>
             {
-                ProphetCoreNative.Prophet_AROON(
+                return ProphetCoreNative.Prophet_AROON(
                     highs, lows,
                     highs.Length,
                     PERIOD,

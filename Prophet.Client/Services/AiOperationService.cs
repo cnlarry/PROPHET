@@ -55,14 +55,14 @@ public class AiOperationService
     /// <summary>
     /// 场景1：创建新Tab并插入代码
     /// </summary>
-    public async Task<bool> CreateNewTabWithCodeAsync(string dslCode, string strategyName = "AI生成策略")
+    public Task<bool> CreateNewTabWithCodeAsync(string dslCode, string strategyName = "AI生成策略")
     {
         try
         {
             if (_strategyHost == null)
             {
                 Console.WriteLine("❌ 策略编辑器未设置");
-                return false;
+                return Task.FromResult(false);
             }
             
             // 创建临时策略
@@ -78,36 +78,36 @@ public class AiOperationService
             
             _strategyHost.OpenEditorTab(tempStrategy);
             Console.WriteLine($"✅ 已创建新Tab: {strategyName}");
-            return true;
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"❌ 创建新Tab失败: {ex.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
     
     /// <summary>
     /// 场景2：替换当前编辑器代码
     /// </summary>
-    public async Task<bool> ReplaceCurrentCodeAsync(string newDslCode)
+    public Task<bool> ReplaceCurrentCodeAsync(string newDslCode)
     {
         try
         {
             if (_strategyHost == null)
             {
                 Console.WriteLine("❌ 策略编辑器未设置");
-                return false;
+                return Task.FromResult(false);
             }
             
             _strategyHost.ReplaceCurrentCode(newDslCode);
             Console.WriteLine("✅ 已替换当前编辑器代码");
-            return true;
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"❌ 替换代码失败: {ex.Message}");
-            return false;
+            return Task.FromResult(false);
         }
     }
     

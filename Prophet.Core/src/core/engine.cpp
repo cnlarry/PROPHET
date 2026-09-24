@@ -159,6 +159,11 @@ void Engine::loadRulesFromDSL(const std::string& dsl_str) {
         
         for (size_t i = 0; i < rules_.size(); ++i) {
             const auto& rule = rules_[i];
+            // 字节码路径不生成止盈止损（含 tp/sl 的规则直接走 AST，保证字段正确）
+            if (rule.getTakeProfitExpr() != nullptr || rule.getStopLossExpr() != nullptr) {
+                bytecode_.push_back({});
+                continue;
+            }
             try {
                 // 将规则转换为字符串，用于缓存键
                 std::string rule_str = rule.toString();
@@ -262,6 +267,11 @@ void Engine::set_klines(
 ) {
     if (count == 0) {
         throw DSLException("Klines count cannot be zero");
+    }
+
+    if (open == nullptr || high == nullptr || low == nullptr || close == nullptr ||
+        volume == nullptr || open_time == nullptr || close_time == nullptr) {
+        throw DSLException("Klines data pointers must not be null");
     }
     
     if (timeframe.empty()) {

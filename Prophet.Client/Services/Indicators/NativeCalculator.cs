@@ -21,8 +21,8 @@ namespace Prophet.Client.Services.Indicators;
 ///     candles, "RSI",
 ///     () => {
 ///         var result = new IndicatorResult();
-///         result.ReturnCode = Native.Prophet_RSI(closes, length, PERIOD, ref result);
-///         return result;
+///         int code = Native.Prophet_RSI(closes, length, PERIOD, ref result);
+///         return (code, result);
 ///     },
 ///     "value"
 /// );
@@ -31,7 +31,7 @@ namespace Prophet.Client.Services.Indicators;
 /// var data = NativeCalculator.CalculateMultiOutput(
 ///     candles, "MACD",
 ///     (results) => {
-///         Native.Prophet_MACD(closes, length, fast, slow, signal,
+///         return Native.Prophet_MACD(closes, length, fast, slow, signal,
 ///             ref results[0], ref results[1], ref results[2]);
 ///     },
 ///     new[] { "dif", "dea", "histogram" },
@@ -52,7 +52,7 @@ public static class NativeCalculator
     public static List<SubChartDataPoint> CalculateSingleOutput(
         List<Candlestick> candles,
         string indicatorId,
-        Func<ProphetCoreNative.IndicatorResult> nativeCall,
+        Func<(int ReturnCode, ProphetCoreNative.IndicatorResult Result)> nativeCall,
         string outputKey = "value")
     {
         if (candles == null || candles.Count == 0)
@@ -64,11 +64,12 @@ public static class NativeCalculator
         
         try
         {
-            // 调用Native函数
-            result = nativeCall();
+            // 调用Native函数（返回码由函数返回值携带，不在结构体中）
+            var call = nativeCall();
+            result = call.Result;
             
             // 检查返回码
-            if (result.ReturnCode != 0)
+            if (call.ReturnCode != 0)
             {
                 return CreateEmptyDataPoints(candles);
             }
@@ -160,7 +161,7 @@ public static class NativeCalculator
     public static List<SubChartDataPoint> CalculateMultiOutput(
         List<Candlestick> candles,
         string indicatorId,
-        Action<ProphetCoreNative.IndicatorResult[]> nativeCall,
+        Func<ProphetCoreNative.IndicatorResult[], int> nativeCall,
         string[] outputKeys,
         int outputCount)
     {
@@ -184,11 +185,11 @@ public static class NativeCalculator
                 results[i] = new ProphetCoreNative.IndicatorResult();
             }
             
-            // 调用Native函数
-            nativeCall(results);
+            // 调用Native函数（返回码由函数返回值携带）
+            int returnCode = nativeCall(results);
             
-            // 检查返回码（只检查第一个结果）
-            if (results[0].ReturnCode != 0)
+            // 检查返回码
+            if (returnCode != 0)
             {
                 return CreateEmptyDataPoints(candles, outputKeys);
             }

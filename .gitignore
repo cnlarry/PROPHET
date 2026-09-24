@@ -118,5 +118,5 @@ appsettings.*.json
 *.db-journal
 *.sqlite-journal
 
-# 数据目录（含嵌套）
-data/
+# 数据目录（仅仓库根，仅运行时数据；注意：大小写敏感，勿误伤 Prophet.Client/Data/ 源码）
+/data/

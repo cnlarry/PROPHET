@@ -93,7 +93,7 @@ public static class DBHelper
     /// 初始化数据库（仅验证连接，不创建或修改数据）
     /// 注意：PROPHET.db 由用户手动维护，此方法仅验证数据库是否可访问
     /// </summary>
-    public static async Task InitializeDatabaseAsync()
+    public static Task InitializeDatabaseAsync()
     {
         try
         {
@@ -106,8 +106,10 @@ public static class DBHelper
             {
                 // 不自动创建数据库，让SQLite在首次连接时创建空文件
                 // 用户应该手动放置 PROPHET.db 文件
-                return;
+                return Task.CompletedTask;
             }
+
+            return Task.CompletedTask;
         }
         catch (Exception ex)
         {

@@ -54,11 +54,11 @@ public class LiveOrderSynchronizer
     /// <summary>
     /// 定时器回调
     /// </summary>
-    private async Task SyncTimerCallback()
+    private Task SyncTimerCallback()
     {
         if (_isSyncing)
         {
-            return; // 避免重复同步
+            return Task.CompletedTask; // 避免重复同步
         }
         
         _isSyncing = true;
@@ -75,6 +75,8 @@ public class LiveOrderSynchronizer
         {
             _isSyncing = false;
         }
+
+        return Task.CompletedTask;
     }
     
     /// <summary>
