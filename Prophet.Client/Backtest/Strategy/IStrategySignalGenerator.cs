@@ -9,7 +9,7 @@ namespace Prophet.Client.Backtest.Strategy;
 /// 策略信号生成器接口
 /// 用于从K线数据生成交易信号
 /// </summary>
-public interface IStrategySignalGenerator
+public interface IStrategySignalGenerator : IDisposable
 {
     /// <summary>
     /// 初始化策略（加载DSL代码等）
@@ -50,10 +50,7 @@ public interface IStrategySignalGenerator
     /// <param name="fundingRateData">资金费率数据</param>
     /// <param name="longShortRatioData">多空比数据（可选）</param>
     void SetTimeSeriesData(List<FearGreedData> fearGreedData, List<FundingRateData> fundingRateData, List<LongShortRatioData>? longShortRatioData = null);
-    
-    /// <summary>
-    /// 清理资源
-    /// </summary>
-    void Dispose();
+
+    // 清理资源（继承自 IDisposable，此处不再重复声明）
 }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Data.Sqlite;
@@ -389,11 +390,28 @@ CREATE TABLE schema_migrations (
         }
     }
 
+    // 表名/列名只能是标识符（字母/数字/下划线，数字不开头），拼 SQL 前强制校验，
+    // 调用方传外部输入（如品种名、策略名）时必须先过此关，防注入。
+    private static readonly Regex SafeIdentifierPattern =
+        new("^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
+
+    public static string ValidateIdentifier(string identifier, string paramName = "tableName")
+    {
+        if (string.IsNullOrWhiteSpace(identifier) || !SafeIdentifierPattern.IsMatch(identifier))
+        {
+            throw new ArgumentException($"非法的数据表/列标识符: {identifier}", paramName);
+        }
+
+        return identifier;
+    }
+
     /// <summary>
     /// 批量插入数据
     /// </summary>
     public static async Task<int> BulkInsertAsync<T>(string tableName, IEnumerable<T> items)
     {
+        ValidateIdentifier(tableName);
+
         if (!items.Any())
             return 0;
 
@@ -407,10 +425,10 @@ CREATE TABLE schema_migrations (
                 .Where(p => p.CanRead && p.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute), true).Length == 0)
                 .ToList();
             
-            var columnNames = string.Join(", ", properties.Select(p => p.Name));
+            var columnNames = string.Join(", ", properties.Select(p => $"\"{ValidateIdentifier(p.Name, "columnName")}\""));
             var paramNames = string.Join(", ", properties.Select(p => $"@{p.Name}"));
             
-            var sql = $"INSERT INTO {tableName} ({columnNames}) VALUES ({paramNames})";
+            var sql = $"INSERT INTO \"{tableName}\" ({columnNames}) VALUES ({paramNames})";
             
             var count = await connection.ExecuteAsync(sql, items, transaction);
             
@@ -433,11 +451,13 @@ CREATE TABLE schema_migrations (
     /// </summary>
     public static async Task<int> TruncateTableAsync(string tableName)
     {
+        ValidateIdentifier(tableName);
+
         try
         {
             Console.WriteLine($"🗑️ 清空表: {tableName}");
             using var connection = CreateConnection();
-            return await connection.ExecuteAsync($"DELETE FROM {tableName}");
+            return await connection.ExecuteAsync($"DELETE FROM \"{tableName}\"");
         }
         catch (Exception ex)
         {
@@ -463,8 +483,10 @@ CREATE TABLE schema_migrations (
     /// </summary>
     public static async Task<long> GetTableRowCountAsync(string tableName)
     {
+        ValidateIdentifier(tableName);
+
         using var connection = CreateConnection();
-        return await connection.ExecuteScalarAsync<long>($"SELECT COUNT(*) FROM {tableName}");
+        return await connection.ExecuteScalarAsync<long>($"SELECT COUNT(*) FROM \"{tableName}\"");
     }
 
     /// <summary>

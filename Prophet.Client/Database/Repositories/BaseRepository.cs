@@ -23,6 +23,13 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     /// 主键列名（默认为 "id"）
     /// </summary>
     protected virtual string IdColumnName => "id";
+
+    // 表名/主键列在首次使用时校验并加引号：子类常量若不合法直接抛错，
+    // 避免标识符拼进 SQL 造成注入或关键字冲突。
+    private string? _quotedTable;
+    private string QuotedTable => _quotedTable ??= $"\"{DBHelper.ValidateIdentifier(TableName)}\"";
+    private string? _quotedIdColumn;
+    private string QuotedIdColumn => _quotedIdColumn ??= $"\"{DBHelper.ValidateIdentifier(IdColumnName, "idColumnName")}\"";
     
     /// <summary>
     /// 创建数据库连接
@@ -38,7 +45,7 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     public virtual async Task<TEntity?> GetByIdAsync(TId id)
     {
         using var connection = CreateConnection();
-        var sql = $"SELECT * FROM {TableName} WHERE {IdColumnName} = @id";
+        var sql = $"SELECT * FROM {QuotedTable} WHERE {QuotedIdColumn} = @id";
         return await connection.QueryFirstOrDefaultAsync<TEntity>(sql, new { id });
     }
 
@@ -48,7 +55,7 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     public virtual async Task<IEnumerable<TEntity>> GetAllAsync()
     {
         using var connection = CreateConnection();
-        var sql = $"SELECT * FROM {TableName}";
+        var sql = $"SELECT * FROM {QuotedTable}";
         return await connection.QueryAsync<TEntity>(sql);
     }
 
@@ -58,19 +65,22 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     public virtual async Task<int> CountAsync()
     {
         using var connection = CreateConnection();
-        var sql = $"SELECT COUNT(*) FROM {TableName}";
+        var sql = $"SELECT COUNT(*) FROM {QuotedTable}";
         return await connection.ExecuteScalarAsync<int>(sql);
     }
 
     /// <summary>
     /// 条件查询
     /// </summary>
-    /// <param name="whereClause">WHERE 子句（不含 WHERE 关键字）</param>
+    /// <param name="whereClause">WHERE 子句（不含 WHERE 关键字；必须是代码内常量，值一律走 parameters 参数化，禁止拼外部输入）</param>
     /// <param name="parameters">参数对象</param>
     public virtual async Task<IEnumerable<TEntity>> QueryAsync(string whereClause, object? parameters = null)
     {
+        if (string.IsNullOrWhiteSpace(whereClause))
+            throw new ArgumentException("WHERE 子句不能为空", nameof(whereClause));
+
         using var connection = CreateConnection();
-        var sql = $"SELECT * FROM {TableName} WHERE {whereClause}";
+        var sql = $"SELECT * FROM {QuotedTable} WHERE {whereClause}";
         return await connection.QueryAsync<TEntity>(sql, parameters);
     }
 
@@ -79,8 +89,11 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     /// </summary>
     public virtual async Task<TEntity?> QueryFirstOrDefaultAsync(string whereClause, object? parameters = null)
     {
+        if (string.IsNullOrWhiteSpace(whereClause))
+            throw new ArgumentException("WHERE 子句不能为空", nameof(whereClause));
+
         using var connection = CreateConnection();
-        var sql = $"SELECT * FROM {TableName} WHERE {whereClause}";
+        var sql = $"SELECT * FROM {QuotedTable} WHERE {whereClause}";
         return await connection.QueryFirstOrDefaultAsync<TEntity>(sql, parameters);
     }
 
@@ -100,11 +113,11 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
         
         foreach (var prop in properties)
         {
-            columns.Add(prop.Name);
+            columns.Add($"\"{DBHelper.ValidateIdentifier(prop.Name, "columnName")}\"");
             values.Add($"@{prop.Name}");
         }
         
-        var sql = $"INSERT INTO {TableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
+        var sql = $"INSERT INTO {QuotedTable} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
         return await connection.ExecuteAsync(sql, entity);
     }
 
@@ -122,11 +135,11 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
         {
             if (prop.Name != IdColumnName)
             {
-                setClauses.Add($"{prop.Name} = @{prop.Name}");
+                setClauses.Add($"\"{DBHelper.ValidateIdentifier(prop.Name, "columnName")}\" = @{prop.Name}");
             }
         }
         
-        var sql = $"UPDATE {TableName} SET {string.Join(", ", setClauses)} WHERE {IdColumnName} = @id";
+        var sql = $"UPDATE {QuotedTable} SET {string.Join(", ", setClauses)} WHERE {QuotedIdColumn} = @id";
         
         // 创建参数对象（包含实体属性 + id）
         var parameters = new DynamicParameters(entity);
@@ -141,7 +154,7 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     public virtual async Task<int> DeleteAsync(TId id)
     {
         using var connection = CreateConnection();
-        var sql = $"DELETE FROM {TableName} WHERE {IdColumnName} = @id";
+        var sql = $"DELETE FROM {QuotedTable} WHERE {QuotedIdColumn} = @id";
         return await connection.ExecuteAsync(sql, new { id });
     }
 
@@ -150,8 +163,11 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     /// </summary>
     public virtual async Task<int> DeleteWhereAsync(string whereClause, object? parameters = null)
     {
+        if (string.IsNullOrWhiteSpace(whereClause))
+            throw new ArgumentException("WHERE 子句不能为空（禁止无条件全表删除）", nameof(whereClause));
+
         using var connection = CreateConnection();
-        var sql = $"DELETE FROM {TableName} WHERE {whereClause}";
+        var sql = $"DELETE FROM {QuotedTable} WHERE {whereClause}";
         return await connection.ExecuteAsync(sql, parameters);
     }
 
@@ -161,7 +177,7 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
     public virtual async Task<bool> ExistsAsync(TId id)
     {
         using var connection = CreateConnection();
-        var sql = $"SELECT COUNT(*) FROM {TableName} WHERE {IdColumnName} = @id";
+        var sql = $"SELECT COUNT(*) FROM {QuotedTable} WHERE {QuotedIdColumn} = @id";
         var count = await connection.ExecuteScalarAsync<int>(sql, new { id });
         return count > 0;
     }
@@ -179,11 +195,11 @@ public abstract class BaseRepository<TEntity, TId> where TEntity : class
         
         foreach (var prop in properties)
         {
-            columns.Add(prop.Name);
+            columns.Add($"\"{DBHelper.ValidateIdentifier(prop.Name, "columnName")}\"");
             values.Add($"@{prop.Name}");
         }
         
-        var sql = $"INSERT INTO {TableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
+        var sql = $"INSERT INTO {QuotedTable} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", values)})";
         
         using var transaction = connection.BeginTransaction();
         try

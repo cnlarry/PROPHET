@@ -46,6 +46,12 @@ public class BacktestEngine : IBacktestEngine
     // UI更新节流：避免过于频繁的UI更新导致阻塞
     private DateTime _lastUIUpdateTime = DateTime.MinValue;
     private const int UI_UPDATE_INTERVAL_MS = 100;  // 每100ms最多更新一次UI
+
+    // 【反前视】挂起信号：本根收盘产生，下一根开盘执行（每次 RunAsync 开始时重置）
+    private Signal? _pendingSignal;
+    private SignalEvent? _pendingEvent;
+    private int _pendingStep;
+    private int _pendingGlobalIndex;
     
     // 事件
     public event EventHandler<BacktestProgressEventArgs>? ProgressChanged;
@@ -401,6 +407,12 @@ public class BacktestEngine : IBacktestEngine
             
             int progressReportInterval = Math.Max(totalSteps / 100, 10);
             
+            // 【反前视】重置挂起信号（同一引擎多次运行互不干扰）
+            _pendingSignal = null;
+            _pendingEvent = null;
+            _pendingStep = 0;
+            _pendingGlobalIndex = 0;
+            
             // 回测循环：从actualStartIndex到actualEndIndex
             for (int i = startIndex; i <= actualEndIndex; i++)
             {
@@ -433,11 +445,15 @@ public class BacktestEngine : IBacktestEngine
                     i,
                     cancellationToken
                 );
-                
+
+                // 【反前视】先执行上一根K线收盘产生的挂起信号，以本根开盘价成交；
+                // 同根的止盈止损检查在其之后，允许同根触发（真实市场行为）。
+                await ExecutePendingSignalAsync(currentCandle, config, cancellationToken);
+
                 // 【重要】先检查现有持仓的止盈止损（使用K线高低价）
                 // 这样可以避免新开仓位在同一根K线上立即触发止盈止损
                 _orderManager.CheckStopLossAndTakeProfit(currentCandle);
-                _orderManager.UpdateEquity(currentCandle);
+                await _orderManager.UpdateEquityAsync(currentCandle);
                 
                 // 每根K线都更新当前价格和时间（实时更新，但使用节流避免UI阻塞）
                 var now = DateTime.UtcNow;
@@ -494,6 +510,16 @@ public class BacktestEngine : IBacktestEngine
                         currentStep, totalSteps, currentCandle, config, sw.Elapsed, progress, cancellationToken
                     );
                 }
+            }
+            
+            // 最后一根的挂起信号没有下一根可执行，按未执行记录
+            if (_pendingSignal != null && _pendingEvent != null)
+            {
+                _pendingEvent.WasExecuted = false;
+                _pendingEvent.ReasonIfNotExecuted = "回测结束，无下一根K线可执行";
+                _performanceAnalyzer.RecordSignal(_pendingEvent);
+                _pendingSignal = null;
+                _pendingEvent = null;
             }
             
             // 7. 平掉所有持仓
@@ -908,6 +934,7 @@ public class BacktestEngine : IBacktestEngine
         }
         
         // 处理有效的交易信号（BUY 或 SELL）
+        // 【反前视】本根只记录信号，不成交；成交延迟到下一根K线开盘（见 ExecutePendingSignalAsync）
         if (signal.Action == SignalAction.BUY || signal.Action == SignalAction.SELL)
         {
             SignalGenerated?.Invoke(this, new SignalGeneratedEventArgs
@@ -918,27 +945,93 @@ public class BacktestEngine : IBacktestEngine
                 CandleIndex = currentStep,
                 GlobalIndex = globalIndex
             });
-            
-            var executedOrder = _orderManager.ProcessSignal(signal, currentCandle);
-            
-            if (executedOrder != null)
+
+            // 若上一根的挂起信号因故未执行（不应发生），先按未执行记录，避免丢失
+            if (_pendingSignal != null)
             {
-                signalEvent2.WasExecuted = true;
-                _performanceAnalyzer.RecordOrder(executedOrder);
-                OrderExecuted?.Invoke(this, new OrderExecutedEventArgs
-                {
-                    BacktestId = config.RunId,
-                    Order = executedOrder
-                });
+                _pendingEvent!.WasExecuted = false;
+                _pendingEvent.ReasonIfNotExecuted = "被新信号覆盖，未执行";
+                _performanceAnalyzer.RecordSignal(_pendingEvent);
             }
-            else
-            {
-                signalEvent2.ReasonIfNotExecuted = "资金不足或当前已有持仓";
-            }
+
+            _pendingSignal = signal;
+            _pendingEvent = signalEvent2;
+            _pendingEvent.WasExecuted = false;
+            _pendingEvent.ReasonIfNotExecuted = "等待下一根K线开盘执行";
+            _pendingStep = currentStep;
+            _pendingGlobalIndex = globalIndex;
         }
         
-        _performanceAnalyzer.RecordSignal(signalEvent2);
+        // HOLD 路径在上方已记录；BUY/SELL 的记录推迟到执行时（或回测结束）
+        if (signal.Action == SignalAction.HOLD)
+        {
+            _performanceAnalyzer.RecordSignal(signalEvent2);
+        }
+
         await Task.CompletedTask;  // 保持方法签名为async，但移除不必要的让出控制权
+    }
+
+    /// <summary>
+    /// 执行挂起信号：以上一根收盘信号、在本根开盘价成交。
+    /// 信号事件的时间仍归属信号产生的那根K线，价格记为实际成交价。
+    /// </summary>
+    private async Task ExecutePendingSignalAsync(
+        Candlestick executionCandle,
+        BacktestConfig config,
+        CancellationToken cancellationToken)
+    {
+        if (_pendingSignal == null || _pendingEvent == null)
+        {
+            return;
+        }
+
+        var signal = _pendingSignal;
+        var signalEvent = _pendingEvent;
+        _pendingSignal = null;
+        _pendingEvent = null;
+
+        // 以本根开盘价成交（消除“以信号根收盘价成交”的前视偏差）
+        var executionPrice = (decimal)executionCandle.Open;
+        var execSignal = new Signal
+        {
+            Action = signal.Action,
+            SignalPrice = executionPrice,
+            Time = signal.Time,
+            Strength = signal.Strength,
+            Description = signal.Description,
+            Trend = signal.Trend,
+            TakeProfit = signal.TakeProfit,
+            StopLoss = signal.StopLoss,
+            ConfigsJson = signal.ConfigsJson,
+            IndicatorsJson = signal.IndicatorsJson,
+            IndicatorSnapshotsJson = signal.IndicatorSnapshotsJson,
+            DebugJson = signal.DebugJson,
+            KlinesJson = signal.KlinesJson
+        };
+
+        var executedOrder = await _orderManager.ProcessSignalAsync(execSignal, executionCandle);
+
+        if (executedOrder != null)
+        {
+            signalEvent.WasExecuted = true;
+            signalEvent.SignalPrice = executionPrice;
+            signalEvent.ReasonIfNotExecuted = null;
+            _performanceAnalyzer.RecordOrder(executedOrder);
+            OrderExecuted?.Invoke(this, new OrderExecutedEventArgs
+            {
+                BacktestId = config.RunId,
+                Order = executedOrder
+            });
+        }
+        else
+        {
+            signalEvent.WasExecuted = false;
+            signalEvent.SignalPrice = executionPrice;
+            signalEvent.ReasonIfNotExecuted = "资金不足或当前已有持仓";
+        }
+
+        _performanceAnalyzer.RecordSignal(signalEvent);
+        await Task.CompletedTask;
     }
     
     /// <summary>
@@ -1037,7 +1130,7 @@ public class BacktestEngine : IBacktestEngine
                 ? new Signal { Action = SignalAction.SELL, SignalPrice = (decimal)lastCandle.Close, Time = lastCandle.Time }
                 : new Signal { Action = SignalAction.BUY, SignalPrice = (decimal)lastCandle.Close, Time = lastCandle.Time };
             
-            var finalOrder = _orderManager.ProcessSignal(closeSignal, lastCandle);
+            var finalOrder = await _orderManager.ProcessSignalAsync(closeSignal, lastCandle);
             if (finalOrder != null)
             {
                 _performanceAnalyzer.RecordOrder(finalOrder);
@@ -1050,12 +1143,15 @@ public class BacktestEngine : IBacktestEngine
     
     /// <summary>
     /// 批量运行回测（参数优化）
+    /// 注意：每个配置独占一个信号生成器（内含原生引擎句柄，不可跨线程共享），
+    /// 数据源为只读可共享；生成器用完即释放，避免句柄泄漏。
     /// </summary>
     public async Task<List<BacktestResult>> RunBatchAsync(
         string strategyDslCode,
         List<BacktestConfig> configs,
         ParallelOptions? parallelOptions = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        Func<IStrategySignalGenerator>? generatorFactory = null)
     {
         parallelOptions ??= new ParallelOptions
         {
@@ -1068,11 +1164,12 @@ public class BacktestEngine : IBacktestEngine
         
         await Parallel.ForEachAsync(configs, parallelOptions, async (config, ct) =>
         {
+            using var generator = generatorFactory?.Invoke() ?? new DslStrategySignalGenerator();
             var engine = new BacktestEngine(
                 _dataFeed,
                 new SimulatedOrderManager(config),
                 new PerformanceAnalyzer(),
-                _strategyGenerator
+                generator
             );
             
             var result = await engine.RunAsync(strategyDslCode, config, null, ct);

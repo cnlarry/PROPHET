@@ -17,7 +17,7 @@ namespace Prophet.Client.Trading.Engine;
 /// 实盘交易实例管理器
 /// 管理所有实盘实例的生命周期
 /// </summary>
-public class TradingInstanceManager : IDisposable
+public class TradingInstanceManager : IDisposable, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<Guid, LiveTradingEngine> _runningEngines;
     private readonly ConcurrentDictionary<Guid, TradingInstanceConfig> _instanceConfigs;
@@ -560,14 +560,31 @@ public class TradingInstanceManager : IDisposable
     {
         if (!_disposed)
         {
-            // 停止所有运行中的实例
-            StopAllAsync().Wait();
-            
+            // 同步 Dispose 不能阻塞等待异步停止（单线程上下文会死锁）。
+            // 优雅停止请使用 DisposeAsync；此处仅标记，防止重复释放。
             _runningEngines.Clear();
             _instanceConfigs.Clear();
-            
+
             _disposed = true;
         }
+
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposed)
+        {
+            // 先优雅停止所有运行中的实例，再清理
+            await StopAllAsync();
+
+            _runningEngines.Clear();
+            _instanceConfigs.Clear();
+
+            _disposed = true;
+        }
+
+        GC.SuppressFinalize(this);
     }
 }
 

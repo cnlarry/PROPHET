@@ -18,7 +18,7 @@ namespace Prophet.Client.Trading.Engine;
 /// 实盘交易引擎
 /// 整合策略、订单管理、风险控制，提供完整的实盘交易功能
 /// </summary>
-public class LiveTradingEngine : IDisposable
+public class LiveTradingEngine : IDisposable, IAsyncDisposable
 {
     private readonly IExchange _exchange;
     private readonly LiveOrderManager _orderManager;
@@ -358,7 +358,7 @@ public class LiveTradingEngine : IDisposable
         
         // 2. 检查止盈止损
         _orderManager.CheckStopLossAndTakeProfit(candle);
-        _orderManager.UpdateEquity(candle);
+        await _orderManager.UpdateEquityAsync(candle);
         
         // 3. 生成交易信号
         var signal = _strategyGenerator.GenerateSignal(candle, _candleBuffer.ToList());
@@ -482,10 +482,25 @@ public class LiveTradingEngine : IDisposable
     /// </summary>
     private async void OnEmergencyStopTriggered(object? sender, EmergencyStopEventArgs e)
     {
-        Console.WriteLine($"🚨 [LiveTradingEngine] 收到紧急停止信号: {e.Reason}");
-        
-        // 自动停止交易引擎
-        await StopAsync();
+        // async void 是事件处理器唯一合法形态：内部必须捕获所有异常，
+        // 否则异常成为未观测异常直接崩进程。
+        try
+        {
+            Console.WriteLine($"🚨 [LiveTradingEngine] 收到紧急停止信号: {e.Reason}");
+
+            // 自动停止交易引擎
+            await StopAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ [LiveTradingEngine] 紧急停止处理失败: {ex.Message}");
+            ErrorOccurred?.Invoke(this, new TradingErrorEventArgs
+            {
+                Message = $"紧急停止处理失败: {ex.Message}",
+                Exception = ex,
+                Timestamp = DateTime.UtcNow
+            });
+        }
     }
     
     /// <summary>
@@ -513,10 +528,38 @@ public class LiveTradingEngine : IDisposable
     {
         if (!_disposed)
         {
-            _cancellationTokenSource?.Cancel();
+            try { _cancellationTokenSource?.Cancel(); } catch { }
             _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = null;
+
+            // 解除风险事件订阅，避免 RiskController 长期持有引擎
+            if (_riskController != null)
+            {
+                _riskController.EmergencyStopTriggered -= OnEmergencyStopTriggered;
+                _riskController.RiskViolationDetected -= OnRiskViolationDetected;
+            }
+
+            // 策略生成器持有原生引擎句柄，同步释放
+            _strategyGenerator.Dispose();
+            (_exchange as IDisposable)?.Dispose();
+
             _disposed = true;
         }
+
+        GC.SuppressFinalize(this);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposed)
+        {
+            // 优雅停止交易循环后再释放资源
+            try { await StopAsync(); } catch { }
+
+            Dispose();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }
 

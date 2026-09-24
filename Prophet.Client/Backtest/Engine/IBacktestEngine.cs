@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Prophet.Client.Backtest.Models;
+using Prophet.Client.Backtest.Strategy;
 
 namespace Prophet.Client.Backtest.Engine;
 
@@ -36,11 +37,13 @@ public interface IBacktestEngine
     /// <summary>
     /// 批量运行回测（参数优化）
     /// </summary>
+    /// <param name="generatorFactory">信号生成器工厂（每配置一个实例；默认新建 DslStrategySignalGenerator）</param>
     Task<List<BacktestResult>> RunBatchAsync(
         string strategyDslCode,
         List<BacktestConfig> configs,
         ParallelOptions? parallelOptions = null,
-        CancellationToken cancellationToken = default
+        CancellationToken cancellationToken = default,
+        Func<IStrategySignalGenerator>? generatorFactory = null
     );
     
     // ========== 事件 ==========

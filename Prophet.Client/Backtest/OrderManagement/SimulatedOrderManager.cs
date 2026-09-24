@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Prophet.Client.Backtest.Models;
 using Prophet.Client.Models;
 using Prophet.Client.Backtest.Services;
@@ -67,16 +68,17 @@ public class SimulatedOrderManager : IOrderManager
     /// 处理信号并生成订单
     /// 注意：核心引擎只返回 BUY、SELL、HOLD 三种信号
     /// </summary>
-    public Order? ProcessSignal(Signal signal, Candlestick candle)
+    public Task<Order?> ProcessSignalAsync(Signal signal, Candlestick candle)
     {
-        // 根据信号类型处理订单
-        return signal.Action switch
+        // 回测为纯内存计算，无 IO：同步执行后返回已完成任务
+        Order? result = signal.Action switch
         {
             SignalAction.BUY => ProcessBuySignal(signal, candle),
             SignalAction.SELL => ProcessSellSignal(signal, candle),
             SignalAction.HOLD => null,  // HOLD信号不触发交易
             _ => throw new InvalidOperationException($"Unknown signal action: {signal.Action}")
         };
+        return Task.FromResult(result);
     }
     
     /// <summary>
@@ -434,31 +436,33 @@ public class SimulatedOrderManager : IOrderManager
     /// <summary>
     /// 更新止损价格
     /// </summary>
-    public void UpdateStopLoss(Order order, decimal newStopLoss)
+    public Task UpdateStopLossAsync(Order order, decimal newStopLoss)
     {
         if (!_openOrders.Contains(order))
         {
             // Console.WriteLine($"⚠️ 更新止损失败: 订单不在持仓列表中");
-            return;
+            return Task.CompletedTask;
         }
         
         order.StopLoss = newStopLoss;
         // Console.WriteLine($"✏️ 更新止损: {order.Id} -> {newStopLoss:F2} USDT");
+        return Task.CompletedTask;
     }
     
     /// <summary>
     /// 更新止盈价格
     /// </summary>
-    public void UpdateTakeProfit(Order order, decimal newTakeProfit)
+    public Task UpdateTakeProfitAsync(Order order, decimal newTakeProfit)
     {
         if (!_openOrders.Contains(order))
         {
             // Console.WriteLine($"⚠️ 更新止盈失败: 订单不在持仓列表中");
-            return;
+            return Task.CompletedTask;
         }
         
         order.TakeProfit = newTakeProfit;
         // Console.WriteLine($"✏️ 更新止盈: {order.Id} -> {newTakeProfit:F2} USDT");
+        return Task.CompletedTask;
     }
     
     /// <summary>
@@ -703,7 +707,7 @@ public class SimulatedOrderManager : IOrderManager
     /// 对于合约交易，权益 = 现金 + 未实现盈亏
     /// 未实现盈亏 = (当前价格 - 开仓价格) * 持仓数量 * 方向系数
     /// </summary>
-    public void UpdateEquity(Candlestick candle)
+    public Task UpdateEquityAsync(Candlestick candle)
     {
         decimal unrealizedPnL = 0;
         
@@ -736,6 +740,8 @@ public class SimulatedOrderManager : IOrderManager
         {
             _recentCandles.Dequeue();
         }
+
+        return Task.CompletedTask;
     }
     
     /// <summary>

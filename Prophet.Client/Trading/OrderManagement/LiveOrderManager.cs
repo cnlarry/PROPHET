@@ -104,16 +104,7 @@ public class LiveOrderManager : IOrderManager
     }
     
     /// <summary>
-    /// 处理交易信号
-    /// </summary>
-    public Order? ProcessSignal(Signal signal, Candlestick candle)
-    {
-        // 同步调用异步方法（在实盘环境中应该使用异步）
-        return ProcessSignalAsync(signal, candle).GetAwaiter().GetResult();
-    }
-    
-    /// <summary>
-    /// 处理交易信号（异步版本）
+    /// 处理交易信号（异步版本，唯一入口；禁止同步阻塞调用，避免死锁）
     /// </summary>
     public async Task<Order?> ProcessSignalAsync(Signal signal, Candlestick candle)
     {
@@ -434,13 +425,8 @@ public class LiveOrderManager : IOrderManager
     }
     
     /// <summary>
-    /// 更新止损
+    /// 更新止损（异步，唯一入口）
     /// </summary>
-    public void UpdateStopLoss(Order order, decimal newStopLoss)
-    {
-        UpdateStopLossAsync(order, newStopLoss).GetAwaiter().GetResult();
-    }
-    
     public async Task UpdateStopLossAsync(Order order, decimal newStopLoss)
     {
         order.StopLoss = newStopLoss;
@@ -450,13 +436,8 @@ public class LiveOrderManager : IOrderManager
     }
     
     /// <summary>
-    /// 更新止盈
+    /// 更新止盈（异步，唯一入口）
     /// </summary>
-    public void UpdateTakeProfit(Order order, decimal newTakeProfit)
-    {
-        UpdateTakeProfitAsync(order, newTakeProfit).GetAwaiter().GetResult();
-    }
-    
     public async Task UpdateTakeProfitAsync(Order order, decimal newTakeProfit)
     {
         order.TakeProfit = newTakeProfit;
@@ -513,12 +494,11 @@ public class LiveOrderManager : IOrderManager
     }
     
     /// <summary>
-    /// 更新权益
+    /// 更新权益（异步：需查询交易所账户，禁止同步阻塞）
     /// </summary>
-    public void UpdateEquity(Candlestick candle)
+    public async Task UpdateEquityAsync(Candlestick candle)
     {
-        // 同步获取最新账户信息
-        var account = _exchange.GetAccountInfoAsync().GetAwaiter().GetResult();
+        var account = await _exchange.GetAccountInfoAsync();
         _currentEquity = account.TotalBalance;
         _currentCash = account.AvailableBalance;
     }
