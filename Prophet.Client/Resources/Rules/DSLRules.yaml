@@ -1,0 +1,5860 @@
+# Prophet DSL 统一规则定义文件
+# 版本: 1.0.0
+# 日期: 2025-11-18
+# 说明: 此文件是 Prophet DSL 的唯一权威规则来源
+#       所有的代码补全、语法校验、悬停提示、参数验证都基于此文件
+
+# =============================================================================
+# 元数据
+# =============================================================================
+metadata:
+  version: "1.0.0"
+  dsl_version: "4.2.0"
+  core_version: "P3.2+"
+  last_updated: "2025-11-18"
+  description: "Prophet DSL 统一规则定义"
+
+# =============================================================================
+# 时间框架定义
+# =============================================================================
+timeframes:
+  - id: "1m"
+    name: "1分钟"
+    description: "1分钟时间框架"
+    seconds: 60
+  - id: "5m"
+    name: "5分钟"
+    description: "5分钟时间框架"
+    seconds: 300
+  - id: "15m"
+    name: "15分钟"
+    description: "15分钟时间框架"
+    seconds: 900
+  - id: "30m"
+    name: "30分钟"
+    description: "30分钟时间框架"
+    seconds: 1800
+  - id: "1h"
+    name: "1小时"
+    description: "1小时时间框架"
+    seconds: 3600
+  - id: "4h"
+    name: "4小时"
+    description: "4小时时间框架"
+    seconds: 14400
+  - id: "1d"
+    name: "1天"
+    description: "1天时间框架"
+    seconds: 86400
+  - id: "1w"
+    name: "1周"
+    description: "1周时间框架"
+    seconds: 604800
+
+# =============================================================================
+# 技术指标定义 (共62个指标)
+# 语法: $(timeframe).INDICATOR().field
+# 参考文档: Prophet DSL 指标.md
+# =============================================================================
+indicators:
+
+  # 指标 1: MACD
+  - id: "MACD"
+    name: "移动平均收敛发散指标"
+    category: "momentum"
+    description: "Moving Average Convergence Divergence"
+    syntax: "$(timeframe).MACD().field"
+    rating: 5
+    parameters:
+      - name: "FAST_PERIOD"
+        type: "integer"
+        default: 12
+        min: 5
+        max: 50
+      - name: "SLOW_PERIOD"
+        type: "integer"
+        default: 26
+        min: 10
+        max: 100
+      - name: "SIGNAL_PERIOD"
+        type: "integer"
+        default: 9
+        min: 5
+        max: 30
+    fields:
+      - name: "macd"
+        type: "double"
+        description: "MACD线值"
+        readonly: true
+      - name: "signal"
+        type: "double"
+        description: "信号线值"
+        readonly: true
+      - name: "histogram"
+        type: "double"
+        description: "柱状图值"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "zero_cross"
+        type: "boolean"
+        description: "零轴穿越"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+      - name: "momentum"
+        type: "double"
+        description: "动量强度"
+        readonly: true
+
+  # 指标 2: RSI
+  - id: "RSI"
+    name: "相对强弱指标"
+    category: "momentum"
+    description: "Relative Strength Index"
+    syntax: "$(timeframe).RSI().field"
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "RSI值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+      - name: "momentum"
+        type: "double"
+        description: "动量强度"
+        readonly: true
+
+  # 指标 3: EMA
+  - id: "EMA"
+    name: "指数移动平均线"
+    category: "trend"
+    description: "Exponential Moving Average"
+    syntax: "$(timeframe).EMA().field"
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "EMA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+
+  # 指标 4: MA
+  - id: "MA"
+    name: "简单移动平均线"
+    category: "trend"
+    description: "Simple Moving Average"
+    syntax: "$(timeframe).MA().field"
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "MA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 5: BOLL
+  - id: "BOLL"
+    name: "布林带"
+    category: "volatility"
+    description: "Bollinger Bands"
+    syntax: "$(timeframe).BOLL().field"
+    aliases: ["BBANDS"]
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 100
+      - name: "STD_DEV"
+        type: "double"
+        default: 2.0
+        min: 1.0
+        max: 5.0
+    fields:
+      - name: "upper"
+        type: "double"
+        description: "上轨"
+        readonly: true
+      - name: "middle"
+        type: "double"
+        description: "中轨"
+        readonly: true
+      - name: "lower"
+        type: "double"
+        description: "下轨"
+        readonly: true
+      - name: "width"
+        type: "double"
+        description: "带宽百分比"
+        readonly: true
+      - name: "percent_b"
+        type: "double"
+        description: "%B指标"
+        readonly: true
+
+  # 指标 6: ATR
+  - id: "ATR"
+    name: "平均真实波幅"
+    category: "volatility"
+    description: "Average True Range"
+    syntax: "$(timeframe).ATR().field"
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "ATR值"
+        readonly: true
+      - name: "volatility"
+        type: "enum"
+        enum_values: ["LOW", "MEDIUM", "HIGH"]
+        description: "波动率等级"
+        readonly: true
+
+  # 指标 7: STOCHRSI
+  - id: "STOCHRSI"
+    name: "随机RSI"
+    category: "momentum"
+    description: "Stochastic RSI"
+    syntax: "$(timeframe).STOCHRSI().field"
+    rating: 4
+    parameters:
+      - name: "RSI_PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+      - name: "STOCH_PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+      - name: "K_PERIOD"
+        type: "integer"
+        default: 3
+        min: 1
+        max: 10
+      - name: "D_PERIOD"
+        type: "integer"
+        default: 3
+        min: 1
+        max: 10
+    fields:
+      - name: "k"
+        type: "double"
+        description: "K线值"
+        readonly: true
+      - name: "d"
+        type: "double"
+        description: "D线值"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+
+  # 指标 8: KDJ
+  - id: "KDJ"
+    name: "随机指标"
+    category: "momentum"
+    description: "KDJ Stochastic"
+    syntax: "$(timeframe).KDJ().field"
+    rating: 5
+    parameters:
+      - name: "FASTK_PERIOD"
+        type: "integer"
+        default: 9
+        min: 3
+        max: 20
+      - name: "SLOWK_PERIOD"
+        type: "integer"
+        default: 3
+        min: 1
+        max: 10
+      - name: "SLOWD_PERIOD"
+        type: "integer"
+        default: 3
+        min: 1
+        max: 10
+    fields:
+      - name: "k"
+        type: "double"
+        description: "K线值"
+        readonly: true
+      - name: "d"
+        type: "double"
+        description: "D线值"
+        readonly: true
+      - name: "j"
+        type: "double"
+        description: "J线值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+
+  # 指标 9: CCI
+  - id: "CCI"
+    name: "商品通道指标"
+    category: "momentum"
+    description: "Commodity Channel Index"
+    syntax: "$(timeframe).CCI().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "CCI值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 10: ADX
+  - id: "ADX"
+    name: "平均趋向指标"
+    category: "momentum"
+    description: "Average Directional Index"
+    syntax: "$(timeframe).ADX().field"
+    rating: 5
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "ADX值"
+        readonly: true
+      - name: "trend_strength"
+        type: "enum"
+        enum_values: ["WEAK", "MODERATE", "STRONG", "VERY_STRONG"]
+        description: "趋势强度"
+        readonly: true
+  
+  # 指标 11: WR
+  - id: "WR"
+    name: "威廉指标"
+    category: "momentum"
+    description: "Williams %R"
+    syntax: "$(timeframe).WR().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "WR值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+
+  # 指标 12: MFI
+  - id: "MFI"
+    name: "资金流量指标"
+    category: "momentum"
+    description: "Money Flow Index"
+    syntax: "$(timeframe).MFI().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "MFI值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+
+  # 指标 13: OBV
+  - id: "OBV"
+    name: "能量潮指标"
+    category: "volume"
+    description: "On Balance Volume"
+    syntax: "$(timeframe).OBV().field"
+    rating: 4
+    parameters: []
+    fields:
+      - name: "value"
+        type: "double"
+        description: "OBV值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+      - name: "change"
+        type: "double"
+        description: "变化量"
+        readonly: true
+
+  # 指标 14: SAR
+  - id: "SAR"
+    name: "抛物线转向指标"
+    category: "trend"
+    description: "Parabolic SAR"
+    syntax: "$(timeframe).SAR().field"
+    rating: 4
+    parameters:
+      - name: "SAR_ACCELERATION"
+        type: "double"
+        default: 0.02
+        min: 0.01
+        max: 0.1
+      - name: "SAR_MAXIMUM"
+        type: "double"
+        default: 0.2
+        min: 0.1
+        max: 0.5
+    fields:
+      - name: "value"
+        type: "double"
+        description: "SAR值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 15: WMA
+  - id: "WMA"
+    name: "加权移动平均线"
+    category: "trend"
+    description: "Weighted Moving Average"
+    syntax: "$(timeframe).WMA().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "WMA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+
+  # 指标 16: ROC
+  - id: "ROC"
+    name: "变动率指标"
+    category: "momentum"
+    description: "Rate of Change"
+    syntax: "$(timeframe).ROC().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 12
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "ROC值(百分比)"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 17: AROON
+  - id: "AROON"
+    name: "阿隆指标"
+    category: "trend"
+    description: "Aroon Indicator"
+    syntax: "$(timeframe).AROON().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 25
+        min: 5
+        max: 100
+    fields:
+      - name: "aroon_up"
+        type: "double"
+        description: "Aroon上升线"
+        readonly: true
+      - name: "aroon_down"
+        type: "double"
+        description: "Aroon下降线"
+        readonly: true
+      - name: "oscillator"
+        type: "double"
+        description: "振荡器"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 18: TRIX
+  - id: "TRIX"
+    name: "三重指数平滑移动平均"
+    category: "price"
+    description: "Triple Exponential Average"
+    syntax: "$(timeframe).TRIX().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 15
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "TRIX值(百分比)"
+        readonly: true
+      - name: "signal"
+        type: "double"
+        description: "信号线"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "zero_cross"
+        type: "boolean"
+        description: "零轴穿越"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 19: DMI
+  - id: "DMI"
+    name: "趋向指标"
+    category: "trend"
+    description: "Directional Movement Index"
+    syntax: "$(timeframe).DMI().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "plus_di"
+        type: "double"
+        description: "+DI"
+        readonly: true
+      - name: "minus_di"
+        type: "double"
+        description: "-DI"
+        readonly: true
+      - name: "adx"
+        type: "double"
+        description: "ADX"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+      - name: "trend_strength"
+        type: "enum"
+        enum_values: ["WEAK", "MODERATE", "STRONG", "VERY_STRONG"]
+        description: "趋势强度"
+        readonly: true
+
+  # 指标 20: CMO
+  - id: "CMO"
+    name: "钱德动量摆动指标"
+    category: "momentum"
+    description: "Chande Momentum Oscillator"
+    syntax: "$(timeframe).CMO().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "CMO值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+      - name: "zero_cross"
+        type: "boolean"
+        description: "零轴穿越"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+  
+  # 指标 21: TEMA
+  - id: "TEMA"
+    name: "三重指数移动平均"
+    category: "trend"
+    description: "Triple Exponential Moving Average"
+    syntax: "$(timeframe).TEMA().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 30
+        min: 5
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "TEMA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 22: DEMA
+  - id: "DEMA"
+    name: "双重指数移动平均"
+    category: "trend"
+    description: "Double Exponential Moving Average"
+    syntax: "$(timeframe).DEMA().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 30
+        min: 5
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "DEMA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 23: KAMA
+  - id: "KAMA"
+    name: "Kaufman自适应移动平均"
+    category: "trend"
+    description: "Kaufman Adaptive Moving Average"
+    syntax: "$(timeframe).KAMA().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 5
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "KAMA值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 24: T3
+  - id: "T3"
+    name: "Triple Exponential Moving Average"
+    category: "trend"
+    description: "T3 (Tillson)"
+    syntax: "$(timeframe).T3().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 5
+        min: 2
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "T3值"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "与当前价格的距离百分比"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 25: MAMA
+  - id: "MAMA"
+    name: "MESA自适应移动平均"
+    category: "trend"
+    description: "MESA Adaptive Moving Average"
+    syntax: "$(timeframe).MAMA().field"
+    rating: 3
+    parameters:
+      - name: "MAMA_FASTLIMIT"
+        type: "double"
+        default: 0.5
+        min: 0.01
+        max: 0.99
+      - name: "MAMA_SLOWLIMIT"
+        type: "double"
+        default: 0.05
+        min: 0.01
+        max: 0.99
+    fields:
+      - name: "mama"
+        type: "double"
+        description: "MAMA线"
+        readonly: true
+      - name: "fama"
+        type: "double"
+        description: "FAMA线"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 26: STOCHF
+  - id: "STOCHF"
+    name: "快速随机指标"
+    category: "momentum"
+    description: "Fast Stochastic"
+    syntax: "$(timeframe).STOCHF().field"
+    rating: 4
+    parameters:
+      - name: "FASTK_PERIOD"
+        type: "integer"
+        default: 5
+        min: 1
+        max: 20
+      - name: "FASTD_PERIOD"
+        type: "integer"
+        default: 3
+        min: 1
+        max: 20
+    fields:
+      - name: "k"
+        type: "double"
+        description: "FastK值"
+        readonly: true
+      - name: "d"
+        type: "double"
+        description: "FastD值"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+
+  # 指标 27: ULTOSC
+  - id: "ULTOSC"
+    name: "终极振荡器"
+    category: "momentum"
+    description: "Ultimate Oscillator"
+    syntax: "$(timeframe).ULTOSC().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD1"
+        type: "integer"
+        default: 7
+        min: 1
+        max: 30
+      - name: "PERIOD2"
+        type: "integer"
+        default: 14
+        min: 1
+        max: 30
+      - name: "PERIOD3"
+        type: "integer"
+        default: 28
+        min: 1
+        max: 30
+    fields:
+      - name: "value"
+        type: "double"
+        description: "UO值"
+        readonly: true
+      - name: "overbought"
+        type: "boolean"
+        description: "是否超买"
+        readonly: true
+      - name: "oversold"
+        type: "boolean"
+        description: "是否超卖"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 28: PPO
+  - id: "PPO"
+    name: "价格百分比振荡器"
+    category: "momentum"
+    description: "Percentage Price Oscillator"
+    syntax: "$(timeframe).PPO().field"
+    rating: 3
+    parameters:
+      - name: "FAST_PERIOD"
+        type: "integer"
+        default: 12
+        min: 2
+        max: 50
+      - name: "SLOW_PERIOD"
+        type: "integer"
+        default: 26
+        min: 10
+        max: 100
+      - name: "SIGNAL_PERIOD"
+        type: "integer"
+        default: 9
+        min: 2
+        max: 30
+    fields:
+      - name: "ppo"
+        type: "double"
+        description: "PPO值"
+        readonly: true
+      - name: "signal"
+        type: "double"
+        description: "信号线"
+        readonly: true
+      - name: "histogram"
+        type: "double"
+        description: "柱状图"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "交叉类型"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 29: APO
+  - id: "APO"
+    name: "绝对价格振荡器"
+    category: "momentum"
+    description: "Absolute Price Oscillator"
+    syntax: "$(timeframe).APO().field"
+    rating: 2
+    parameters:
+      - name: "FAST_PERIOD"
+        type: "integer"
+        default: 12
+        min: 2
+        max: 50
+      - name: "SLOW_PERIOD"
+        type: "integer"
+        default: 26
+        min: 10
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "APO值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 30: ADOSC
+  - id: "ADOSC"
+    name: "Chaikin累积派发振荡器"
+    category: "volume"
+    description: "Chaikin A/D Oscillator"
+    syntax: "$(timeframe).ADOSC().field"
+    rating: 3
+    parameters:
+      - name: "FAST_PERIOD"
+        type: "integer"
+        default: 3
+        min: 2
+        max: 20
+      - name: "SLOW_PERIOD"
+        type: "integer"
+        default: 10
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "ADOSC值"
+        readonly: true
+      - name: "crossover_type"
+        type: "enum"
+        enum_values: ["GOLDEN_CROSS", "DEATH_CROSS", "NONE"]
+        description: "零轴穿越"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+  
+  # 指标 31: NATR
+  - id: "NATR"
+    name: "标准化平均真实波幅"
+    category: "volatility"
+    description: "Normalized Average True Range"
+    syntax: "$(timeframe).NATR().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 1
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "NATR值(百分比)"
+        readonly: true
+      - name: "volatility"
+        type: "enum"
+        enum_values: ["LOW", "MEDIUM", "HIGH"]
+        description: "波动率等级"
+        readonly: true
+
+  # 指标 32: MTM
+  - id: "MTM"
+    name: "动量指标"
+    category: "momentum"
+    description: "Momentum"
+    syntax: "$(timeframe).MTM().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 1
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "动量值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 33: Ichimoku
+  - id: "Ichimoku"
+    name: "一目均衡表"
+    category: "trend"
+    description: "Ichimoku Cloud"
+    syntax: "$(timeframe).Ichimoku().field"
+    rating: 4
+    parameters:
+      - name: "TENKAN"
+        type: "integer"
+        default: 9
+        min: 1
+        max: 50
+      - name: "KIJUN"
+        type: "integer"
+        default: 26
+        min: 1
+        max: 100
+      - name: "SENKOU"
+        type: "integer"
+        default: 52
+        min: 1
+        max: 200
+    fields:
+      - name: "tenkan"
+        type: "double"
+        description: "转换线"
+        readonly: true
+      - name: "kijun"
+        type: "double"
+        description: "基准线"
+        readonly: true
+      - name: "senkou_a"
+        type: "double"
+        description: "先行带A"
+        readonly: true
+      - name: "senkou_b"
+        type: "double"
+        description: "先行带B"
+        readonly: true
+      - name: "chikou"
+        type: "double"
+        description: "延迟线"
+        readonly: true
+      - name: "signal"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "信号"
+        readonly: true
+
+  # 指标 34: CMF
+  - id: "CMF"
+    name: "蔡金资金流"
+    category: "volume"
+    description: "Chaikin Money Flow"
+    syntax: "$(timeframe).CMF().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 1
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "CMF值"
+        readonly: true
+      - name: "is_positive"
+        type: "boolean"
+        description: "是否为正值"
+        readonly: true
+      - name: "is_strong"
+        type: "boolean"
+        description: "是否为强势（abs > 0.25）"
+        readonly: true
+
+  # 指标 35: EMV
+  - id: "EMV"
+    name: "简易波动指标"
+    category: "volume"
+    description: "Ease of Movement"
+    syntax: "$(timeframe).EMV().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 1
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "EMV值"
+        readonly: true
+      - name: "signal"
+        type: "double"
+        description: "信号线"
+        readonly: true
+      - name: "is_positive"
+        type: "boolean"
+        description: "是否为正值"
+        readonly: true
+
+  # 指标 36: Keltner
+  - id: "Keltner"
+    name: "肯特纳通道"
+    category: "volatility"
+    description: "Keltner Channel"
+    syntax: "$(timeframe).Keltner().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 1
+        max: 100
+      - name: "MULTIPLIER"
+        type: "double"
+        default: 2.0
+        min: 1.0
+        max: 5.0
+    fields:
+      - name: "upper"
+        type: "double"
+        description: "上轨"
+        readonly: true
+      - name: "middle"
+        type: "double"
+        description: "中轨"
+        readonly: true
+      - name: "lower"
+        type: "double"
+        description: "下轨"
+        readonly: true
+      - name: "width"
+        type: "double"
+        description: "通道宽度"
+        readonly: true
+      - name: "percent_k"
+        type: "double"
+        description: "价格在通道中的位置"
+        readonly: true
+
+  # 指标 37: VWAP
+  - id: "VWAP"
+    name: "成交量加权平均价"
+    category: "price"
+    description: "Volume Weighted Average Price"
+    syntax: "$(timeframe).VWAP().field"
+    rating: 5
+    parameters: []
+    fields:
+      - name: "value"
+        type: "double"
+        description: "VWAP值"
+        readonly: true
+
+  # 指标 38: Supertrend
+  - id: "Supertrend"
+    name: "超级趋势指标"
+    category: "trend"
+    description: "SuperTrend"
+    syntax: "$(timeframe).Supertrend().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 1
+        max: 100
+      - name: "MULTIPLIER"
+        type: "double"
+        default: 3.0
+        min: 1.0
+        max: 10.0
+    fields:
+      - name: "value"
+        type: "double"
+        description: "SuperTrend值"
+        readonly: true
+      - name: "direction"
+        type: "enum"
+        enum_values: ["UP", "DOWN"]
+        description: "方向"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势"
+        readonly: true
+      - name: "islong"
+        type: "boolean"
+        description: "是否多头信号"
+        readonly: true
+      - name: "isshort"
+        type: "boolean"
+        description: "是否空头信号"
+        readonly: true
+
+  # 指标 39: DonchianChannel
+  - id: "DonchianChannel"
+    name: "唐奇安通道"
+    category: "trend"
+    description: "Donchian Channel"
+    syntax: "$(timeframe).DonchianChannel().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 100
+    fields:
+      - name: "upper"
+        type: "double"
+        description: "上轨(N期最高价)"
+        readonly: true
+      - name: "middle"
+        type: "double"
+        description: "中轨"
+        readonly: true
+      - name: "lower"
+        type: "double"
+        description: "下轨(N期最低价)"
+        readonly: true
+      - name: "position"
+        type: "enum"
+        enum_values: ["UPPER_BREAK", "LOWER_BREAK", "UPPER_HALF", "LOWER_HALF", "MIDDLE"]
+        description: "价格位置"
+        readonly: true
+
+  # 指标 40: PivotPoints
+  - id: "PivotPoints"
+    name: "枢轴点"
+    category: "price"
+    description: "Pivot Points"
+    syntax: "$(timeframe).PivotPoints().field"
+    rating: 4
+    parameters: []
+    fields:
+      - name: "pp"
+        type: "double"
+        description: "枢轴点"
+        readonly: true
+      - name: "r1"
+        type: "double"
+        description: "阻力位1"
+        readonly: true
+      - name: "r2"
+        type: "double"
+        description: "阻力位2"
+        readonly: true
+      - name: "r3"
+        type: "double"
+        description: "阻力位3"
+        readonly: true
+      - name: "s1"
+        type: "double"
+        description: "支撑位1"
+        readonly: true
+      - name: "s2"
+        type: "double"
+        description: "支撑位2"
+        readonly: true
+      - name: "s3"
+        type: "double"
+        description: "支撑位3"
+        readonly: true
+  
+  # 指标 41: StdDev
+  - id: "StdDev"
+    name: "标准差"
+    category: "statistics"
+    description: "Standard Deviation"
+    syntax: "$(timeframe).StdDev().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 2
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "标准差值"
+        readonly: true
+      - name: "percent"
+        type: "double"
+        description: "标准差百分比"
+        readonly: true
+      - name: "volatility"
+        type: "enum"
+        enum_values: ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+        description: "波动率等级"
+        readonly: true
+
+  # 指标 42: VWMA
+  - id: "VWMA"
+    name: "成交量加权移动平均"
+    category: "trend"
+    description: "Volume Weighted Moving Average"
+    syntax: "$(timeframe).VWMA().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 2
+        max: 200
+    fields:
+      - name: "value"
+        type: "double"
+        description: "VWMA值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势"
+        readonly: true
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+
+  # 指标 43: SwingHL
+  - id: "SwingHL"
+    name: "摆动高低点"
+    category: "pattern"
+    description: "Swing High/Low"
+    syntax: "$(timeframe).SwingHL().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 5
+        min: 1
+        max: 20
+    fields:
+      - name: "swing_high"
+        type: "double"
+        description: "摆动高点价格(0.0表示不是)"
+        readonly: true
+      - name: "swing_low"
+        type: "double"
+        description: "摆动低点价格(0.0表示不是)"
+        readonly: true
+      - name: "is_swing_high"
+        type: "boolean"
+        description: "是否是摆动高点"
+        readonly: true
+      - name: "is_swing_low"
+        type: "boolean"
+        description: "是否是摆动低点"
+        readonly: true
+
+  # 指标 44: VWAPBands
+  - id: "VWAPBands"
+    name: "VWAP通道"
+    category: "volume"
+    description: "VWAP Bands"
+    syntax: "$(timeframe).VWAPBands().field"
+    rating: 4
+    parameters:
+      - name: "STD_DEV"
+        type: "double"
+        default: 2.0
+        min: 1.0
+        max: 5.0
+    fields:
+      - name: "vwap"
+        type: "double"
+        description: "VWAP线"
+        readonly: true
+      - name: "upper"
+        type: "double"
+        description: "上轨"
+        readonly: true
+      - name: "lower"
+        type: "double"
+        description: "下轨"
+        readonly: true
+      - name: "position"
+        type: "enum"
+        enum_values: ["ABOVE_UPPER", "BELOW_LOWER", "ABOVE_VWAP", "BELOW_VWAP", "AT_VWAP"]
+        description: "价格位置"
+        readonly: true
+
+  # 指标 45: HV
+  - id: "HV"
+    name: "历史波动率"
+    category: "volatility"
+    description: "Historical Volatility"
+    syntax: "$(timeframe).HV().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "日波动率(百分比)"
+        readonly: true
+      - name: "annual"
+        type: "double"
+        description: "年化波动率"
+        readonly: true
+      - name: "volatility"
+        type: "enum"
+        enum_values: ["LOW", "MEDIUM", "HIGH", "VERY_HIGH"]
+        description: "波动率等级"
+        readonly: true
+
+  # 指标 46: ChandelierExit
+  - id: "ChandelierExit"
+    name: "吊灯止损"
+    category: "trend"
+    description: "Chandelier Exit"
+    syntax: "$(timeframe).ChandelierExit().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 22
+        min: 1
+        max: 100
+      - name: "MULTIPLIER"
+        type: "double"
+        default: 3.0
+        min: 1.0
+        max: 10.0
+    fields:
+      - name: "long_stop"
+        type: "double"
+        description: "多头止损线"
+        readonly: true
+      - name: "short_stop"
+        type: "double"
+        description: "空头止损线"
+        readonly: true
+      - name: "direction"
+        type: "enum"
+        enum_values: ["LONG", "SHORT", "NEUTRAL"]
+        description: "当前方向"
+        readonly: true
+
+  # 指标 47: ChoppinessIndex
+  - id: "ChoppinessIndex"
+    name: "震荡指数"
+    category: "trend"
+    description: "Choppiness Index"
+    syntax: "$(timeframe).ChoppinessIndex().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "震荡指数值(0-100)"
+        readonly: true
+      - name: "market_state"
+        type: "enum"
+        enum_values: ["CHOPPY", "TRENDING", "TRANSITIONAL"]
+        description: "市场状态"
+        readonly: true
+
+  # 指标 48: TSI
+  - id: "TSI"
+    name: "真实强度指数"
+    category: "momentum"
+    description: "True Strength Index"
+    syntax: "$(timeframe).TSI().field"
+    rating: 3
+    parameters:
+      - name: "LONG_PERIOD"
+        type: "integer"
+        default: 25
+        min: 10
+        max: 50
+      - name: "SHORT_PERIOD"
+        type: "integer"
+        default: 13
+        min: 5
+        max: 30
+      - name: "SIGNAL_PERIOD"
+        type: "integer"
+        default: 7
+        min: 3
+        max: 20
+    fields:
+      - name: "tsi"
+        type: "double"
+        description: "TSI值"
+        readonly: true
+      - name: "signal"
+        type: "double"
+        description: "信号线"
+        readonly: true
+      - name: "histogram"
+        type: "double"
+        description: "柱状图"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["STRONG_BULLISH", "BULLISH", "BEARISH", "STRONG_BEARISH"]
+        description: "趋势强度"
+        readonly: true
+
+  # 指标 49: BollingerBW
+  - id: "BollingerBW"
+    name: "布林带宽度"
+    category: "volatility"
+    description: "Bollinger Bandwidth"
+    syntax: "$(timeframe).BollingerBW().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 100
+      - name: "STD_DEV"
+        type: "double"
+        default: 2.0
+        min: 1.0
+        max: 5.0
+    fields:
+      - name: "bandwidth"
+        type: "double"
+        description: "布林带宽度(绝对值)"
+        readonly: true
+      - name: "percent"
+        type: "double"
+        description: "布林带宽度(百分比)"
+        readonly: true
+      - name: "squeeze"
+        type: "boolean"
+        description: "是否处于挤压状态"
+        readonly: true
+
+  # 指标 50: MSB
+  - id: "MSB"
+    name: "市场结构破坏"
+    category: "pattern"
+    description: "Market Structure Break"
+    syntax: "$(timeframe).MSB().field"
+    rating: 3
+    parameters:
+      - name: "LOOKBACK"
+        type: "integer"
+        default: 20
+        min: 5
+        max: 100
+    fields:
+      - name: "msb_type"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NONE"]
+        description: "结构破坏类型"
+        readonly: true
+      - name: "break_level"
+        type: "double"
+        description: "破坏的价格水平"
+        readonly: true
+      - name: "is_bullish_msb"
+        type: "boolean"
+        description: "是否看涨破坏"
+        readonly: true
+      - name: "is_bearish_msb"
+        type: "boolean"
+        description: "是否看跌破坏"
+        readonly: true
+  
+  # 指标 51: ADL
+  - id: "ADL"
+    name: "累积派发线"
+    category: "volume"
+    description: "Accumulation/Distribution Line"
+    syntax: "$(timeframe).ADL().field"
+    rating: 3
+    parameters: []
+    fields:
+      - name: "value"
+        type: "double"
+        description: "累积派发线值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势"
+        readonly: true
+
+  # 指标 52: HHLL
+  - id: "HHLL"
+    name: "更高高点/更低低点"
+    category: "pattern"
+    description: "Higher High/Lower Low"
+    syntax: "$(timeframe).HHLL().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 5
+        max: 50
+    fields:
+      - name: "is_higher_high"
+        type: "boolean"
+        description: "是否更高高点"
+        readonly: true
+      - name: "is_lower_low"
+        type: "boolean"
+        description: "是否更低低点"
+        readonly: true
+      - name: "is_higher_low"
+        type: "boolean"
+        description: "是否更高低点"
+        readonly: true
+      - name: "is_lower_high"
+        type: "boolean"
+        description: "是否更低高点"
+        readonly: true
+      - name: "trend_structure"
+        type: "enum"
+        enum_values: ["UPTREND", "DOWNTREND", "EXPANDING", "CONTRACTING", "NEUTRAL"]
+        description: "趋势结构"
+        readonly: true
+
+  # 指标 53: Alligator
+  - id: "Alligator"
+    name: "鳄鱼指标"
+    category: "trend"
+    description: "Williams Alligator"
+    syntax: "$(timeframe).Alligator().field"
+    rating: 4
+    parameters:
+      - name: "JAW_PERIOD"
+        type: "integer"
+        default: 13
+        min: 5
+        max: 50
+      - name: "TEETH_PERIOD"
+        type: "integer"
+        default: 8
+        min: 3
+        max: 30
+      - name: "LIPS_PERIOD"
+        type: "integer"
+        default: 5
+        min: 2
+        max: 20
+    fields:
+      - name: "jaw"
+        type: "double"
+        description: "下颚线"
+        readonly: true
+      - name: "teeth"
+        type: "double"
+        description: "牙齿线"
+        readonly: true
+      - name: "lips"
+        type: "double"
+        description: "嘴唇线"
+        readonly: true
+      - name: "state"
+        type: "enum"
+        enum_values: ["SLEEPING", "WAKING", "EATING"]
+        description: "状态"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+  # 指标 54: ElderRay
+  - id: "ElderRay"
+    name: "多空能量"
+    category: "momentum"
+    description: "Elder Ray Index"
+    syntax: "$(timeframe).ElderRay().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 13
+        min: 5
+        max: 50
+    fields:
+      - name: "bull_power"
+        type: "double"
+        description: "多头能量"
+        readonly: true
+      - name: "bear_power"
+        type: "double"
+        description: "空头能量"
+        readonly: true
+      - name: "net_power"
+        type: "double"
+        description: "净能量"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["STRONG_BULLISH", "BULLISH", "NEUTRAL", "BEARISH", "STRONG_BEARISH"]
+        description: "趋势类型"
+        readonly: true
+
+  # 指标 55: FisherTransform
+  - id: "FisherTransform"
+    name: "Fisher变换"
+    category: "momentum"
+    description: "Fisher Transform"
+    syntax: "$(timeframe).FisherTransform().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 3
+        max: 50
+    fields:
+      - name: "fisher"
+        type: "double"
+        description: "Fisher值"
+        readonly: true
+      - name: "trigger"
+        type: "double"
+        description: "触发线"
+        readonly: true
+      - name: "signal"
+        type: "enum"
+        enum_values: ["STRONG_BUY", "BUY", "SELL", "STRONG_SELL", "OVERBOUGHT", "OVERSOLD", "NONE"]
+        description: "信号"
+        readonly: true
+
+  # 指标 56: ForceIndex
+  - id: "ForceIndex"
+    name: "力量指数"
+    category: "volume"
+    description: "Force Index"
+    syntax: "$(timeframe).ForceIndex().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 13
+        min: 1
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "力量指数值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "NEUTRAL", "BEARISH"]
+        description: "趋势方向"
+        readonly: true
+      - name: "strength"
+        type: "enum"
+        enum_values: ["WEAK", "MODERATE", "STRONG", "VERY_STRONG"]
+        description: "力量强度"
+        readonly: true
+
+  # 指标 57: KaufmanER
+  - id: "KaufmanER"
+    name: "Kaufman效率比"
+    category: "statistics"
+    description: "Kaufman Efficiency Ratio"
+    syntax: "$(timeframe).KaufmanER().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 5
+        max: 50
+    fields:
+      - name: "value"
+        type: "double"
+        description: "效率比(0-1)"
+        readonly: true
+      - name: "market_state"
+        type: "enum"
+        enum_values: ["TRENDING", "TRANSITIONAL", "CHOPPY"]
+        description: "市场状态"
+        readonly: true
+      - name: "efficiency"
+        type: "enum"
+        enum_values: ["VERY_HIGH", "HIGH", "MEDIUM", "LOW"]
+        description: "效率等级"
+        readonly: true
+
+  # 指标 58: LinearRegSlope
+  - id: "LinearRegSlope"
+    name: "线性回归斜率"
+    category: "statistics"
+    description: "Linear Regression Slope"
+    syntax: "$(timeframe).LinearRegSlope().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 100
+    fields:
+      - name: "slope"
+        type: "double"
+        description: "斜率"
+        readonly: true
+      - name: "angle"
+        type: "double"
+        description: "斜率角度(度)"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+      - name: "strength"
+        type: "enum"
+        enum_values: ["WEAK", "MODERATE", "STRONG", "VERY_STRONG"]
+        description: "趋势强度"
+        readonly: true
+
+  # 指标 59: McGinleyDynamic
+  - id: "McGinleyDynamic"
+    name: "McGinley动态均线"
+    category: "trend"
+    description: "McGinley Dynamic"
+    syntax: "$(timeframe).McGinleyDynamic().field"
+    rating: 3
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 14
+        min: 5
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "动态均线值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "NEUTRAL", "BEARISH"]
+        description: "趋势方向"
+        readonly: true
+      - name: "distance"
+        type: "double"
+        description: "偏离百分比"
+        readonly: true
+
+  # 指标 60: ParabolicTP
+  - id: "ParabolicTP"
+    name: "抛物线时间价格"
+    category: "trend"
+    description: "Parabolic Time/Price"
+    syntax: "$(timeframe).ParabolicTP().field"
+    rating: 3
+    parameters:
+      - name: "PARABOLIC_AF"
+        type: "double"
+        default: 0.02
+        min: 0.01
+        max: 0.2
+      - name: "PARABOLIC_MAX_AF"
+        type: "double"
+        default: 0.2
+        min: 0.1
+        max: 1.0
+    fields:
+      - name: "value"
+        type: "double"
+        description: "调整后的TP值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH"]
+        description: "趋势方向"
+        readonly: true
+      - name: "time_factor"
+        type: "double"
+        description: "时间因子"
+        readonly: true
+      - name: "confidence"
+        type: "double"
+        description: "信号置信度"
+        readonly: true
+
+  # 指标 61: SchaffTrendCycle
+  - id: "SchaffTrendCycle"
+    name: "Schaff趋势周期"
+    category: "momentum"
+    description: "Schaff Trend Cycle"
+    syntax: "$(timeframe).SchaffTrendCycle().field"
+    rating: 4
+    parameters:
+      - name: "PERIOD"
+        type: "integer"
+        default: 10
+        min: 5
+        max: 50
+      - name: "FAST_PERIOD"
+        type: "integer"
+        default: 23
+        min: 10
+        max: 50
+      - name: "SLOW_PERIOD"
+        type: "integer"
+        default: 50
+        min: 20
+        max: 100
+    fields:
+      - name: "value"
+        type: "double"
+        description: "STC值(0-100)"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "NEUTRAL", "BEARISH"]
+        description: "趋势方向"
+        readonly: true
+      - name: "signal"
+        type: "enum"
+        enum_values: ["BUY", "SELL", "OVERBOUGHT", "OVERSOLD", "NONE"]
+        description: "信号"
+        readonly: true
+
+  # 指标 62: VolumePriceTrend
+  - id: "VolumePriceTrend"
+    name: "量价趋势"
+    category: "volume"
+    description: "Volume Price Trend"
+    syntax: "$(timeframe).VolumePriceTrend().field"
+    rating: 3
+    parameters: []
+    fields:
+      - name: "value"
+        type: "double"
+        description: "VPT值"
+        readonly: true
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "趋势方向"
+        readonly: true
+
+# =============================================================================
+# 数据函数定义
+# 规则：
+#   - methods/submethods：需要括号 ()，即使无参数
+#   - fields/subfields：不需要括号，直接访问
+# 五种标准形式：
+#   1. Func(tf).method()           - 方法
+#   2. Func(tf).method().subfield  - 方法 + 子字段
+#   3. Func(tf).method().submethod() - 方法 + 子方法
+#   4. Func(tf).field              - 字段
+#   5. Func(tf).field.subfield     - 字段 + 子字段
+# =============================================================================
+data_functions:
+  # 1. K线数据访问
+  - id: "KLINE"
+    name: "K线数据访问"
+    category: "data_access"
+    description: "获取K线数据"
+    syntax: "KLINE(timeframe).field(offset)"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+        description: "时间框架"
+    methods:
+      - name: "open"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移量，0表示当前K线"
+        description: "获取开盘价"
+      - name: "high"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "获取最高价"
+      - name: "low"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "获取最低价"
+      - name: "close"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "获取收盘价"
+      - name: "volume"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "获取成交量"
+
+  # 2. 综合价格计算
+  - id: "PRICE"
+    name: "综合价格计算"
+    category: "data_access"
+    description: "提供多种价格计算方法"
+    syntax: "PRICE(timeframe).method([offset])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "AVG"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "平均价格 (High + Low + Close) / 3"
+      - name: "MED"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "中位价 (High + Low) / 2"
+      - name: "TYP"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "典型价 (High + Low + Close) / 3"
+      - name: "WCL"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "加权收盘价 (High + Low + Close * 2) / 4"
+      - name: "MID"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "中点价 (High + Low) / 2"
+    examples:
+      - "PRICE(5m).AVG()"
+      - "PRICE(5m).TYP(1)"
+      - "PRICE(1h).WCL(0)"
+
+  # 3. 最高值
+  - id: "HIGHEST"
+    name: "最高值"
+    category: "statistics"
+    description: "返回指定周期内的最大值"
+    syntax: "HIGHEST(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "high"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "low"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "close"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "volume"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+
+  # 4. 最低值
+  - id: "LOWEST"
+    name: "最低值"
+    category: "statistics"
+    description: "返回指定周期内的最小值"
+    syntax: "LOWEST(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 1
+        max: 100
+    return_type: "double"
+    examples:
+      - "LOWEST(5m).low(20)"
+      - "LOWEST(5m).close(30)"
+
+  # 5. 平均值
+  - id: "AVERAGE"
+    name: "平均值"
+    category: "statistics"
+    description: "计算指定周期内的算术平均值"
+    syntax: "AVERAGE(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "high"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "low"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "close"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+      - name: "volume"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+
+  # 6. 累加和
+  - id: "SUM"
+    name: "累加和"
+    category: "statistics"
+    description: "计算指定周期内所有值的总和"
+    syntax: "SUM(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 1
+        max: 100
+    return_type: "double"
+    examples:
+      - "SUM(5m).volume(20)"
+      - "SUM(5m).close(20)"
+
+  # 7. 中位数
+  - id: "MEDIAN"
+    name: "中位数"
+    category: "statistics"
+    description: "返回指定周期内的中位数"
+    syntax: "MEDIAN(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 2
+        max: 100
+    return_type: "double"
+    examples:
+      - "MEDIAN(5m).close(20)"
+
+  # 8. 标准差
+  - id: "STD"
+    name: "标准差"
+    category: "statistics"
+    description: "计算指定周期内的标准差"
+    syntax: "STD(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 2
+        max: 100
+    return_type: "double"
+    examples:
+      - "STD(5m).close(20)"
+
+  # 9. 方差
+  - id: "VARIANCE"
+    name: "方差"
+    category: "statistics"
+    description: "计算指定周期内的方差"
+    syntax: "VARIANCE(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 2
+        max: 100
+    return_type: "double"
+    examples:
+      - "VARIANCE(5m).close(20)"
+
+  # 10. 变化量计算
+  - id: "CHANGE"
+    name: "变化量计算"
+    category: "statistics"
+    description: "计算当前值与N个周期前的变化量"
+    syntax: "CHANGE(timeframe).method(PERIOD).subfield"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对变化量"
+          - name: "pct"
+            type: "double"
+            description: "百分比变化率"
+      - name: "high"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对变化量"
+          - name: "pct"
+            type: "double"
+            description: "百分比变化率"
+      - name: "low"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对变化量"
+          - name: "pct"
+            type: "double"
+            description: "百分比变化率"
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对变化量"
+          - name: "pct"
+            type: "double"
+            description: "百分比变化率"
+      - name: "volume"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对变化量"
+          - name: "pct"
+            type: "double"
+            description: "百分比变化率"
+    examples:
+      - "CHANGE(5m).close(5).value"
+      - "CHANGE(5m).close(10).pct"
+
+  # 11. 排名计算
+  - id: "RANK"
+    name: "排名计算"
+    category: "statistics"
+    description: "计算当前值在最近N个周期内的排名"
+    syntax: "RANK(timeframe).method(PERIOD).subfield"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "integer"
+            description: "绝对排名（1到period）"
+          - name: "pct"
+            type: "double"
+            description: "百分位排名（0.0到1.0）"
+      - name: "high"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "integer"
+            description: "绝对排名（1到period）"
+          - name: "pct"
+            type: "double"
+            description: "百分位排名（0.0到1.0）"
+      - name: "low"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "integer"
+            description: "绝对排名（1到period）"
+          - name: "pct"
+            type: "double"
+            description: "百分位排名（0.0到1.0）"
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "integer"
+            description: "绝对排名（1到period）"
+          - name: "pct"
+            type: "double"
+            description: "百分位排名（0.0到1.0）"
+      - name: "volume"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "integer"
+            description: "绝对排名（1到period）"
+          - name: "pct"
+            type: "double"
+            description: "百分位排名（0.0到1.0）"
+    examples:
+      - "RANK(5m).close(20).value"
+      - "RANK(5m).close(20).pct"
+
+  # 12. 线性回归斜率
+  - id: "SLOPE"
+    name: "线性回归斜率"
+    category: "statistics"
+    description: "计算指定周期内数据的线性回归斜率"
+    syntax: "SLOPE(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 2
+        max: 100
+    return_type: "double"
+    examples:
+      - "SLOPE(5m).close(20)"
+
+  # 13. 标准化得分
+  - id: "ZSCORE"
+    name: "标准化得分"
+    category: "statistics"
+    description: "计算当前值相对于历史均值的标准化得分"
+    syntax: "ZSCORE(timeframe).field(period)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 2
+        max: 100
+    return_type: "double"
+    examples:
+      - "ZSCORE(5m).close(50)"
+
+  # 14. 百分位数
+  - id: "PERCENTILE"
+    name: "百分位数"
+    category: "statistics"
+    description: "计算指定百分位数的值"
+    syntax: "PERCENTILE(timeframe).field(period, quantile)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+      - name: "field"
+        type: "enum"
+        enum_values: ["open", "high", "low", "close", "volume"]
+        required: true
+      - name: "period"
+        type: "integer"
+        required: true
+        min: 1
+        max: 100
+      - name: "quantile"
+        type: "double"
+        required: true
+        min: 0.0
+        max: 1.0
+    return_type: "double"
+    examples:
+      - "PERCENTILE(5m).high(100, 0.95)"
+      - "PERCENTILE(5m).low(100, 0.05)"
+
+  # 15. 交叉检测
+  - id: "CROSS"
+    name: "交叉检测"
+    category: "statistics"
+    description: "检测数值是否穿越阈值"
+    syntax: "CROSS(timeframe).method(threshold).subfield"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "object"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            required: true
+        subfields:
+          - name: "above"
+            type: "boolean"
+            description: "向上穿越"
+          - name: "below"
+            type: "boolean"
+            description: "向下穿越"
+          - name: "any"
+            type: "boolean"
+            description: "任意穿越"
+      - name: "high"
+        return_type: "object"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            required: true
+        subfields:
+          - name: "above"
+            type: "boolean"
+            description: "向上穿越"
+          - name: "below"
+            type: "boolean"
+            description: "向下穿越"
+          - name: "any"
+            type: "boolean"
+            description: "任意穿越"
+      - name: "low"
+        return_type: "object"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            required: true
+        subfields:
+          - name: "above"
+            type: "boolean"
+            description: "向上穿越"
+          - name: "below"
+            type: "boolean"
+            description: "向下穿越"
+          - name: "any"
+            type: "boolean"
+            description: "任意穿越"
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            required: true
+        subfields:
+          - name: "above"
+            type: "boolean"
+            description: "向上穿越"
+          - name: "below"
+            type: "boolean"
+            description: "向下穿越"
+          - name: "any"
+            type: "boolean"
+            description: "任意穿越"
+      - name: "volume"
+        return_type: "object"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            required: true
+        subfields:
+          - name: "above"
+            type: "boolean"
+            description: "向上穿越"
+          - name: "below"
+            type: "boolean"
+            description: "向下穿越"
+          - name: "any"
+            type: "boolean"
+            description: "任意穿越"
+    examples:
+      - "CROSS(5m).close(100).above"
+      - "CROSS(5m).close(100).below"
+
+  # 16. 波动率分析
+  - id: "VOLA"
+    name: "波动率分析"
+    category: "statistics"
+    description: "计算价格或其他字段的波动率"
+    syntax: "VOLA(timeframe).method(PERIOD).subfield"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 2
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对波动率（标准差）"
+          - name: "pct"
+            type: "double"
+            description: "百分比波动率（变异系数）"
+      - name: "high"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 2
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对波动率（标准差）"
+          - name: "pct"
+            type: "double"
+            description: "百分比波动率（变异系数）"
+      - name: "low"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 2
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对波动率（标准差）"
+          - name: "pct"
+            type: "double"
+            description: "百分比波动率（变异系数）"
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 2
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对波动率（标准差）"
+          - name: "pct"
+            type: "double"
+            description: "百分比波动率（变异系数）"
+      - name: "volume"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 2
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对波动率（标准差）"
+          - name: "pct"
+            type: "double"
+            description: "百分比波动率（变异系数）"
+    examples:
+      - "VOLA(5m).close(20).value"
+      - "VOLA(5m).close(20).pct"
+
+  # 17. 平均真实波幅
+  - id: "ATR"
+    name: "平均真实波幅"
+    category: "statistics"
+    description: "计算平均真实波动幅度"
+    syntax: "ATR(timeframe).method(PERIOD).subfield"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        subfields:
+          - name: "value"
+            type: "double"
+            description: "绝对ATR"
+          - name: "pct"
+            type: "double"
+            description: "百分比ATR"
+    examples:
+      - "ATR(5m).close(14).value"
+      - "ATR(5m).close(14).pct"
+
+  # 18. 希尔伯特变换
+  - id: "HT"
+    name: "希尔伯特变换"
+    category: "advanced"
+    description: "信号处理技术，分析时间序列的周期性、相位和趋势"
+    syntax: "HT(timeframe).field[.subfield]"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    fields:
+      - name: "DCPERIOD"
+        type: "double"
+        description: "主导周期"
+        readonly: true
+      - name: "DCPHASE"
+        type: "double"
+        description: "主导周期相位"
+        readonly: true
+      - name: "PHASOR"
+        type: "object"
+        description: "相量分量（需访问子字段）"
+        readonly: true
+        subfields:
+          - name: "inphase"
+            type: "double"
+            description: "同相分量"
+          - name: "quadrature"
+            type: "double"
+            description: "正交分量"
+      - name: "SINE"
+        type: "object"
+        description: "正弦波（需访问子字段）"
+        readonly: true
+        subfields:
+          - name: "sine"
+            type: "double"
+            description: "主正弦波"
+          - name: "leadsine"
+            type: "double"
+            description: "领先正弦波"
+      - name: "TRENDMODE"
+        type: "integer"
+        description: "趋势模式（0=无趋势，1=有趋势）"
+        readonly: true
+      - name: "TRENDLINE"
+        type: "double"
+        description: "趋势线值"
+        readonly: true
+    examples:
+      - "HT(5m).DCPERIOD"
+      - "HT(5m).DCPHASE"
+      - "HT(5m).PHASOR.inphase"
+      - "HT(5m).SINE.sine"
+      - "HT(5m).TRENDMODE"
+      - "HT(5m).TRENDLINE"
+
+  # 19. 力量平衡指标
+  - id: "POWER"
+    name: "力量平衡指标"
+    category: "advanced"
+    description: "分析市场买卖力量的平衡关系"
+    syntax: "POWER(timeframe).method([offset])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "BOP"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+        description: "Balance of Power（力量平衡）"
+    examples:
+      - "POWER(5m).BOP()"
+      - "POWER(5m).BOP(1)"
+
+  # 20. K线形态识别（61种形态）
+  - id: "PATTERN"
+    name: "K线形态识别"
+    category: "advanced"
+    description: "识别K线形态模式，支持61种TA-Lib形态"
+    syntax: "PATTERN(timeframe).pattern_name([penetration])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      # =========================================================================
+      # 看涨形态（21种）
+      # =========================================================================
+      - name: "hammer"
+        return_type: "boolean"
+        description: "锤子线 - 底部反转，长下影线"
+        talib_function: "CDLHAMMER"
+        requires_penetration: false
+      - name: "inverted_hammer"
+        return_type: "boolean"
+        description: "倒锤子线 - 底部反转，长上影线"
+        talib_function: "CDLINVERTEDHAMMER"
+        requires_penetration: false
+      - name: "engulfing_bullish"
+        return_type: "boolean"
+        description: "看涨吞没 - 后K线完全包含前K线"
+        talib_function: "CDLENGULFING"
+        requires_penetration: false
+      - name: "morning_star"
+        return_type: "boolean"
+        description: "晨星 - 三根K线底部反转"
+        talib_function: "CDLMORNINGSTAR"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "morning_doji_star"
+        return_type: "boolean"
+        description: "启明星 - 晨星变体，中间是十字星"
+        talib_function: "CDLMORNINGDOJISTAR"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "piercing"
+        return_type: "boolean"
+        description: "刺透形态 - 阳线穿入前阴线"
+        talib_function: "CDLPIERCING"
+        requires_penetration: false
+      - name: "three_white_soldiers"
+        return_type: "boolean"
+        description: "三白兵 - 三根连续阳线"
+        talib_function: "CDL3WHITESOLDIERS"
+        requires_penetration: false
+      - name: "three_inside_up"
+        return_type: "boolean"
+        description: "三内升"
+        talib_function: "CDL3INSIDE"
+        requires_penetration: false
+      - name: "three_outside_up"
+        return_type: "boolean"
+        description: "三外升"
+        talib_function: "CDL3OUTSIDE"
+        requires_penetration: false
+      - name: "three_line_strike_bull"
+        return_type: "boolean"
+        description: "三线打击（看涨）"
+        talib_function: "CDL3LINESTRIKE"
+        requires_penetration: false
+      - name: "abandoned_baby_bull"
+        return_type: "boolean"
+        description: "弃婴（看涨）"
+        talib_function: "CDLABANDONEDBABY"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "breakaway_bull"
+        return_type: "boolean"
+        description: "脱离（看涨）"
+        talib_function: "CDLBREAKAWAY"
+        requires_penetration: false
+      - name: "concealing_baby_swallow"
+        return_type: "boolean"
+        description: "藏婴吞没"
+        talib_function: "CDLCONCEALBABYSWALL"
+        requires_penetration: false
+      - name: "counterattack"
+        return_type: "boolean"
+        description: "反击线"
+        talib_function: "CDLCOUNTERATTACK"
+        requires_penetration: false
+      - name: "dragonfly_doji"
+        return_type: "boolean"
+        description: "蜻蜓十字星"
+        talib_function: "CDLDRAGONFLYDOJI"
+        requires_penetration: false
+      - name: "belt_hold_bull"
+        return_type: "boolean"
+        description: "捉腰带线（看涨）"
+        talib_function: "CDLBELTHOLD"
+        requires_penetration: false
+      - name: "hikkake_bull"
+        return_type: "boolean"
+        description: "陷阱（看涨）"
+        talib_function: "CDLHIKKAKE"
+        requires_penetration: false
+      - name: "kicking_bull"
+        return_type: "boolean"
+        description: "踢踹（看涨）"
+        talib_function: "CDLKICKING"
+        requires_penetration: false
+      - name: "ladder_bottom"
+        return_type: "boolean"
+        description: "梯底"
+        talib_function: "CDLLADDERBOTTOM"
+        requires_penetration: false
+      - name: "mat_hold"
+        return_type: "boolean"
+        description: "铺垫形态"
+        talib_function: "CDLMATHOLD"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "rising_three_methods"
+        return_type: "boolean"
+        description: "上升三法"
+        talib_function: "CDLRISEFALL3METHODS"
+        requires_penetration: false
+      
+      # =========================================================================
+      # 看跌形态（21种）
+      # =========================================================================
+      - name: "hanging_man"
+        return_type: "boolean"
+        description: "上吊线 - 顶部反转，长下影线"
+        talib_function: "CDLHANGINGMAN"
+        requires_penetration: false
+      - name: "shooting_star"
+        return_type: "boolean"
+        description: "射击之星 - 顶部反转，长上影线"
+        talib_function: "CDLSHOOTINGSTAR"
+        requires_penetration: false
+      - name: "engulfing_bearish"
+        return_type: "boolean"
+        description: "看跌吞没 - 后K线完全包含前K线"
+        talib_function: "CDLENGULFING"
+        requires_penetration: false
+      - name: "evening_star"
+        return_type: "boolean"
+        description: "黄昏星 - 三根K线顶部反转"
+        talib_function: "CDLEVENINGSTAR"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "evening_doji_star"
+        return_type: "boolean"
+        description: "黄昏十字星 - 黄昏星变体，中间是十字星"
+        talib_function: "CDLEVENINGDOJISTAR"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "dark_cloud_cover"
+        return_type: "boolean"
+        description: "乌云盖顶 - 阴线覆盖前阳线"
+        talib_function: "CDLDARKCLOUDCOVER"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "three_black_crows"
+        return_type: "boolean"
+        description: "三只乌鸦 - 三根连续阴线"
+        talib_function: "CDL3BLACKCROWS"
+        requires_penetration: false
+      - name: "three_inside_down"
+        return_type: "boolean"
+        description: "三内降"
+        talib_function: "CDL3INSIDE"
+        requires_penetration: false
+      - name: "three_outside_down"
+        return_type: "boolean"
+        description: "三外降"
+        talib_function: "CDL3OUTSIDE"
+        requires_penetration: false
+      - name: "three_line_strike_bear"
+        return_type: "boolean"
+        description: "三线打击（看跌）"
+        talib_function: "CDL3LINESTRIKE"
+        requires_penetration: false
+      - name: "abandoned_baby_bear"
+        return_type: "boolean"
+        description: "弃婴（看跌）"
+        talib_function: "CDLABANDONEDBABY"
+        requires_penetration: true
+        parameters:
+          - name: "penetration"
+            type: "double"
+            default: 0.3
+            min: 0.0
+            max: 1.0
+      - name: "breakaway_bear"
+        return_type: "boolean"
+        description: "脱离（看跌）"
+        talib_function: "CDLBREAKAWAY"
+        requires_penetration: false
+      - name: "advance_block"
+        return_type: "boolean"
+        description: "前进受阻"
+        talib_function: "CDLADVANCEBLOCK"
+        requires_penetration: false
+      - name: "deliberation"
+        return_type: "boolean"
+        description: "深思熟虑"
+        talib_function: "CDLDELIBERATION"
+        requires_penetration: false
+      - name: "gravestone_doji"
+        return_type: "boolean"
+        description: "墓碑十字星"
+        talib_function: "CDLGRAVESTONEDOJI"
+        requires_penetration: false
+      - name: "belt_hold_bear"
+        return_type: "boolean"
+        description: "捉腰带线（看跌）"
+        talib_function: "CDLBELTHOLD"
+        requires_penetration: false
+      - name: "hikkake_bear"
+        return_type: "boolean"
+        description: "陷阱（看跌）"
+        talib_function: "CDLHIKKAKE"
+        requires_penetration: false
+      - name: "kicking_bear"
+        return_type: "boolean"
+        description: "踢踹（看跌）"
+        talib_function: "CDLKICKING"
+        requires_penetration: false
+      - name: "two_crows"
+        return_type: "boolean"
+        description: "两只乌鸦"
+        talib_function: "CDL2CROWS"
+        requires_penetration: false
+      - name: "upside_gap_two_crows"
+        return_type: "boolean"
+        description: "向上跳空两只乌鸦"
+        talib_function: "CDLUPSIDEGAP2CROWS"
+        requires_penetration: false
+      - name: "falling_three_methods"
+        return_type: "boolean"
+        description: "下降三法"
+        talib_function: "CDLRISEFALL3METHODS"
+        requires_penetration: false
+      
+      # =========================================================================
+      # 中性/反转形态（19种）
+      # =========================================================================
+      - name: "doji"
+        return_type: "boolean"
+        description: "十字星 - 开盘价≈收盘价"
+        talib_function: "CDLDOJI"
+        requires_penetration: false
+      - name: "long_legged_doji"
+        return_type: "boolean"
+        description: "长腿十字星 - 十字星+长影线"
+        talib_function: "CDLLONGLEGGEDDOJI"
+        requires_penetration: false
+      - name: "spinning_top"
+        return_type: "boolean"
+        description: "陀螺线 - 小实体+长影线"
+        talib_function: "CDLSPINNINGTOP"
+        requires_penetration: false
+      - name: "marubozu"
+        return_type: "boolean"
+        description: "光头光脚 - 无影线的大实体"
+        talib_function: "CDLMARUBOZU"
+        requires_penetration: false
+      - name: "harami"
+        return_type: "boolean"
+        description: "孕线"
+        talib_function: "CDLHARAMI"
+        requires_penetration: false
+      - name: "harami_cross"
+        return_type: "boolean"
+        description: "十字孕线"
+        talib_function: "CDLHARAMICROSS"
+        requires_penetration: false
+      - name: "high_wave"
+        return_type: "boolean"
+        description: "高浪线"
+        talib_function: "CDLHIGHWAVE"
+        requires_penetration: false
+      - name: "homing_pigeon"
+        return_type: "boolean"
+        description: "家鸽"
+        talib_function: "CDLHOMINGPIGEON"
+        requires_penetration: false
+      - name: "identical_three_crows"
+        return_type: "boolean"
+        description: "同类三鸦"
+        talib_function: "CDLIDENTICAL3CROWS"
+        requires_penetration: false
+      - name: "in_neck"
+        return_type: "boolean"
+        description: "颈内线"
+        talib_function: "CDLINNECK"
+        requires_penetration: false
+      - name: "on_neck"
+        return_type: "boolean"
+        description: "颈上线"
+        talib_function: "CDLONNECK"
+        requires_penetration: false
+      - name: "separating_lines"
+        return_type: "boolean"
+        description: "分离线"
+        talib_function: "CDLSEPARATINGLINES"
+        requires_penetration: false
+      - name: "stick_sandwich"
+        return_type: "boolean"
+        description: "条形三明治"
+        talib_function: "CDLSTICKSANDWICH"
+        requires_penetration: false
+      - name: "tasuki_gap"
+        return_type: "boolean"
+        description: "跳空并列阴阳线"
+        talib_function: "CDLTASUKIGAP"
+        requires_penetration: false
+      - name: "thrusting"
+        return_type: "boolean"
+        description: "插入线"
+        talib_function: "CDLTHRUSTING"
+        requires_penetration: false
+      - name: "tristar"
+        return_type: "boolean"
+        description: "三星"
+        talib_function: "CDLTRISTAR"
+        requires_penetration: false
+      - name: "unique_three_river"
+        return_type: "boolean"
+        description: "独特三河"
+        talib_function: "CDLUNIQUE3RIVER"
+        requires_penetration: false
+      - name: "rickshaw_man"
+        return_type: "boolean"
+        description: "黄包车夫"
+        talib_function: "CDLRICKSHAWMAN"
+        requires_penetration: false
+      - name: "gap_sidesidewhite"
+        return_type: "boolean"
+        description: "跳空并列白色"
+        talib_function: "CDLGAPSIDESIDEWHITE"
+        requires_penetration: false
+    examples:
+      - "PATTERN(1h).hammer()"
+      - "PATTERN(5m).doji()"
+      - "PATTERN(5m).morning_star(0.3)"
+      - "PATTERN(1h).evening_star(0.4)"
+      - "PATTERN(5m).engulfing_bullish()"
+
+  # 21. 连续条件检测
+  - id: "CONSECUTIVE"
+    name: "连续条件检测"
+    category: "sequence"
+    description: "检查某字段是否连续N个周期满足特定条件"
+    syntax: "CONSECUTIVE(timeframe).method(PERIOD).submethod(params)"
+    aliases: ["CONSEC"]
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    methods:
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "boolean"
+            parameters: []
+            description: "连续上涨"
+          - name: "falling"
+            return_type: "boolean"
+            parameters: []
+            description: "连续下跌"
+          - name: "above"
+            return_type: "boolean"
+            parameters:
+              - name: "threshold"
+                type: "double"
+                required: true
+            description: "连续高于阈值"
+          - name: "below"
+            return_type: "boolean"
+            parameters:
+              - name: "threshold"
+                type: "double"
+                required: true
+            description: "连续低于阈值"
+    examples:
+      - "CONSECUTIVE(5m).close(3).rising()"
+      - "CONSECUTIVE(5m).close(5).above(100)"
+
+  # 22. 条件计数
+  - id: "COUNT"
+    name: "条件计数"
+    category: "sequence"
+    description: "统计最近N个周期中满足特定条件的次数"
+    syntax: "COUNT(timeframe).method(PERIOD).submethod(params...)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "open"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "integer"
+            parameters: []
+            description: "每期上涨"
+          - name: "falling"
+            return_type: "integer"
+            parameters: []
+            description: "每期下跌"
+          - name: "increasing"
+            return_type: "integer"
+            parameters: []
+            description: "每期增加"
+          - name: "decreasing"
+            return_type: "integer"
+            parameters: []
+            description: "每期减少"
+          - name: "above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+            description: "高于阈值"
+          - name: "below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+            description: "低于阈值"
+          - name: "between"
+            return_type: "integer"
+            parameters:
+              - name: "min"
+                type: "double"
+                required: true
+              - name: "max"
+                type: "double"
+                required: true
+            description: "在区间内"
+          - name: "crosses_above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+            description: "向上穿越"
+          - name: "crosses_below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+            description: "向下穿越"
+      - name: "high"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "integer"
+            parameters: []
+          - name: "falling"
+            return_type: "integer"
+            parameters: []
+          - name: "increasing"
+            return_type: "integer"
+            parameters: []
+          - name: "decreasing"
+            return_type: "integer"
+            parameters: []
+          - name: "above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "between"
+            return_type: "integer"
+            parameters:
+              - name: "min"
+                type: "double"
+                required: true
+              - name: "max"
+                type: "double"
+                required: true
+          - name: "crosses_above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "crosses_below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+      - name: "low"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "integer"
+            parameters: []
+          - name: "falling"
+            return_type: "integer"
+            parameters: []
+          - name: "increasing"
+            return_type: "integer"
+            parameters: []
+          - name: "decreasing"
+            return_type: "integer"
+            parameters: []
+          - name: "above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "between"
+            return_type: "integer"
+            parameters:
+              - name: "min"
+                type: "double"
+                required: true
+              - name: "max"
+                type: "double"
+                required: true
+          - name: "crosses_above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "crosses_below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+      - name: "close"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "integer"
+            parameters: []
+          - name: "falling"
+            return_type: "integer"
+            parameters: []
+          - name: "increasing"
+            return_type: "integer"
+            parameters: []
+          - name: "decreasing"
+            return_type: "integer"
+            parameters: []
+          - name: "above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "between"
+            return_type: "integer"
+            parameters:
+              - name: "min"
+                type: "double"
+                required: true
+              - name: "max"
+                type: "double"
+                required: true
+          - name: "crosses_above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "crosses_below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+      - name: "volume"
+        return_type: "object"
+        parameters:
+          - name: "period"
+            type: "integer"
+            required: true
+            min: 1
+            max: 100
+        submethods:
+          - name: "rising"
+            return_type: "integer"
+            parameters: []
+          - name: "falling"
+            return_type: "integer"
+            parameters: []
+          - name: "increasing"
+            return_type: "integer"
+            parameters: []
+          - name: "decreasing"
+            return_type: "integer"
+            parameters: []
+          - name: "above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "between"
+            return_type: "integer"
+            parameters:
+              - name: "min"
+                type: "double"
+                required: true
+              - name: "max"
+                type: "double"
+                required: true
+          - name: "crosses_above"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+          - name: "crosses_below"
+            return_type: "integer"
+            parameters:
+              - name: "value"
+                type: "double"
+                required: true
+    examples:
+      - "COUNT(5m).close(20).rising()"
+      - "COUNT(5m).close(20).above(100)"
+      - "COUNT(5m).close(20).between(90, 110)"
+
+  # 23. 公平价值缺口
+  - id: "FVG"
+    name: "公平价值缺口"
+    category: "smc"
+    description: "Fair Value Gap 检测与分析"
+    syntax: "FVG(timeframe).method(params) 或 FVG(timeframe).field[.subfield]"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    methods:
+      - name: "bullish"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+            min: 0
+            max: 500
+            description: "回溯周期，0表示当前K线"
+          - name: "min_gap_pct"
+            type: "double"
+            default: 0.0
+            min: 0.0
+            max: 100.0
+            description: "最小缺口百分比过滤"
+        description: "检测是否存在看涨FVG"
+      - name: "bearish"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+            min: 0
+            max: 500
+          - name: "min_gap_pct"
+            type: "double"
+            default: 0.0
+            min: 0.0
+            max: 100.0
+        description: "检测是否存在看跌FVG"
+      - name: "any"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+            min: 0
+            max: 500
+          - name: "min_gap_pct"
+            type: "double"
+            default: 0.0
+            min: 0.0
+            max: 100.0
+        description: "检测是否存在任意类型的FVG"
+    fields:
+      - name: "top"
+        type: "double"
+        description: "FVG上边界价格"
+        readonly: true
+      - name: "bottom"
+        type: "double"
+        description: "FVG下边界价格"
+        readonly: true
+      - name: "mid"
+        type: "double"
+        description: "FVG中点价格 (top + bottom) / 2"
+        readonly: true
+      - name: "size"
+        type: "double"
+        description: "FVG大小 (top - bottom)"
+        readonly: true
+      - name: "isfilled"
+        type: "boolean"
+        description: "是否已完全填补（100%）"
+        readonly: true
+      - name: "filled_pct"
+        type: "double"
+        description: "填补百分比（0-100）"
+        readonly: true
+      - name: "filled"
+        type: "object"
+        description: "填补详细信息（访问子字段）"
+        readonly: true
+        subfields:
+          - name: "ispartial"
+            type: "boolean"
+            description: "是否部分填补（0% < filled_pct < 100%）"
+          - name: "pct"
+            type: "double"
+            description: "填补百分比（同filled_pct，保持兼容）"
+      - name: "remaining"
+        type: "object"
+        description: "剩余未填补区域信息（访问子字段）"
+        readonly: true
+        subfields:
+          - name: "top"
+            type: "double"
+            description: "剩余区域上边界（C++实现）"
+          - name: "bottom"
+            type: "double"
+            description: "剩余区域下边界（C++实现）"
+          - name: "mid"
+            type: "double"
+            description: "剩余区域中点（C++派生字段）"
+          - name: "size"
+            type: "double"
+            description: "剩余区域大小（C++派生字段）"
+    examples:
+      - "FVG(5m).bullish(0, 0.1)  // 检测当前是否有看涨FVG（最小0.1%缺口）"
+      - "FVG(15m).any(5, 0.0)  // 检测5根K线前是否有任意FVG"
+      - "FVG(5m).top  // FVG上边界"
+      - "FVG(5m).mid  // FVG中点"
+      - "FVG(5m).size  // FVG大小"
+      - "FVG(5m).isfilled  // 是否已完全填补"
+      - "FVG(5m).filled_pct  // 填补百分比"
+      - "FVG(5m).filled.ispartial  // 是否部分填补"
+      - "FVG(5m).filled.pct  // 填补百分比（另一种访问方式）"
+      - "FVG(5m).remaining.top  // 剩余区域上边界"
+      - "FVG(5m).remaining.bottom  // 剩余区域下边界"
+      - "FVG(5m).remaining.mid  // 剩余区域中点"
+      - "FVG(5m).remaining.size  // 剩余区域大小"
+
+  # 24. 溢价/折价区分析
+  - id: "PREMIUM"
+    name: "溢价/折价区分析"
+    category: "smc"
+    description: "分析当前价格在某个范围内的位置"
+    syntax: "PREMIUM(timeframe).method(PERIOD)"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "premium"
+        return_type: "boolean"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "是否在溢价区"
+      - name: "discount"
+        return_type: "boolean"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "是否在折价区"
+      - name: "equilibrium"
+        return_type: "boolean"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "是否在均衡区"
+      - name: "zone"
+        return_type: "integer"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "区域类型（1=溢价，0=均衡，-1=折价）"
+      - name: "pct"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "在范围内的百分比位置"
+      - name: "level"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "均衡价格水平"
+      - name: "strength"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "区域强度"
+      - name: "high"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "范围高点"
+      - name: "low"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 100
+            min: 1
+            max: 100
+        description: "范围低点"
+    examples:
+      - "PREMIUM(5m).discount(100)"
+      - "PREMIUM(15m).premium(100)"
+      - "PREMIUM(5m).pct(100)"
+
+  # 25. 订单块
+  - id: "ORDERBLOCK"
+    name: "订单块"
+    category: "smc"
+    description: "Order Block 检测"
+    syntax: "ORDERBLOCK(timeframe).property"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    fields:
+      - name: "bullish"
+        type: "boolean"
+        description: "是否为看涨订单块"
+        readonly: true
+      - name: "bearish"
+        type: "boolean"
+        description: "是否为看跌订单块"
+        readonly: true
+      - name: "strength"
+        type: "double"
+        description: "订单块强度"
+        readonly: true
+      - name: "top"
+        type: "double"
+        description: "订单块上边界"
+        readonly: true
+      - name: "bottom"
+        type: "double"
+        description: "订单块下边界"
+        readonly: true
+
+  # 26. 摆动高低点
+  - id: "SWING"
+    name: "摆动高低点"
+    category: "smc"
+    description: "Swing High/Low 检测"
+    syntax: "SWING(timeframe).field 或 SWING(timeframe).method().subfield/submethod()"
+    parameters:
+      - name: "timeframe"
+        type: "timeframe"
+        required: true
+    fields:
+      - name: "trend"
+        type: "enum"
+        enum_values: ["BULLISH", "BEARISH", "NEUTRAL"]
+        description: "摆动趋势"
+        readonly: true
+    methods:
+      - name: "high"
+        return_type: "object"
+        parameters: []
+        description: "获取摆动高点对象"
+        subfields:
+          - name: "count"
+            type: "integer"
+            description: "摆动高点数量"
+        submethods:
+          - name: "value"
+            return_type: "double"
+            parameters:
+              - name: "index"
+                type: "integer"
+                default: 0
+            description: "摆动高点值"
+      - name: "low"
+        return_type: "object"
+        parameters: []
+        description: "获取摆动低点对象"
+        subfields:
+          - name: "count"
+            type: "integer"
+            description: "摆动低点数量"
+        submethods:
+          - name: "value"
+            return_type: "double"
+            parameters:
+              - name: "index"
+                type: "integer"
+                default: 0
+            description: "摆动低点值"
+    examples:
+      - "SWING(5m).trend"
+      - "SWING(5m).high().count"
+      - "SWING(5m).high().value(0)"
+      - "SWING(5m).low().count"
+
+  # 27. 结构突破检测
+  - id: "BOS"
+    name: "结构突破检测"
+    category: "smc"
+    description: "检测Break of Structure（结构突破）"
+    syntax: "BOS(timeframe).method(swing_left, swing_right[, lookback])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "bullish"
+        return_type: "boolean"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否发生看涨BOS"
+      - name: "bearish"
+        return_type: "boolean"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否发生看跌BOS"
+      - name: "price"
+        return_type: "double"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "突破发生的价格"
+      - name: "swing"
+        return_type: "double"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "被突破的摆动点价格"
+      - name: "count"
+        return_type: "integer"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "统计BOS数量"
+    examples:
+      - "BOS(15m).bullish(5, 5)"
+      - "BOS(5m).price(5, 5, 0)"
+      - "BOS(5m).count(5, 5, 50)"
+
+  # 28. 特征改变检测
+  - id: "CHOCH"
+    name: "特征改变检测"
+    category: "smc"
+    description: "检测Change of Character（特征改变）"
+    syntax: "CHOCH(timeframe).method(swing_left, swing_right[, lookback])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "bullish"
+        return_type: "boolean"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否发生看涨CHoCH"
+      - name: "bearish"
+        return_type: "boolean"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否发生看跌CHoCH"
+      - name: "price"
+        return_type: "double"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "改变发生的价格"
+      - name: "swing"
+        return_type: "double"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "被突破的摆动点价格"
+      - name: "trend"
+        return_type: "integer"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "当前趋势（1=上升，-1=下降，0=未知）"
+      - name: "count"
+        return_type: "integer"
+        parameters:
+          - name: "swing_left"
+            type: "integer"
+            default: 5
+          - name: "swing_right"
+            type: "integer"
+            default: 5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "统计CHoCH数量"
+    examples:
+      - "CHOCH(15m).bullish(5, 5)"
+      - "CHOCH(5m).trend(5, 5)"
+      - "CHOCH(5m).count(5, 5, 50)"
+
+  # 29. 流动性区域检测
+  - id: "LIQUIDITY"
+    name: "流动性区域检测"
+    category: "smc"
+    description: "检测流动性区域（等高点、等低点）"
+    syntax: "LIQUIDITY(timeframe).method(price_tolerance[, lookback])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "buyside"
+        return_type: "boolean"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否存在买方流动性"
+      - name: "sellside"
+        return_type: "boolean"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否存在卖方流动性"
+      - name: "price"
+        return_type: "double"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "流动性价格水平"
+      - name: "strength"
+        return_type: "double"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "流动性强度"
+      - name: "swept"
+        return_type: "boolean"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否被扫荡"
+      - name: "distance"
+        return_type: "double"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "距离流动性的百分比"
+      - name: "count"
+        return_type: "integer"
+        parameters:
+          - name: "price_tolerance"
+            type: "double"
+            default: 0.5
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "统计流动性区域数量"
+    examples:
+      - "LIQUIDITY(5m).buyside(0.5)"
+      - "LIQUIDITY(5m).swept(0.5, 0)"
+      - "LIQUIDITY(15m).distance(0.5)"
+
+  # 30. 突破块检测
+  - id: "BREAKER"
+    name: "突破块检测"
+    category: "smc"
+    description: "检测Breaker Block（突破块）"
+    syntax: "BREAKER(timeframe).method([lookback])"
+    parameters:
+      - name: "timeframe"
+        type: "string"
+        required: true
+    methods:
+      - name: "bullish"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否存在看涨突破块"
+      - name: "bearish"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否存在看跌突破块"
+      - name: "top"
+        return_type: "double"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "突破块上边界"
+      - name: "bottom"
+        return_type: "double"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "突破块下边界"
+      - name: "mid"
+        return_type: "double"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "突破块中间价"
+      - name: "strength"
+        return_type: "double"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "突破块强度"
+      - name: "tested"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否被测试过"
+      - name: "testcount"
+        return_type: "integer"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "测试次数"
+      - name: "broken"
+        return_type: "boolean"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "是否失效"
+      - name: "count"
+        return_type: "integer"
+        parameters:
+          - name: "lookback"
+            type: "integer"
+            default: 0
+        description: "统计突破块数量"
+    examples:
+      - "BREAKER(5m).bullish()"
+      - "BREAKER(5m).bottom(0)"
+      - "BREAKER(15m).testcount(0)"
+
+# =============================================================================
+# 数学运算函数定义
+# 参考文档: Prophet DSL 数学运算函数.md
+# 特点: 不需要timeframe参数，使用标准函数调用语法
+# =============================================================================
+math_functions:
+  # =========================================================================
+  # 基础运算函数（6个）
+  # =========================================================================
+  
+  # 1. ABS - 绝对值
+  - id: "ABS"
+    name: "绝对值"
+    category: "basic"
+    description: "返回数值的绝对值"
+    syntax: "ABS(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "double"
+    use_cases:
+      - "计算价差幅度（不考虑方向）"
+      - "指标偏离度计算"
+      - "距离测量"
+      - "误差计算"
+    examples:
+      - "ABS(-5.5)  // 返回 5.5"
+      - "ABS($(5m).MACD().histogram)  // MACD柱状图的绝对值"
+      - "ABS(KLINE(5m).close(0) - KLINE(5m).open(0))  // 实体大小"
+  
+  # 2. ROUND - 四舍五入
+  - id: "ROUND"
+    name: "四舍五入"
+    category: "basic"
+    description: "将数值四舍五入到指定小数位数"
+    syntax: "ROUND(value, precision)"
+    parameters:
+      - name: "value"
+        type: "double"
+        required: true
+        description: "要处理的数值"
+      - name: "precision"
+        type: "integer"
+        required: true
+        min: 0
+        description: "保留的小数位数"
+    return_type: "double"
+    use_cases:
+      - "数值显示格式化"
+      - "价格精度处理"
+      - "百分比展示"
+      - "减少浮点误差"
+    examples:
+      - "ROUND(3.14159, 2)  // 返回 3.14"
+      - "ROUND($(5m).RSI().value, 0)  // RSI值取整"
+      - "ROUND(KLINE(5m).close(0), 2)  // 价格保留2位小数"
+  
+  # 3. CEIL - 向上取整
+  - id: "CEIL"
+    name: "向上取整"
+    category: "basic"
+    description: "返回大于或等于给定数值的最小整数"
+    syntax: "CEIL(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "integer"
+    use_cases:
+      - "周期参数取整"
+      - "数量向上取整"
+      - "价格档位调整"
+    examples:
+      - "CEIL(3.14)  // 返回 4"
+      - "CEIL(-2.5)  // 返回 -2"
+      - "CEIL(HT(5m).DCPERIOD)  // 周期向上取整"
+  
+  # 4. FLOOR - 向下取整
+  - id: "FLOOR"
+    name: "向下取整"
+    category: "basic"
+    description: "返回小于或等于给定数值的最大整数"
+    syntax: "FLOOR(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "integer"
+    use_cases:
+      - "周期参数取整"
+      - "数量向下取整"
+      - "保守估算"
+    examples:
+      - "FLOOR(3.9)  // 返回 3"
+      - "FLOOR(-2.5)  // 返回 -3"
+      - "FLOOR(HT(5m).DCPERIOD)  // 周期向下取整"
+  
+  # 5. SQRT - 平方根
+  - id: "SQRT"
+    name: "平方根"
+    category: "basic"
+    description: "返回数值的平方根"
+    syntax: "SQRT(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        min: 0.0
+        description: "非负实数（x ≥ 0）"
+    return_type: "double"
+    validation: "如果 x < 0，将抛出异常"
+    use_cases:
+      - "标准差计算"
+      - "距离计算（欧几里得距离）"
+      - "波动率归一化"
+      - "数学模型构建"
+    examples:
+      - "SQRT(16)  // 返回 4"
+      - "SQRT(VARIANCE(5m).close(20))  // 标准差计算"
+      - "SQRT($(5m).ATR().value)  // ATR平方根"
+  
+  # 6. POW - 幂运算
+  - id: "POW"
+    name: "幂运算"
+    category: "basic"
+    description: "返回底数的指数次幂"
+    syntax: "POW(base, exponent)"
+    parameters:
+      - name: "base"
+        type: "double"
+        required: true
+        description: "底数"
+      - name: "exponent"
+        type: "double"
+        required: true
+        description: "指数"
+    return_type: "double"
+    use_cases:
+      - "平方/立方计算"
+      - "指数加权"
+      - "方差计算"
+      - "复利计算"
+      - "数学模型"
+    examples:
+      - "POW(2, 3)  // 返回 8 (2³)"
+      - "POW(4, 0.5)  // 返回 2 (平方根)"
+      - "POW(KLINE(5m).close(0), 2)  // 收盘价的平方"
+  
+  # =========================================================================
+  # 三角函数（6个）
+  # 注意：所有三角函数使用弧度制，不是角度制！
+  # =========================================================================
+  
+  # 7. SIN - 正弦
+  - id: "SIN"
+    name: "正弦"
+    category: "trigonometric"
+    description: "返回角度的正弦值"
+    syntax: "SIN(angle)"
+    parameters:
+      - name: "angle"
+        type: "double"
+        required: true
+        description: "弧度值"
+    return_type: "double"
+    value_range: "[-1, 1]"
+    note: "使用弧度制，角度需转换：radians = degrees * π / 180"
+    examples:
+      - "SIN(0)  // 返回 0"
+      - "SIN(3.14159 / 2)  // 返回 1 (π/2)"
+  
+  # 8. COS - 余弦
+  - id: "COS"
+    name: "余弦"
+    category: "trigonometric"
+    description: "返回角度的余弦值"
+    syntax: "COS(angle)"
+    parameters:
+      - name: "angle"
+        type: "double"
+        required: true
+        description: "弧度值"
+    return_type: "double"
+    value_range: "[-1, 1]"
+    note: "使用弧度制"
+    examples:
+      - "COS(0)  // 返回 1"
+      - "COS(3.14159)  // 返回 -1 (π)"
+  
+  # 9. TAN - 正切
+  - id: "TAN"
+    name: "正切"
+    category: "trigonometric"
+    description: "返回角度的正切值"
+    syntax: "TAN(angle)"
+    parameters:
+      - name: "angle"
+        type: "double"
+        required: true
+        description: "弧度值"
+    return_type: "double"
+    note: "使用弧度制，在 ±π/2 处不连续"
+    examples:
+      - "TAN(0)  // 返回 0"
+      - "TAN(3.14159 / 4)  // 返回 1 (π/4, 即45度)"
+  
+  # 10. ASIN - 反正弦
+  - id: "ASIN"
+    name: "反正弦"
+    category: "trigonometric"
+    description: "返回正弦值对应的角度"
+    syntax: "ASIN(value)"
+    parameters:
+      - name: "value"
+        type: "double"
+        required: true
+        min: -1.0
+        max: 1.0
+        description: "必须在 [-1, 1] 范围内"
+    return_type: "double"
+    value_range: "[-π/2, π/2] 弧度"
+    validation: "如果 value 不在 [-1, 1]，将抛出异常"
+    examples:
+      - "ASIN(0)  // 返回 0"
+      - "ASIN(1)  // 返回 π/2"
+      - "ASIN(0.5)  // 返回 π/6 (30度)"
+  
+  # 11. ACOS - 反余弦
+  - id: "ACOS"
+    name: "反余弦"
+    category: "trigonometric"
+    description: "返回余弦值对应的角度"
+    syntax: "ACOS(value)"
+    parameters:
+      - name: "value"
+        type: "double"
+        required: true
+        min: -1.0
+        max: 1.0
+        description: "必须在 [-1, 1] 范围内"
+    return_type: "double"
+    value_range: "[0, π] 弧度"
+    validation: "如果 value 不在 [-1, 1]，将抛出异常"
+    examples:
+      - "ACOS(0)  // 返回 π/2"
+      - "ACOS(1)  // 返回 0"
+      - "ACOS(-1)  // 返回 π"
+  
+  # 12. ATAN - 反正切
+  - id: "ATAN"
+    name: "反正切"
+    category: "trigonometric"
+    description: "返回正切值对应的角度"
+    syntax: "ATAN(value)"
+    parameters:
+      - name: "value"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "double"
+    value_range: "(-π/2, π/2) 弧度"
+    use_cases:
+      - "斜率转角度"
+      - "趋势角度计算"
+    examples:
+      - "ATAN(0)  // 返回 0"
+      - "ATAN(1)  // 返回 π/4 (45度)"
+      - "ATAN(SLOPE(5m).close(20))  // 斜率转角度"
+  
+  # =========================================================================
+  # 双曲函数（3个）
+  # =========================================================================
+  
+  # 13. SINH - 双曲正弦
+  - id: "SINH"
+    name: "双曲正弦"
+    category: "hyperbolic"
+    description: "返回双曲正弦值"
+    syntax: "SINH(x)"
+    formula: "SINH(x) = (e^x - e^(-x)) / 2"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "double"
+    examples:
+      - "SINH(0)  // 返回 0"
+      - "SINH(1)  // 返回 1.175..."
+  
+  # 14. COSH - 双曲余弦
+  - id: "COSH"
+    name: "双曲余弦"
+    category: "hyperbolic"
+    description: "返回双曲余弦值"
+    syntax: "COSH(x)"
+    formula: "COSH(x) = (e^x + e^(-x)) / 2"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "double"
+    examples:
+      - "COSH(0)  // 返回 1"
+      - "COSH(1)  // 返回 1.543..."
+  
+  # 15. TANH - 双曲正切
+  - id: "TANH"
+    name: "双曲正切"
+    category: "hyperbolic"
+    description: "返回双曲正切值"
+    syntax: "TANH(x)"
+    formula: "TANH(x) = SINH(x) / COSH(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "任意实数"
+    return_type: "double"
+    value_range: "(-1, 1)"
+    use_cases:
+      - "数值归一化（类似Sigmoid）"
+      - "机器学习激活函数"
+      - "平滑函数"
+    examples:
+      - "TANH(0)  // 返回 0"
+      - "TANH(1)  // 返回 0.762..."
+      - "TANH(($(5m).RSI().value - 50) / 50)  // RSI归一化"
+  
+  # =========================================================================
+  # 指数和对数函数（3个）
+  # =========================================================================
+  
+  # 16. EXP - 自然指数
+  - id: "EXP"
+    name: "自然指数"
+    category: "exponential"
+    description: "返回 e^x，其中 e ≈ 2.71828"
+    syntax: "EXP(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        description: "指数值"
+    return_type: "double"
+    value_range: "(0, +∞)"
+    note: "x 通常应在 [-20, 20] 范围，避免溢出"
+    use_cases:
+      - "指数增长/衰减模型"
+      - "正态分布计算"
+      - "指数移动平均权重"
+      - "复利计算"
+    examples:
+      - "EXP(0)  // 返回 1"
+      - "EXP(1)  // 返回 2.71828... (自然常数e)"
+      - "EXP(-0.1)  // 指数衰减因子"
+  
+  # 17. LN - 自然对数
+  - id: "LN"
+    name: "自然对数"
+    category: "exponential"
+    description: "返回 x 的自然对数（以 e 为底）"
+    syntax: "LN(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        min: 0.0
+        exclusive_min: true
+        description: "x 必须大于 0"
+    return_type: "double"
+    validation: "如果 x ≤ 0，将抛出异常"
+    use_cases:
+      - "对数收益率计算"
+      - "增长率分析"
+      - "幂律分布"
+      - "信息熵计算"
+    examples:
+      - "LN(1)  // 返回 0"
+      - "LN(2.71828)  // 返回 1"
+      - "LN(KLINE(5m).close(0) / KLINE(5m).close(10))  // 对数收益率"
+  
+  # 18. LOG10 - 常用对数
+  - id: "LOG10"
+    name: "常用对数"
+    category: "exponential"
+    description: "返回 x 的常用对数（以 10 为底）"
+    syntax: "LOG10(x)"
+    parameters:
+      - name: "x"
+        type: "double"
+        required: true
+        min: 0.0
+        exclusive_min: true
+        description: "x 必须大于 0"
+    return_type: "double"
+    validation: "如果 x ≤ 0，将抛出异常"
+    use_cases:
+      - "数量级判断"
+      - "对数刻度绘图"
+      - "科学计数法"
+      - "范围压缩"
+    examples:
+      - "LOG10(1)  // 返回 0"
+      - "LOG10(10)  // 返回 1"
+      - "LOG10(100)  // 返回 2"
+      - "FLOOR(LOG10(KLINE(5m).close(0)))  // 价格数量级"
+
+# =============================================================================
+# 信号函数定义（8个）
+# 参考文档: Prophet DSL 信号函数.md
+# =============================================================================
+signal_functions:
+  # 1. ALL - 全部满足
+  - id: "ALL"
+    name: "全部满足"
+    category: "basic_logic"
+    description: "所有条件都必须满足时才触发信号"
+    syntax: "ALL { conditions } = SIGNAL_TYPE"
+    return_type: "signal"
+    strictness: 5  # 最严格
+    flexibility: 1  # 灵活性低
+    use_cases:
+      - "高确定性策略"
+      - "保守型交易"
+      - "多维度验证"
+    examples:
+      - |
+        ALL {
+          $(1h).MACD().trend == BULLISH,
+          $(1h).RSI().value > 50,
+          $(1h).OBV().trend == BULLISH
+        } = BUY;
+      - |
+        ALL {
+          $(5m).MA().trend == BULLISH,
+          $(15m).MA().trend == BULLISH,
+          $(1h).MA().trend == BULLISH
+        } = BUY;
+  
+  # 2. ANY - 任一满足
+  - id: "ANY"
+    name: "任一满足"
+    category: "basic_logic"
+    description: "任意一个条件满足时就触发信号"
+    syntax: "ANY { conditions } = SIGNAL_TYPE"
+    return_type: "signal"
+    strictness: 1  # 最宽松
+    flexibility: 5  # 灵活性高
+    use_cases:
+      - "积极型交易"
+      - "多机会捕获"
+      - "止损/止盈触发"
+    examples:
+      - |
+        ANY {
+          $(1h).RSI().value > 70,
+          $(1h).STOCHRSI().overbought = true,
+          $(1h).MFI().value > 80
+        } = SELL;
+      - |
+        ANY {
+          $(1h).MACD().crossover_type == GOLDEN_CROSS,
+          $(1h).KDJ().k > $(1h).KDJ().d,
+          $(1h).MA().trend == BULLISH
+        } = BUY;
+  
+  # 3. NONE - 全部不满足
+  - id: "NONE"
+    name: "全部不满足"
+    category: "basic_logic"
+    description: "所有条件都不满足时才触发信号"
+    syntax: "NONE { conditions } = SIGNAL_TYPE"
+    return_type: "signal"
+    strictness: 5  # 严格
+    flexibility: 2  # 灵活性较低
+    use_cases:
+      - "风险过滤"
+      - "反向确认"
+      - "市场状态排除"
+    examples:
+      - |
+        NONE {
+          $(1h).RSI().value > 70,
+          $(1h).STOCHRSI().overbought = true,
+          $(1h).MFI().value > 80
+        } = BUY;
+      - |
+        NONE {
+          $(1h).MACD().trend == BEARISH,
+          $(1h).RSI().value < 30,
+          $(1h).ADX().value < 20
+        } = HOLD;
+  
+  # 4. MIN - 最少满足
+  - id: "MIN"
+    name: "最少满足"
+    category: "quantity_control"
+    description: "至少满足N个条件时触发信号"
+    syntax: "MIN(n) { conditions } = SIGNAL_TYPE"
+    parameters:
+      - name: "n"
+        type: "integer"
+        required: true
+        min: 1
+        description: "最少需要满足的条件数量"
+    return_type: "signal"
+    strictness: 3  # 中等
+    flexibility: 3  # 中等
+    use_cases:
+      - "平衡型策略"
+      - "多维度弱确认"
+      - "降低ALL的严格性"
+    examples:
+      - |
+        MIN(2) {
+          $(1h).MACD().trend == BULLISH,
+          $(1h).RSI().value > 50,
+          $(1h).ADX().value > 25,
+          $(1h).OBV().trend == BULLISH
+        } = BUY;
+      - |
+        MIN(2) {
+          $(5m).MA().trend == BULLISH,
+          $(15m).MA().trend == BULLISH,
+          $(1h).MA().trend == BULLISH,
+          $(4h).MA().trend == BULLISH
+        } = BUY;
+  
+  # 5. COUNT - 恰好满足
+  - id: "COUNT"
+    name: "恰好满足"
+    category: "quantity_control"
+    description: "恰好满足N个条件时触发信号"
+    syntax: "COUNT(n) { conditions } = SIGNAL_TYPE"
+    parameters:
+      - name: "n"
+        type: "integer"
+        required: true
+        min: 1
+        description: "需要恰好满足的条件数量"
+    return_type: "signal"
+    strictness: 5  # 非常严格
+    flexibility: 1  # 灵活性极低
+    use_cases:
+      - "特殊模式识别"
+      - "精确条件匹配"
+    note: "使用较少，建议优先使用MIN或VOTE"
+    examples:
+      - |
+        COUNT(2) {
+          $(1h).MACD().trend == BULLISH,
+          $(1h).RSI().value > 50,
+          $(1h).ADX().value > 25
+        } = BUY;
+  
+  # 6. MAX - 最多满足
+  - id: "MAX"
+    name: "最多满足"
+    category: "quantity_control"
+    description: "最多满足N个条件时触发信号"
+    syntax: "MAX(n) { conditions } = SIGNAL_TYPE"
+    parameters:
+      - name: "n"
+        type: "integer"
+        required: true
+        min: 0
+        description: "最多允许满足的条件数量"
+    return_type: "signal"
+    strictness: 3  # 中等
+    flexibility: 2  # 灵活性较低
+    use_cases:
+      - "风险控制"
+      - "避免市场过热"
+      - "反向确认"
+    examples:
+      - |
+        MAX(1) {
+          $(1h).RSI().value > 70,
+          $(1h).STOCHRSI().overbought = true,
+          $(1h).MFI().value > 80
+        } = BUY;
+  
+  # 7. VOTE - 投票机制（推荐）
+  - id: "VOTE"
+    name: "投票机制"
+    category: "quantity_control"
+    description: "支持两种模式的投票机制，适合民主决策"
+    syntax: "VOTE(threshold) { conditions } = SIGNAL_TYPE"
+    parameters:
+      - name: "threshold"
+        type: "number"
+        required: true
+        description: "投票阈值：>1为整数模式（至少N个），0<threshold<=1为百分比模式（至少x%）"
+    return_type: "signal"
+    strictness: 3  # 中等
+    flexibility: 5  # 灵活性最高
+    recommended: true
+    use_cases:
+      - "多指标综合决策（推荐百分比模式）"
+      - "多时间框架共振"
+      - "策略模块化"
+      - "动态策略"
+    modes:
+      - name: "integer_mode"
+        description: "整数模式（threshold > 1）：至少满足N个条件"
+        example: "VOTE(3) { ... }  // 至少3个条件满足"
+      - name: "percentage_mode"
+        description: "百分比模式（0 < threshold <= 1）：至少满足x%的条件"
+        example: "VOTE(0.6) { ... }  // 至少60%的条件满足"
+        recommended: true
+    advantages:
+      - "灵活性最高 - 支持数量和百分比两种模式"
+      - "语义清晰 - '投票'概念直观易懂"
+      - "扩展性强 - 动态添加条件无需修改阈值（百分比模式）"
+    examples:
+      - |
+        // 整数模式：至少3个指标看涨
+        VOTE(3) {
+          $(1h).MACD().trend == BULLISH,
+          $(1h).RSI().value > 50,
+          $(1h).ADX().value > 25,
+          $(1h).OBV().trend == BULLISH,
+          $(1h).MA().trend == BULLISH
+        } = BUY;
+      - |
+        // 百分比模式：至少60%的指标看涨（推荐）
+        VOTE(0.6) {
+          $(1h).MACD().trend == BULLISH,
+          $(1h).RSI().value > 50,
+          $(1h).ADX().value > 25,
+          $(1h).OBV().trend == BULLISH,
+          $(1h).MA().trend == BULLISH
+        } = BUY;
+      - |
+        // 多时间框架投票
+        VOTE(0.6) {
+          $(1m).RSI().value > 50,
+          $(5m).RSI().value > 50,
+          $(15m).RSI().value > 50,
+          $(30m).RSI().value > 50,
+          $(1h).RSI().value > 50
+        } = BUY;
+  
+  # 8. WEIGHTED - 加权评分
+  - id: "WEIGHTED"
+    name: "加权评分"
+    category: "weighted_scoring"
+    description: "为不同条件分配权重，根据总分触发信号"
+    syntax: "WEIGHTED(threshold) { WEIGHT(condition) = weight; ... } = SIGNAL_TYPE"
+    parameters:
+      - name: "threshold"
+        type: "double"
+        required: true
+        min: 0.0
+        max: 1.0
+        description: "触发阈值（0.0-1.0）"
+    return_type: "signal"
+    strictness: 3  # 中等
+    flexibility: 5  # 灵活性高
+    complexity: "high"
+    use_cases:
+      - "复杂量化策略"
+      - "多因子模型"
+      - "信号强度评估"
+      - "条件重要性差异大"
+    weight_design_principles:
+      - "总权重可超过1.0 - 满分越高，触发难度越大"
+      - "核心条件高权重 - 最重要的条件分配30%-50%权重"
+      - "辅助条件低权重 - 次要条件分配10%-20%权重"
+      - "权重平衡 - 避免单一条件主导决策"
+    examples:
+      - |
+        // 基础加权评分
+        WEIGHTED(0.6) {
+          WEIGHT($(5m).MACD().crossover_type == GOLDEN_CROSS) = 0.4;
+          WEIGHT($(5m).RSI().value < 50) = 0.2;
+          WEIGHT($(1h).MACD().trend == BULLISH) = 0.3;
+          WEIGHT($(5m).EMA().trend == BULLISH) = 0.3;
+        } = BUY;
+      - |
+        // 多维度加权（趋势50%、动量30%、成交量20%）
+        WEIGHTED(0.7) {
+          // 趋势类（50%权重）
+          WEIGHT($(1h).MACD().trend == BULLISH) = 0.3;
+          WEIGHT($(1h).MA().trend == BULLISH) = 0.2;
+          
+          // 动量类（30%权重）
+          WEIGHT($(1h).RSI().value > 50) = 0.15;
+          WEIGHT($(1h).STOCHRSI().k > $(1h).STOCHRSI().d) = 0.15;
+          
+          // 成交量类（20%权重）
+          WEIGHT($(1h).OBV().trend == BULLISH) = 0.1;
+          WEIGHT($(1h).MFI().value > 50) = 0.1;
+        } = BUY;
+      - |
+        // 多条件共享权重（AND逻辑）
+        WEIGHTED(0.6) {
+          WEIGHT(
+            $(5m).MACD().crossover_type == GOLDEN_CROSS,
+            $(5m).EMA().trend == BULLISH,
+            $(5m).RSI().value < 30
+          ) = 0.4;
+          
+          WEIGHT($(1h).MACD().trend == BULLISH) = 0.3;
+          WEIGHT($(1h).ADX().value > 25) = 0.3;
+        } = BUY;
+
+# =============================================================================
+# 枚举类型定义
+# =============================================================================
+enums:
+  - id: "TrendType"
+    name: "趋势类型"
+    description: "表示市场趋势方向的枚举类型"
+    values:
+      - "BULLISH"
+      - "BEARISH"
+      - "NEUTRAL"
+    value_descriptions:
+      "BULLISH": "看涨/上涨趋势，表示价格处于上升趋势中"
+      "BEARISH": "看跌/下跌趋势，表示价格处于下降趋势中"
+      "NEUTRAL": "中性/横盘趋势，表示价格无明显方向性"
+  
+  - id: "CrossoverType"
+    name: "交叉类型"
+    description: "表示技术指标交叉类型的枚举"
+    values:
+      - "GOLDEN_CROSS"
+      - "DEATH_CROSS"
+      - "NONE"
+    value_descriptions:
+      "GOLDEN_CROSS": "金叉，短期均线向上穿越长期均线，通常为买入信号"
+      "DEATH_CROSS": "死叉，短期均线向下穿越长期均线，通常为卖出信号"
+      "NONE": "无交叉，表示当前没有发生交叉"
+  
+  - id: "LevelType"
+    name: "水平类型"
+    description: "表示指标超买超卖水平的枚举类型"
+    values:
+      - "OVERBOUGHT"
+      - "OVERSOLD"
+      - "NEUTRAL"
+    value_descriptions:
+      "OVERBOUGHT": "超买，指标值过高，可能面临回调风险"
+      "OVERSOLD": "超卖，指标值过低，可能出现反弹机会"
+      "NEUTRAL": "中性，指标值处于正常范围内"
+  
+  - id: "SignalType"
+    name: "信号类型"
+    description: "表示交易信号类型的枚举"
+    values:
+      - "BUY"
+      - "SELL"
+      - "HOLD"
+    value_descriptions:
+      "BUY": "买入信号，建议做多或开多仓"
+      "SELL": "卖出信号，建议做空或开空仓"
+      "HOLD": "持有信号，建议保持当前仓位不变"
+  
+  - id: "TrendDirectionType"
+    name: "趋势方向类型"
+    description: "表示趋势方向变化的枚举类型"
+    values:
+      - "RISING"
+      - "FALLING"
+      - "STABLE"
+    value_descriptions:
+      "RISING": "上升，趋势方向向上"
+      "FALLING": "下降，趋势方向向下"
+      "STABLE": "稳定，趋势方向无明显变化"
+  
+  - id: "VolatilityLevel"
+    name: "波动率等级"
+    description: "表示市场波动率水平的枚举类型"
+    values:
+      - "LOW"
+      - "MEDIUM"
+      - "HIGH"
+      - "VERY_HIGH"
+    value_descriptions:
+      "LOW": "低波动率，市场波动较小，价格变化平缓"
+      "MEDIUM": "中等波动率，市场波动处于正常水平"
+      "HIGH": "高波动率，市场波动较大，价格变化剧烈"
+      "VERY_HIGH": "极高波动率，市场波动非常大，价格变化极端"
+  
+  - id: "TrendStrength"
+    name: "趋势强度"
+    description: "表示趋势强度的枚举类型"
+    values:
+      - "WEAK"
+      - "MODERATE"
+      - "STRONG"
+      - "VERY_STRONG"
+    value_descriptions:
+      "WEAK": "弱趋势，趋势信号较弱，可能不稳定"
+      "MODERATE": "中等趋势，趋势信号中等强度"
+      "STRONG": "强趋势，趋势信号明确且稳定"
+      "VERY_STRONG": "极强趋势，趋势信号非常强烈且可靠"
+  
+  - id: "DirectionType"
+    name: "方向类型"
+    description: "表示简单方向的枚举类型"
+    values:
+      - "UP"
+      - "DOWN"
+    value_descriptions:
+      "UP": "向上，价格或指标向上移动"
+      "DOWN": "向下，价格或指标向下移动"
+  
+  - id: "PositionType"
+    name: "价格位置类型"
+    description: "表示价格在通道或区间中位置的枚举类型"
+    values:
+      - "UPPER_BREAK"
+      - "LOWER_BREAK"
+      - "UPPER_HALF"
+      - "LOWER_HALF"
+      - "MIDDLE"
+      - "ABOVE_UPPER"
+      - "BELOW_LOWER"
+      - "ABOVE_VWAP"
+      - "BELOW_VWAP"
+      - "AT_VWAP"
+    value_descriptions:
+      "UPPER_BREAK": "突破上轨，价格突破通道上边界"
+      "LOWER_BREAK": "突破下轨，价格突破通道下边界"
+      "UPPER_HALF": "上半部分，价格位于通道上半部分"
+      "LOWER_HALF": "下半部分，价格位于通道下半部分"
+      "MIDDLE": "中间位置，价格位于通道中间"
+      "ABOVE_UPPER": "上轨上方，价格位于上轨之上"
+      "BELOW_LOWER": "下轨下方，价格位于下轨之下"
+      "ABOVE_VWAP": "VWAP上方，价格位于成交量加权平均价之上"
+      "BELOW_VWAP": "VWAP下方，价格位于成交量加权平均价之下"
+      "AT_VWAP": "VWAP位置，价格位于成交量加权平均价附近"
+  
+  - id: "MarketState"
+    name: "市场状态"
+    description: "表示市场状态的枚举类型"
+    values:
+      - "CHOPPY"
+      - "TRENDING"
+      - "TRANSITIONAL"
+    value_descriptions:
+      "CHOPPY": "震荡市场，价格在区间内波动，无明显趋势"
+      "TRENDING": "趋势市场，价格有明显方向性趋势"
+      "TRANSITIONAL": "过渡状态，市场正在从一种状态转换到另一种状态"
+  
+  - id: "ExtendedTrendType"
+    name: "扩展趋势类型"
+    description: "表示扩展趋势类型的枚举"
+    values:
+      - "STRONG_BULLISH"
+      - "BULLISH"
+      - "NEUTRAL"
+      - "BEARISH"
+      - "STRONG_BEARISH"
+    value_descriptions:
+      "STRONG_BULLISH": "强烈看涨，非常强烈的上涨趋势"
+      "BULLISH": "看涨，上涨趋势"
+      "NEUTRAL": "中性，无明显趋势"
+      "BEARISH": "看跌，下跌趋势"
+      "STRONG_BEARISH": "强烈看跌，非常强烈的下跌趋势"
+  
+  - id: "TrendStructure"
+    name: "趋势结构"
+    description: "表示趋势结构类型的枚举"
+    values:
+      - "UPTREND"
+      - "DOWNTREND"
+      - "EXPANDING"
+      - "CONTRACTING"
+      - "NEUTRAL"
+    value_descriptions:
+      "UPTREND": "上升趋势，价格持续上涨"
+      "DOWNTREND": "下降趋势，价格持续下跌"
+      "EXPANDING": "扩张，波动范围扩大"
+      "CONTRACTING": "收缩，波动范围缩小"
+      "NEUTRAL": "中性，无明显结构"
+  
+  - id: "AlligatorState"
+    name: "鳄鱼指标状态"
+    description: "表示鳄鱼指标状态的枚举类型"
+    values:
+      - "SLEEPING"
+      - "WAKING"
+      - "EATING"
+    value_descriptions:
+      "SLEEPING": "睡眠状态，均线纠缠，市场处于震荡"
+      "WAKING": "苏醒状态，均线开始分离，趋势即将形成"
+      "EATING": "进食状态，均线明显分离，趋势明确"
+  
+  - id: "SignalStrength"
+    name: "信号强度"
+    description: "表示交易信号强度的枚举类型"
+    values:
+      - "STRONG_BUY"
+      - "BUY"
+      - "SELL"
+      - "STRONG_SELL"
+      - "OVERBOUGHT"
+      - "OVERSOLD"
+      - "NONE"
+    value_descriptions:
+      "STRONG_BUY": "强烈买入，非常强烈的买入信号"
+      "BUY": "买入，买入信号"
+      "SELL": "卖出，卖出信号"
+      "STRONG_SELL": "强烈卖出，非常强烈的卖出信号"
+      "OVERBOUGHT": "超买，价格过高可能回调"
+      "OVERSOLD": "超卖，价格过低可能反弹"
+      "NONE": "无信号，当前无明确交易信号"
+  
+  - id: "PositionSide"
+    name: "持仓方向"
+    description: "表示持仓方向的枚举类型"
+    values:
+      - "LONG"
+      - "SHORT"
+      - "NEUTRAL"
+    value_descriptions:
+      "LONG": "多头，持有多头仓位"
+      "SHORT": "空头，持有空头仓位"
+      "NEUTRAL": "中性，无持仓"
+  
+  - id: "EfficiencyLevel"
+    name: "效率等级"
+    description: "表示市场效率等级的枚举类型"
+    values:
+      - "VERY_HIGH"
+      - "HIGH"
+      - "MEDIUM"
+      - "LOW"
+    value_descriptions:
+      "VERY_HIGH": "极高效率，市场趋势非常明确"
+      "HIGH": "高效率，市场趋势明确"
+      "MEDIUM": "中等效率，市场趋势一般"
+      "LOW": "低效率，市场趋势不明确"
+  
+  - id: "KlineField"
+    name: "K线字段"
+    description: "表示K线数据字段的枚举类型"
+    values:
+      - "open"
+      - "high"
+      - "low"
+      - "close"
+      - "volume"
+    value_descriptions:
+      "open": "开盘价，K线开始时的价格"
+      "high": "最高价，K线期间的最高价格"
+      "low": "最低价，K线期间的最低价格"
+      "close": "收盘价，K线结束时的价格"
+      "volume": "成交量，K线期间的交易量"
+
+# =============================================================================
+# 时间序列函数定义
+# 语法: FUNCTION().method(params)
+# 特点: 不需要timeframe参数，数据自带时间维度
+# 用于处理历史数据序列（如恐惧与贪婪指数、资金费率等）
+# =============================================================================
+timeseries_functions:
+  
+  # 1. FEARGREED - 恐惧与贪婪指数
+  - id: "FEARGREED"
+    name: "恐惧与贪婪指数"
+    category: "sentiment"
+    description: "Alternative.me 加密货币恐惧与贪婪指数，用于衡量市场情绪(0-100)"
+    syntax: "FEARGREED().method(params)"
+    rating: 4
+    data_source: "Alternative.me API + feargreed数据表"
+    update_frequency: "每日更新"
+    parameters: []
+    methods:
+      # 基础访问方法
+      - name: "value"
+        return_type: "integer"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移天数，0=今天，1=昨天，7=7天前"
+        description: "获取指定日期的恐惧与贪婪指数值(0-100)"
+      
+      - name: "classification"
+        return_type: "string"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移天数，0=今天，1=昨天，7=7天前"
+        description: "获取指定日期的分类标签(Extreme Fear/Fear/Neutral/Greed/Extreme Greed)"
+      
+      # 变化量方法
+      - name: "change"
+        return_type: "integer"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 1
+            max: 100
+            description: "计算变化的周期(天)"
+        description: "计算N天变化量 (当前值 - N天前)"
+      
+      # 平均值方法
+      - name: "avg"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 1
+            max: 100
+            description: "计算平均值的周期(天)"
+        description: "计算N天平均值"
+      
+      # 最小值方法
+      - name: "min"
+        return_type: "integer"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 1
+            max: 100
+            description: "查找最小值的周期(天)"
+        description: "获取N天内的最小值"
+      
+      # 最大值方法
+      - name: "max"
+        return_type: "integer"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 1
+            max: 100
+            description: "查找最大值的周期(天)"
+        description: "获取N天内的最大值"
+      
+      # 趋势判断方法
+      - name: "trend"
+        return_type: "enum"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 2
+            max: 100
+            description: "判断趋势的周期(天)"
+        description: "判断N天趋势方向：RISING(上升)/FALLING(下降)/STABLE(稳定)"
+    
+    examples:
+      - "FEARGREED().value(0) < 25  // 当前极度恐慌"
+      - "FEARGREED().classification(0) = \"Extreme Fear\"  // 获取分类标签"
+      - "FEARGREED().change(7) < -10  // 7天下降超过10点"
+      - "FEARGREED().avg(30) < 40  // 30天平均值较低"
+      - "FEARGREED().trend(7) = FALLING  // 7天趋势下降"
+      - "FEARGREED().value(0) > FEARGREED().avg(7)  // 当前高于7天均值"
+
+  # 2. FUNDINGRATE - 资金费率（待实现）
+  - id: "FUNDINGRATE"
+    name: "资金费率"
+    category: "market"
+    description: "期货合约资金费率历史数据，用于判断多空力量对比"
+    syntax: "FUNDINGRATE().method(params)"
+    rating: 4
+    data_source: "Binance API + fundingrate数据表"
+    update_frequency: "每8小时更新"
+    parameters: []
+    methods:
+      - name: "value"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数，0=最新，1=上一次"
+        description: "获取指定时间的资金费率"
+      
+      - name: "avg"
+        return_type: "double"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 24
+            min: 1
+            max: 100
+            description: "计算平均值的周期(次)"
+        description: "计算N次平均资金费率"
+      
+      - name: "trend"
+        return_type: "enum"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 24
+            min: 2
+            max: 100
+            description: "判断趋势的周期(次)"
+        description: "判断资金费率趋势：RISING/FALLING/STABLE"
+    
+    examples:
+      - "FUNDINGRATE().value(0) > 0.001  // 资金费率较高"
+      - "FUNDINGRATE().avg(24) < 0  // 24次平均为负"
+      - "FUNDINGRATE().trend(24) = RISING  // 持续上升趋势"
+
+  # 3. CURRENT - 当前状态访问函数
+  - id: "CURRENT"
+    name: "当前状态"
+    category: "runtime"
+    description: "访问当前价格、时间和市场数据"
+    syntax: "CURRENT().field"
+    rating: 5
+    data_source: "运行时传入"
+    update_frequency: "实时"
+    parameters: []
+    methods:
+      # 价格
+      - name: "price"
+        return_type: "double"
+        parameters: []
+        description: "当前价格"
+      
+      # 时间戳
+      - name: "timestamp"
+        return_type: "integer"
+        parameters: []
+        description: "当前Unix时间戳（秒）"
+      
+      # 资金费率
+      - name: "fundingrate"
+        return_type: "double"
+        parameters: []
+        description: "当前资金费率"
+    
+    # 时间字段（属性访问）
+    time_fields:
+      - name: "time.hour"
+        return_type: "integer"
+        description: "UTC时间小时（0-23）"
+      
+      - name: "time.minute"
+        return_type: "integer"
+        description: "UTC时间分钟（0-59）"
+      
+      - name: "time.second"
+        return_type: "integer"
+        description: "UTC时间秒（0-59）"
+      
+      - name: "time.week"
+        return_type: "integer"
+        description: "UTC时间星期几（0-6，0=周日）"
+      
+      - name: "time.day"
+        return_type: "integer"
+        description: "UTC时间日期（1-31）"
+      
+      - name: "time.month"
+        return_type: "integer"
+        description: "UTC时间月份（1-12）"
+    
+    # 带时区的时间字段（方法调用）
+    time_methods:
+      - name: "time(timezone).hour"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+            description: "UTC偏移量，如8表示北京时间"
+        description: "指定时区的小时（0-23）"
+      
+      - name: "time(timezone).minute"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+        description: "指定时区的分钟（0-59）"
+      
+      - name: "time(timezone).second"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+        description: "指定时区的秒（0-59）"
+      
+      - name: "time(timezone).week"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+        description: "指定时区的星期几（0-6，0=周日）"
+      
+      - name: "time(timezone).day"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+        description: "指定时区的日期（1-31）"
+      
+      - name: "time(timezone).month"
+        return_type: "integer"
+        parameters:
+          - name: "timezone"
+            type: "integer"
+            default: 0
+            min: -12
+            max: 12
+        description: "指定时区的月份（1-12）"
+    
+    # 恐惧贪婪指数字段
+    feargreed_fields:
+      - name: "feargreed.value"
+        return_type: "integer"
+        description: "当天的恐惧贪婪指数值（0-100）"
+      
+      - name: "feargreed.classification"
+        return_type: "enum"
+        description: "当天的分类标签（Neutral/Greed/Fear/Extreme Greed/Extreme Fear）"
+      
+      - name: "feargreed(offset).value"
+        return_type: "integer"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移天数（负数表示过去，0=今天，-1=昨天）"
+        description: "指定日期的恐惧贪婪指数值"
+    
+    # 多空比字段（子函数组）
+    longshort_fields:
+      - name: "longshort.ratio"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数（负数表示过去，0=当前，-1=上一次）"
+        description: "多空比率（long/short）"
+      
+      - name: "longshort.long"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数（负数表示过去，0=当前，-1=上一次）"
+        description: "多头比例（0~1）"
+      
+      - name: "longshort.short"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数（负数表示过去，0=当前，-1=上一次）"
+        description: "空头比例（0~1）"
+      
+      - name: "longshort.net"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数（负数表示过去，0=当前，-1=上一次）"
+        description: "净多头比例（(long-short)/(long+short)）"
+      
+      - name: "longshort.dominance"
+        return_type: "double"
+        parameters:
+          - name: "offset"
+            type: "integer"
+            default: 0
+            min: -100
+            max: 0
+            description: "偏移次数（负数表示过去，0=当前，-1=上一次）"
+        description: "多头主导率（long/(long+short)*100）"
+      
+      - name: "longshort.trend"
+        return_type: "enum"
+        parameters:
+          - name: "period"
+            type: "integer"
+            default: 7
+            min: 2
+            max: 100
+            description: "判断趋势的周期（数据点数量）"
+        description: "判断多空比趋势：RISING/FALLING/STABLE"
+      
+      - name: "longshort.extreme"
+        return_type: "boolean"
+        parameters:
+          - name: "threshold"
+            type: "double"
+            default: 2.0
+            min: 0.1
+            max: 10.0
+            description: "极端阈值（ratio > threshold 或 < 1/threshold）"
+        description: "判断是否极端（多空比过高或过低）"
+    
+    examples:
+      - "CURRENT().price > $(1h).EMA().value  // 价格突破均线"
+      - "CURRENT().time.hour BETWEEN(9, 21)  // UTC时间9-21点"
+      - "CURRENT().time(8).hour BETWEEN(9, 21)  // 北京时间9-21点"
+      - "CURRENT().time.week BETWEEN(1, 5)  // 工作日（周一到周五）"
+      - "CURRENT().fundingrate < 0.001  // 资金费率较低"
+      - "CURRENT().feargreed.value < 25  // 极度恐慌"
+      - "CURRENT().feargreed(-1).value > 50  // 昨天贪婪"
+      - "CURRENT().longshort.ratio(0) > 1.5  // 多空比大于1.5"
+      - "CURRENT().longshort.long(0) > 0.6  // 多头比例超过60%"
+      - "CURRENT().longshort.dominance(0) > 70  // 多头主导率超过70%"
+      - "CURRENT().longshort.trend(7) = RISING  // 7个数据点趋势上升"
+      - "CURRENT().longshort.extreme(2.0) = true  // 多空比极端（>2.0或<0.5）"
+
+# =============================================================================
+# 自定义函数语法定义
+# 说明：用户可以在 DSL 中定义自己的函数来封装复杂逻辑
+# =============================================================================
+custom_functions:
+  # 语法规则
+  syntax:
+    # 函数定义格式：funcName(param1: Type, param2: Type): ReturnType { ... }
+    definition_pattern: "^[a-z][a-zA-Z0-9_]*\\s*\\([^)]*\\)\\s*(:\\s*\\w+)?\\s*\\{$"
+    # 函数调用格式：funcName(arg1, arg2)
+    call_pattern: "\\b[a-z][a-zA-Z0-9_]*\\s*\\([^)]*\\)"
+    
+  # 命名规则
+  naming:
+    # 函数名：小写字母开头，后跟字母、数字、下划线
+    function_name_pattern: "^[a-z][a-zA-Z0-9_]*$"
+    description: "函数名必须以小写字母开头，可包含字母、数字、下划线"
+    examples: ["calcTrendScore", "getStopLoss", "my_function"]
+    
+  # 参数规则
+  parameters:
+    # 参数格式：paramName: Type
+    pattern: "^[a-z][a-zA-Z0-9_]*\\s*:\\s*(Double|Integer|Boolean|String)$"
+    # 支持的参数类型
+    allowed_types: ["Double", "Integer", "Boolean", "String"]
+    # 参数命名：小写字母开头 + 下划线
+    naming_pattern: "^[a-z][a-z0-9_]*$"
+    description: "参数名必须以小写字母开头，全小写+下划线，类型首字母大写"
+    examples: ["price: Double", "PERIOD: Integer", "is_long: Boolean"]
+    
+  # 返回值规则
+  return_type:
+    # 支持的返回类型
+    allowed_types: ["Double", "Integer", "Boolean", "String"]
+    # 返回语句格式
+    statement_pattern: "^return\\s+[^;]+;?$"
+    description: "必须使用 return 语句返回值"
+    
+  # 局部变量规则
+  local_variables:
+    # 局部变量格式：@varName: Type = value;
+    declaration_pattern: "^@[a-z][a-z0-9_]*\\s*:\\s*\\w+\\s*=\\s*[^;]+;?$"
+    # 变量命名：@ + 小写字母开头 + 下划线
+    naming_pattern: "^@[a-z][a-z0-9_]*$"
+    description: "局部变量必须以 @ 开头，后跟小写字母、数字、下划线"
+    examples: ["@score: Double = 0.0;", "@my_var: Integer = 10;"]
+    
+  # 使用规则
+  usage:
+    # 函数必须在使用前定义
+    declare_before_use: true
+    # 函数定义位置：文件顶部，信号规则之前
+    definition_location: "top_level_before_rules"
+    # 函数调用位置：可以在信号规则、其他自定义函数中调用
+    call_location: ["signal_rules", "custom_functions", "condition_blocks"]
+    
+  # 示例
+  examples:
+    - description: "计算趋势评分函数"
+      code: |
+        calcTrendScore(ema_fast: Double, ema_slow: Double, adx_value: Double): Double {
+            @score: Double = 0.0;
+            if (ema_fast > ema_slow) {
+                @score += 40.0;
+            }
+            return @score;
+        }
+    - description: "计算止损价格函数"
+      code: |
+        calcStopLoss(entry_price: Double, atr_value: Double, is_long: Boolean): Double {
+            @stop_loss: Double = 0.0;
+            if (is_long) {
+                @stop_loss = entry_price - (atr_value * 2.0);
+            } else {
+                @stop_loss = entry_price + (atr_value * 2.0);
+            }
+            return @stop_loss;
+        }
+
+# =============================================================================
+# 命名规范
+# =============================================================================
+naming_conventions:
+  indicators:
+    pattern: "^[A-Z][A-Z0-9_]*$"
+    description: "指标名必须全大写，可包含数字和下划线"
+    examples: ["MACD", "RSI", "BOLL"]
+    
+  fields:
+    pattern: "^[a-z][a-z0-9_]*$"
+    description: "字段名必须全小写，可包含数字和下划线"
+    examples: ["value", "trend", "crossover_type"]
+    
+  parameters:
+    pattern: "^[A-Z][A-Z0-9_]*$"
+    description: "参数名必须全大写，可包含数字和下划线"
+    examples: ["PERIOD", "FAST_PERIOD"]
+    
+  data_functions:
+    pattern: "^[A-Z][A-Z0-9_]*$"
+    description: "数据函数名必须全大写"
+    examples: ["KLINE", "HIGHEST", "AVERAGE"]
+    
+  signal_functions:
+    pattern: "^[A-Z][A-Z0-9_]*$"
+    description: "信号函数名必须全大写"
+    examples: ["ALL", "ANY", "WEIGHTED"]
+
+# =============================================================================
+# 验证规则
+# =============================================================================
+validation_rules:
+  # 指标引用必须包含时间框架
+  indicator_reference:
+    pattern: "\\$\\([^)]+\\)\\.\\w+"
+    message: "指标引用格式：$(timeframe).INDICATOR.field"
+    
+  # 参数只能赋值，不能读取后修改
+  parameter_assignment:
+    allowed_context: ["top_level"]
+    forbidden_context: ["condition_block"]
+    message: "参数赋值只能在顶层，不能在条件块内"
+    
+  # 字段只读，不能赋值
+  field_readonly:
+    message: "字段是只读的，不能赋值。只有参数可以修改。"
+    
+  # 信号函数必须赋值
+  signal_assignment:
+    required: true
+    valid_values: ["BUY", "SELL", "HOLD"]
+    message: "信号函数必须赋值为 BUY、SELL 或 HOLD"
+

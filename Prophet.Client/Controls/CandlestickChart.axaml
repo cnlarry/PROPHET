@@ -1,0 +1,164 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Prophet.Client.Controls.CandlestickChart">
+    
+    <Border Background="{DynamicResource Background2Brush}"
+            BorderBrush="{DynamicResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="8"
+            ClipToBounds="True">
+        <Grid>
+            <!-- 画布层 -->
+            <Canvas x:Name="ChartCanvas" 
+                    Background="Transparent"
+                    ClipToBounds="True"/>
+            
+            <!-- 详细信息面板（点击K线时显示） -->
+            <Border x:Name="DetailPanel"
+                    HorizontalAlignment="Right" 
+                    VerticalAlignment="Top"
+                    Background="{DynamicResource Background1Brush}"
+                    BorderBrush="{DynamicResource PrimaryBrush}"
+                    BorderThickness="2"
+                    CornerRadius="8"
+                    Padding="16"
+                    Margin="16"
+                    IsVisible="False"
+                    MaxWidth="280">
+                <StackPanel Spacing="12">
+                    <!-- 标题 -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Text="K线详情" 
+                                   Classes="Title3"
+                                   Foreground="{DynamicResource Text1Brush}"/>
+                        <Button Grid.Column="1"
+                                Content="✕"
+                                Width="24"
+                                Height="24"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{DynamicResource Text2Brush}"
+                                FontSize="14"/>
+                    </Grid>
+                    
+                    <!-- 时间 -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="时间" 
+                                   Classes="Caption"
+                                   Foreground="{DynamicResource Text2Brush}"/>
+                        <TextBlock x:Name="DetailTimeText" 
+                                   Text="-" 
+                                   Classes="Body"
+                                   Foreground="{DynamicResource Text1Brush}"/>
+                    </StackPanel>
+                    
+                    <!-- 价格信息 -->
+                    <Border BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Padding="0,8,0,0">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="80,*">
+                            <!-- 开盘价 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="开盘价:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       x:Name="DetailOpenText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       Foreground="{DynamicResource Text1Brush}"/>
+                            
+                            <!-- 最高价 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="最高价:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       x:Name="DetailHighText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       Foreground="#26A69A"
+                                       Margin="0,4,0,0"/>
+                            
+                            <!-- 最低价 -->
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="最低价:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       x:Name="DetailLowText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       Foreground="#EF5350"
+                                       Margin="0,4,0,0"/>
+                            
+                            <!-- 收盘价 -->
+                            <TextBlock Grid.Row="3" Grid.Column="0"
+                                       Text="收盘价:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="3" Grid.Column="1"
+                                       x:Name="DetailCloseText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       FontWeight="SemiBold"
+                                       Margin="0,4,0,0"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- 涨跌幅和成交量 -->
+                    <Border BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0,1,0,0"
+                            Padding="0,8,0,0">
+                        <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="80,*">
+                            <!-- 涨跌额 -->
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="涨跌额:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       x:Name="DetailChangeText" 
+                                       Text="-" 
+                                       Classes="Body"/>
+                            
+                            <!-- 涨跌幅 -->
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="涨跌幅:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       x:Name="DetailChangePercentText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       FontWeight="SemiBold"
+                                       Margin="0,4,0,0"/>
+                            
+                            <!-- 成交量 -->
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="成交量:" 
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       x:Name="DetailVolumeText" 
+                                       Text="-" 
+                                       Classes="Body"
+                                       Margin="0,4,0,0"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+    
+</UserControl>
+

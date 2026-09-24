@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Prophet.Client.Views.Dialogs.DiagnosticsPanelDialog"
+        Width="760"
+        Height="480"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner"
+        Title="诊断面板"
+        Background="{DynamicResource Background1Brush}">
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="0">
+        <!-- Header -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="12,10">
+            <StackPanel Spacing="4">
+                <TextBlock x:Name="TitleText"
+                           Text="诊断面板"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           Foreground="{DynamicResource Text1Brush}"/>
+                <TextBlock x:Name="SummaryText"
+                           Text="双击条目可跳转到对应位置"
+                           FontSize="12"
+                           Foreground="{DynamicResource Text2Brush}"/>
+            </StackPanel>
+        </Border>
+        
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <TextBlock x:Name="EmptyText"
+                       Text="✅ 没有发现任何问题"
+                       FontSize="14"
+                       Foreground="{DynamicResource Text2Brush}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       IsVisible="False"/>
+            
+            <ListBox x:Name="DiagnosticsList"
+                     Margin="12"
+                     Background="{DynamicResource Background2Brush}"
+                     BorderBrush="{DynamicResource BorderBrush}"
+                     BorderThickness="1"
+                     CornerRadius="4"
+                     DoubleTapped="OnItemDoubleTapped"
+                     SelectionChanged="OnSelectionChanged"/>
+        </Grid>
+        
+        <!-- Footer -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="12,10">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                <TextBlock x:Name="HintText"
+                           Grid.Column="0"
+                           Text=""
+                           FontSize="12"
+                           Foreground="{DynamicResource Text2Brush}"
+                           VerticalAlignment="Center"/>
+                
+                <Button Grid.Column="1"
+                        x:Name="JumpButton"
+                        Content="跳转"
+                        IsEnabled="False"
+                        Click="OnJumpClicked"/>
+                
+                <Button Grid.Column="2"
+                        Content="关闭"
+                        Click="OnCloseClicked"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+
+

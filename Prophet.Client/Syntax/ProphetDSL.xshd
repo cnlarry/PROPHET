@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<!-- Prophet DSL Syntax Highlighting Definition -->
+<SyntaxDefinition name="ProphetDSL" extensions=".dsl" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+  
+  <!-- 颜色定义 -->
+  <Color name="Comment" foreground="#6A9955" />
+  <Color name="String" foreground="#CE9178" />
+  <Color name="Number" foreground="#B5CEA8" />
+  <Color name="Keyword" foreground="#569CD6" fontWeight="bold" />
+  <Color name="Function" foreground="#DCDCAA" />
+  <Color name="Operator" foreground="#D4D4D4" />
+  <Color name="Indicator" foreground="#4EC9B0" />
+  <Color name="Environment" foreground="#9CDCFE" />
+  <Color name="Signal" foreground="#C586C0" />
+  
+  <!-- 主规则集 -->
+  <RuleSet ignoreCase="false">
+    
+    <!-- 注释 -->
+    <Span color="Comment" begin="//" />
+    <Span color="Comment" multiline="true" begin="/\*" end="\*/" />
+    
+    <!-- 字符串 -->
+    <Span color="String">
+      <Begin>"</Begin>
+      <End>"</End>
+      <RuleSet>
+        <Span begin="\\" end="." />
+      </RuleSet>
+    </Span>
+    
+    <!-- 数字 -->
+    <Rule color="Number">
+      \b0[xX][0-9a-fA-F]+  # 十六进制
+      |
+      (	\b\d+(\.[0-9]+)?   # 整数和小数
+      |	\.[0-9]+           # 小数
+      )
+      ([eE][+-]?[0-9]+)?   # 指数
+    </Rule>
+    
+    <!-- 信号函数关键字 -->
+    <Keywords color="Signal">
+      <Word>ALL</Word>
+      <Word>ANY</Word>
+      <Word>NONE</Word>
+      <Word>MIN</Word>
+      <Word>MAX</Word>
+      <Word>COUNT</Word>
+      <Word>WEIGHTED</Word>
+      <Word>WEIGHT</Word>
+      <Word>CONSECUTIVE</Word>
+    </Keywords>
+    
+    <!-- 数据函数 -->
+    <Keywords color="Function">
+      <Word>KLINE</Word>
+      <Word>HIGHEST</Word>
+      <Word>LOWEST</Word>
+      <Word>AVERAGE</Word>
+      <Word>STD</Word>
+      <Word>CHANGE</Word>
+      <Word>SUM</Word>
+      <Word>SLOPE</Word>
+      <Word>PATTERN</Word>
+      <Word>CROSS_ABOVE</Word>
+      <Word>CROSS_BELOW</Word>
+      <Word>DIVERGENCE</Word>
+    </Keywords>
+    
+    <!-- 逻辑关键字和信号 -->
+    <Keywords color="Keyword">
+      <Word>if</Word>
+      <Word>else</Word>
+      <Word>and</Word>
+      <Word>or</Word>
+      <Word>not</Word>
+      <Word>true</Word>
+      <Word>false</Word>
+      <Word>BUY</Word>
+      <Word>SELL</Word>
+      <Word>HOLD</Word>
+    </Keywords>
+    
+    <!-- 指标名称（从 IntelliSense.json） -->
+    <Keywords color="Indicator">
+      <Word>MACD</Word>
+      <Word>RSI</Word>
+      <Word>EMA</Word>
+      <Word>BBANDS</Word>
+      <Word>ATR</Word>
+      <Word>ADX</Word>
+      <Word>MA</Word>
+      <Word>SMA</Word>
+      <Word>KDJ</Word>
+      <Word>BOLL</Word>
+      <Word>CCI</Word>
+      <Word>WR</Word>
+      <Word>SAR</Word>
+      <Word>OBV</Word>
+      <Word>VWAP</Word>
+      <Word>KAMA</Word>
+      <Word>ICHIMOKU</Word>
+      <Word>STOCHASTIC</Word>
+    </Keywords>
+    
+    <!-- 枚举值 -->
+    <Keywords color="Number">
+      <Word>BULLISH</Word>
+      <Word>BEARISH</Word>
+      <Word>NEUTRAL</Word>
+      <Word>GOLDEN_CROSS</Word>
+      <Word>DEATH_CROSS</Word>
+      <Word>OVERBOUGHT</Word>
+      <Word>OVERSOLD</Word>
+      <Word>HIGH</Word>
+      <Word>MEDIUM</Word>
+      <Word>LOW</Word>
+      <Word>STRONG</Word>
+      <Word>MODERATE</Word>
+      <Word>WEAK</Word>
+    </Keywords>
+    
+    <!-- OHLCV 字段 -->
+    <Keywords color="Function">
+      <Word>open</Word>
+      <Word>high</Word>
+      <Word>low</Word>
+      <Word>close</Word>
+      <Word>volume</Word>
+    </Keywords>
+    
+    <!-- 运算符 -->
+    <Rule color="Operator">
+      [+\-*/%=&lt;&gt;!&amp;|~^]+
+    </Rule>
+    
+    <!-- 指标引用前缀 $ -->
+    <Rule color="Indicator">
+      \$\.[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)*
+    </Rule>
+    
+    <!-- 环境变量前缀 @ -->
+    <Rule color="Environment">
+      @[a-zA-Z_][a-zA-Z0-9_]*
+    </Rule>
+    
+  </RuleSet>
+  
+</SyntaxDefinition>
+

@@ -1,0 +1,158 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- 临时改为 Exe 以便调试时看到控制台输出 -->
+    <!-- 正式发布时改回 WinExe -->
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- 移除 RuntimeIdentifier，避免警告 -->
+    <!-- <RuntimeIdentifier>win-x64</RuntimeIdentifier> -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!--<ApplicationIcon>Assets\icon.ico</ApplicationIcon>-->
+    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Syntax\**" />
+    <AvaloniaResource Include="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Avalonia 11.3.0 - 与 AvaloniaEdit 完全匹配 -->
+    <PackageReference Include="Avalonia" Version="11.3.0" />
+    <!-- 恢复使用 NuGet 包（保留主题样式文件配置）-->
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0" />
+    
+    <!--诊断，热重载-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.0" />
+    <PackageReference Include="AvaloniaEdit.TextMate" Version="11.3.0" />
+    
+    <!-- SQLite数据库 -->
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    
+    <!-- MVVM工具包 -->
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    
+    <!-- 依赖注入容器 -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+    
+    <!-- 回测模块依赖 -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    
+    <!-- YAML 解析（用于构建时转换） -->
+    <PackageReference Include="YamlDotNet" Version="13.7.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <!--将来添加项目引用-->
+    <!--<ProjectReference Include="..\Prophet.Shared\Prophet.Shared.csproj" />-->
+    <!--<ProjectReference Include="..\Prophet.Data\Prophet.Data.csproj" />-->
+    <!--<ProjectReference Include="..\Prophet.Core.Managed\Prophet.Core.Managed.vcxproj" />-->
+  </ItemGroup>
+
+  <!-- 复制Prophet核心引擎DLL到输出目录 -->
+  <ItemGroup>
+    <!-- Debug模式下使用Debug DLL -->
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_common.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_common.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_logging.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_logging.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_cache.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_cache.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_indicators.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_indicators.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_functions.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_functions.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_dsl.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_dsl.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Debug\prophet_core_engine.dll" Condition="'$(Configuration)' == 'Debug'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_engine.dll</Link>
+    </None>
+    
+    <!-- Release模式下使用Release DLL -->
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_common.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_common.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_logging.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_logging.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_cache.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_cache.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_indicators.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_indicators.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_functions.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_functions.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_dsl.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_dsl.dll</Link>
+    </None>
+    <None Include="..\Prophet.Core\build\bin\Release\prophet_core_engine.dll" Condition="'$(Configuration)' == 'Release'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>prophet_core_engine.dll</Link>
+    </None>
+  </ItemGroup>
+
+  <!-- ========================================
+       统一规则系统 (DSLRules.yaml)
+       ======================================== -->
+  
+  <ItemGroup>
+    <None Include="Resources\Rules\DSLRules.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- ========================================
+       策略模板文件
+       ======================================== -->
+  
+  <!-- 模板配置和DSL文件 - 复制到输出目录 -->
+  <ItemGroup>
+    <None Include="Resources\Templates\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>Resources\Templates\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avaloniaEdit="using:AvaloniaEdit"
+        x:Class="Prophet.Client.Views.EditorTestWindow"
+        Title="AvaloniaEdit 测试窗口"
+        Width="800"
+        Height="600"
+        Background="#252526">
+    
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- 顶部标题 -->
+        <Border Grid.Row="0" Background="#007ACC" Padding="15">
+            <TextBlock Text="AvaloniaEdit 编辑器测试"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       Foreground="White"/>
+        </Border>
+        
+        <!-- 编辑器区域 -->
+        <Border Grid.Row="1" 
+                Background="#1E1E1E" 
+                BorderBrush="#3E3E42" 
+                BorderThickness="1"
+                Margin="10">
+            <avaloniaEdit:TextEditor Name="TestEditor"
+                                     FontFamily="Cascadia Code,Consolas,Courier New"
+                                     FontSize="14"
+                                     Background="#1E1E1E"
+                                     Foreground="#D4D4D4"
+                                     HorizontalScrollBarVisibility="Auto"
+                                     VerticalScrollBarVisibility="Auto"/>
+        </Border>
+        
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="2" Background="#007ACC" Padding="10">
+            <StackPanel Orientation="Horizontal" Spacing="20">
+                <TextBlock Name="StatusText" 
+                           Text="就绪"
+                           Foreground="White"
+                           VerticalAlignment="Center"/>
+                <Button Content="设置示例代码" 
+                        Click="OnSetSampleCode"
+                        Background="#0E639C"
+                        Foreground="White"
+                        Padding="10,5"
+                        BorderThickness="0"/>
+                <Button Content="清空" 
+                        Click="OnClear"
+                        Background="#0E639C"
+                        Foreground="White"
+                        Padding="10,5"
+                        BorderThickness="0"/>
+                <Button Content="显示行号" 
+                        Click="OnToggleLineNumbers"
+                        Background="#0E639C"
+                        Foreground="White"
+                        Padding="10,5"
+                        BorderThickness="0"/>
+            </StackPanel>
+        </Border>
+        
+    </Grid>
+    
+</Window>
+

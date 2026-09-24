@@ -1,0 +1,408 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Prophet.Client.ViewModels"
+             mc:Ignorable="d"
+             d:DesignWidth="1400"
+             d:DesignHeight="900"
+             x:Class="Prophet.Client.Views.Pages.LiveTradingView"
+             x:DataType="vm:LiveTradingViewModel">
+
+    <UserControl.Styles>
+        <!-- 实例卡片样式 -->
+        <Style Selector="Border.InstanceCard">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- 状态徽章样式 -->
+        <Style Selector="Border.StatusBadge">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Running">
+            <Setter Property="Background" Value="#20F0B90B"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Stopped">
+            <Setter Property="Background" Value="#20808080"/>
+            <Setter Property="BorderBrush" Value="#808080"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Paused">
+            <Setter Property="Background" Value="#20FFA500"/>
+            <Setter Property="BorderBrush" Value="#FFA500"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Error">
+            <Setter Property="Background" Value="#20F44336"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- 操作按钮样式 -->
+        <Style Selector="Button.InstanceButton">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}"/>
+        </Style>
+
+        <Style Selector="Button.InstanceButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+
+        <Style Selector="Button.InstanceButton.Primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="#1E2329"/>
+        </Style>
+
+        <Style Selector="Button.InstanceButton.Primary:pointerover">
+            <Setter Property="Background" Value="#FFC107"/>
+            <Setter Property="BorderBrush" Value="#FFC107"/>
+        </Style>
+
+        <Style Selector="Button.InstanceButton.Danger">
+            <Setter Property="BorderBrush" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource DangerBrush}"/>
+        </Style>
+
+        <Style Selector="Button.InstanceButton.Danger:pointerover">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        
+        <!-- 顶部工具栏 -->
+        <Border Grid.Row="0" 
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                
+                <!-- 标题 -->
+                <StackPanel Grid.Column="0" Spacing="4">
+                    <TextBlock Text="实盘交易" Classes="Title2"/>
+                    <TextBlock Classes="Caption" Foreground="{DynamicResource Text2Brush}">
+                        <Run Text="运行中:"/>
+                        <Run Text="{Binding RunningInstancesCount}" Foreground="{DynamicResource PrimaryBrush}"/>
+                        <Run Text="/ 总计:"/>
+                        <Run Text="{Binding TotalInstancesCount}"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- 批量操作 -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12">
+                    <Button Classes="InstanceButton" Command="{Binding CreateInstanceCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Path Data="{StaticResource IconAdd}" 
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="创建实例"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Classes="InstanceButton" 
+                            Command="{Binding StartAllCommand}"
+                            IsEnabled="{Binding HasStoppedInstances}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Path Data="{StaticResource IconPlay}" 
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="全部启动"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <Button Classes="InstanceButton Danger" 
+                            Command="{Binding StopAllCommand}"
+                            IsEnabled="{Binding HasRunningInstances}">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Path Data="{StaticResource IconStop}" 
+                                  Fill="{DynamicResource DangerBrush}"
+                                  Width="14" Height="14"
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="全部停止"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 实例列表 -->
+        <ScrollViewer Grid.Row="1" 
+                      Padding="24"
+                      VerticalScrollBarVisibility="Auto">
+            
+            <StackPanel Spacing="0">
+                
+                <!-- 空状态提示 -->
+                <Border IsVisible="{Binding IsEmpty}"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="48"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <StackPanel Spacing="16" HorizontalAlignment="Center">
+                        <Viewbox Width="64" Height="64" HorizontalAlignment="Center">
+                            <Path Data="{StaticResource IconTrade}" 
+                                  Fill="{DynamicResource Text3Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                        <TextBlock Text="暂无实盘交易实例" 
+                                   FontSize="16"
+                                   Foreground="{DynamicResource Text2Brush}"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="点击「创建实例」开始实盘交易" 
+                                   Classes="Caption"
+                                   Foreground="{DynamicResource Text3Brush}"
+                                   HorizontalAlignment="Center"/>
+                        <Button Classes="InstanceButton Primary" 
+                                Command="{Binding CreateInstanceCommand}"
+                                HorizontalAlignment="Center">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Path Data="{StaticResource IconAdd}" 
+                                      Fill="#1E2329"
+                                      Width="14" Height="14"
+                                      Stretch="Uniform"/>
+                                <TextBlock Text="创建第一个实例"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- 实例卡片列表 -->
+                <ItemsControl ItemsSource="{Binding TradingInstances}"
+                              IsVisible="{Binding !IsEmpty}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="vm:TradingInstanceViewModel">
+                            <Border Classes="InstanceCard">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                                    
+                                    <!-- 第一行：实例名称 + 状态徽章 -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Spacing="8">
+                                        <TextBlock Text="{Binding InstanceName}" 
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Text1Brush}"/>
+                                        
+                                        <StackPanel Orientation="Horizontal" Spacing="8">
+                                            <!-- 状态徽章 -->
+                                            <Border Classes.Running="{Binding IsRunning}"
+                                                    Classes.Stopped="{Binding IsStopped}"
+                                                    Classes.Paused="{Binding IsPaused}"
+                                                    Classes.Error="{Binding IsError}"
+                                                    Classes="StatusBadge">
+                                                <TextBlock Text="{Binding StatusText}" 
+                                                           FontSize="11"
+                                                           Classes="Caption"/>
+                                            </Border>
+                                            
+                                            <!-- 交易所 + 币种 -->
+                                            <TextBlock Classes="Caption" Foreground="{DynamicResource Text2Brush}">
+                                                <Run Text="{Binding ExchangeName}"/>
+                                                <Run Text="·"/>
+                                                <Run Text="{Binding Symbol}"/>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- 操作按钮 -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" 
+                                                Orientation="Horizontal" 
+                                                Spacing="8"
+                                                VerticalAlignment="Top">
+                                        <Button Classes="InstanceButton Primary" 
+                                                Command="{Binding StartCommand}"
+                                                IsVisible="{Binding CanStart}"
+                                                ToolTip.Tip="启动">
+                                            <Path Data="{StaticResource IconPlay}" 
+                                                  Fill="#1E2329"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                        
+                                        <Button Classes="InstanceButton" 
+                                                Command="{Binding PauseCommand}"
+                                                IsVisible="{Binding CanPause}"
+                                                ToolTip.Tip="暂停">
+                                            <Path Data="{StaticResource IconPause}" 
+                                                  Fill="{DynamicResource Text1Brush}"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                        
+                                        <Button Classes="InstanceButton" 
+                                                Command="{Binding ResumeCommand}"
+                                                IsVisible="{Binding CanResume}"
+                                                ToolTip.Tip="恢复">
+                                            <Path Data="{StaticResource IconPlay}" 
+                                                  Fill="{DynamicResource Text1Brush}"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                        
+                                        <Button Classes="InstanceButton Danger" 
+                                                Command="{Binding StopCommand}"
+                                                IsVisible="{Binding CanStop}"
+                                                ToolTip.Tip="停止">
+                                            <Path Data="{StaticResource IconStop}" 
+                                                  Fill="{DynamicResource DangerBrush}"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                        
+                                        <Button Classes="InstanceButton" 
+                                                Command="{Binding EditCommand}"
+                                                ToolTip.Tip="编辑">
+                                            <Path Data="{StaticResource IconEdit}" 
+                                                  Fill="{DynamicResource Text1Brush}"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                        
+                                        <Button Classes="InstanceButton Danger" 
+                                                Command="{Binding DeleteCommand}"
+                                                ToolTip.Tip="删除">
+                                            <Path Data="{StaticResource IconDelete}" 
+                                                  Fill="{DynamicResource DangerBrush}"
+                                                  Width="14" Height="14"
+                                                  Stretch="Uniform"/>
+                                        </Button>
+                                    </StackPanel>
+
+                                    <!-- 第二行：关键指标 -->
+                                    <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                          ColumnDefinitions="*,*,*,*"
+                                          Margin="0,16,0,0">
+                                        
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="持仓" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                            <TextBlock Text="{Binding PositionSize, StringFormat='{}{0:F4}'}" 
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource Text1Brush}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Spacing="4">
+                                            <TextBlock Text="今日盈亏" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                            <TextBlock FontSize="14" FontWeight="Medium">
+                                                <TextBlock.Foreground>
+                                                    <SolidColorBrush>
+                                                        <SolidColorBrush.Color>
+                                                            <MultiBinding Converter="{StaticResource ProfitColorConverter}">
+                                                                <Binding Path="TodayPnL"/>
+                                                            </MultiBinding>
+                                                        </SolidColorBrush.Color>
+                                                    </SolidColorBrush>
+                                                </TextBlock.Foreground>
+                                                <Run Text="{Binding TodayPnL, StringFormat='{}{0:F2}'}"/>
+                                                <Run Text="(" /><Run Text="{Binding TodayPnLPercent, StringFormat='{}{0:F2}%'}"/><Run Text=")"/>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2" Spacing="4">
+                                            <TextBlock Text="累计盈亏" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                            <TextBlock FontSize="14" FontWeight="Medium">
+                                                <TextBlock.Foreground>
+                                                    <SolidColorBrush>
+                                                        <SolidColorBrush.Color>
+                                                            <MultiBinding Converter="{StaticResource ProfitColorConverter}">
+                                                                <Binding Path="TotalPnL"/>
+                                                            </MultiBinding>
+                                                        </SolidColorBrush.Color>
+                                                    </SolidColorBrush>
+                                                </TextBlock.Foreground>
+                                                <Run Text="{Binding TotalPnL, StringFormat='{}{0:F2}'}"/>
+                                                <Run Text="(" /><Run Text="{Binding TotalPnLPercent, StringFormat='{}{0:F2}%'}"/><Run Text=")"/>
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="3" Spacing="4">
+                                            <TextBlock Text="运行时长" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                            <TextBlock Text="{Binding RunningDuration}" 
+                                                       FontSize="14"
+                                                       FontWeight="Medium"
+                                                       Foreground="{DynamicResource Text1Brush}"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <!-- 第三行：策略信息 -->
+                                    <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                Margin="0,12,0,0"
+                                                Spacing="4">
+                                        <TextBlock Text="策略" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                        <TextBlock Text="{Binding StrategyName}" 
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                    </StackPanel>
+
+                                    <!-- 第四行：风控信息 -->
+                                    <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                            Margin="0,12,0,0"
+                                            Padding="12"
+                                            Background="{DynamicResource Background1Brush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="4">
+                                        <Grid ColumnDefinitions="*,*,*">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="最大仓位" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                                <TextBlock Text="{Binding MaxPosition, StringFormat='{}{0:F2}'}" 
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource Text2Brush}"/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Text="日内交易次数" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                                <TextBlock FontSize="12" Foreground="{DynamicResource Text2Brush}">
+                                                    <Run Text="{Binding TodayTradesCount}"/>
+                                                    <Run Text="/"/>
+                                                    <Run Text="{Binding MaxDailyTrades}"/>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Spacing="4">
+                                                <TextBlock Text="最大回撤" Classes="Caption" Foreground="{DynamicResource Text3Brush}"/>
+                                                <TextBlock Text="{Binding MaxDrawdown, StringFormat='{}{0:F2}%'}" 
+                                                           FontSize="12"
+                                                           Foreground="{DynamicResource DangerBrush}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>
+

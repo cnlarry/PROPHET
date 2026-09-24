@@ -1,0 +1,696 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:pages="using:Prophet.Client.Views.Pages"
+             xmlns:converters="using:Prophet.Client.Converters"
+             xmlns:controls="using:Prophet.Client.Controls"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="Prophet.Client.Views.Pages.HomePageView">
+    
+    <UserControl.Resources>
+        <converters:StringToBrushConverter x:Key="StringToBrushConverter"/>
+    </UserControl.Resources>
+    
+    <!--首页行情数据视图-->
+    <Border Grid.Row="1">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <controls:FlowGridPanel ColumnSpacing="10" RowSpacing="10" Margin="10">
+                
+                <!-- 恐惧与贪婪指数（占1列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="恐惧与贪婪指数" Classes="Title3"/>
+                        
+                        <!-- 仪表盘 -->
+                        <controls:FearGreedGauge x:Name="FearGreedGauge"
+                                                    Value="0"
+                                                    Classification="--"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Margin="0,0,0,0"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 资金费率列表（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Text="资金费率" Classes="Title2" Grid.Column="0"/>
+                            <Button Grid.Column="2"
+                                    Content="编辑"
+                                    Padding="8,4"
+                                    FontSize="11"
+                                    Classes="Primary"
+                                    Click="EditFundingRate_Click"/>
+                        </Grid>
+                        
+                        <!-- 资金费率表格 -->
+                        <Grid ColumnDefinitions="*,Auto,Auto" 
+                                RowDefinitions="Auto,*"
+                                Margin="0,8,0,0">
+                            <!-- 表头 -->
+                            <Border Grid.Row="0" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="交易对" Classes="Caption" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="资金费率" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6">
+                                <TextBlock Text="24h变化" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            
+                            <!-- 数据行 -->
+                            <ItemsControl x:Name="FundingRateItems" Grid.Row="1" Grid.ColumnSpan="3">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="pages:FundingRateItem">
+                                        <Grid ColumnDefinitions="*,Auto,Auto">
+                                            <Border Grid.Column="0" 
+                                                    Padding="8,8"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Symbol}" Classes="Body"/>
+                                            </Border>
+                                            <Border Grid.Column="1" 
+                                                    Padding="8,8"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Rate}" 
+                                                            Classes="Body"
+                                                            Foreground="{Binding RateColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="2" 
+                                                    Padding="8,8"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,0,0">
+                                                <TextBlock Text="{Binding Change24h}" 
+                                                            Classes="Body"
+                                                            Foreground="{Binding ChangeColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 主流币种价格（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="2">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="主流币种价格" Classes="Title3"/>
+                        <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="8" ColumnSpacing="8" Margin="0,4,0,0">
+                            <!-- BTC -->
+                            <Border Grid.Row="0" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="BTC" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="BTCPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="BTCChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- ETH -->
+                            <Border Grid.Row="0" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="ETH" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="ETHPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="ETHChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- BNB -->
+                            <Border Grid.Row="0" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="BNB" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="BNBPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="BNBChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- SOL -->
+                            <Border Grid.Row="1" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="SOL" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="SOLPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="SOLChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- XRP -->
+                            <Border Grid.Row="1" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="XRP" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="XRPPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="XRPChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                            <!-- DOGE -->
+                            <Border Grid.Row="1" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="10,8"
+                                    CornerRadius="4">
+                                <StackPanel Spacing="2">
+                                    <TextBlock Text="DOGE" Classes="Caption" FontSize="11"/>
+                                    <TextBlock x:Name="DOGEPrice" Text="--" Classes="Body" FontSize="13" FontWeight="SemiBold"/>
+                                    <TextBlock x:Name="DOGEChange" Text="--" Classes="Caption" FontSize="10"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 多空比（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="多空比" Classes="Title2"/>
+                        
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12" Margin="0,8,0,0">
+                            <!-- 大账户持仓量多空比 -->
+                            <Border Grid.Row="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="持仓量多空比" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="LongShortRatioValue" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="LongShortRatioChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 大账户户数多空比 -->
+                            <Border Grid.Row="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="账户数多空比" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="AccountRatioValue" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="AccountRatioChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 多空持仓人数比 -->
+                            <Border Grid.Row="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="持仓人数比" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="TraderRatioValue" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="TraderRatioChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 合约主动买卖量（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="合约主动买卖量" Classes="Title2"/>
+                        
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12" Margin="0,8,0,0">
+                            <!-- 主动买入量 -->
+                            <Border Grid.Row="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="主动买入量" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="BuyVolumeValue" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    Foreground="{DynamicResource SuccessBrush}"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="BuyVolumePercent" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 主动卖出量 -->
+                            <Border Grid.Row="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="主动卖出量" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="SellVolumeValue" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    Foreground="{DynamicResource DangerBrush}"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="SellVolumePercent" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 买卖比 -->
+                            <Border Grid.Row="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="买卖比" Classes="Caption" Grid.Column="0"/>
+                                    <TextBlock x:Name="BuySellRatioValue" 
+                                                Text="--" 
+                                                Classes="Title3"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 涨幅榜（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="24h涨幅榜" Classes="Title2"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" 
+                                RowDefinitions="Auto,*"
+                                Margin="0,8,0,0"
+                                Grid.IsSharedSizeScope="True">
+                            <!-- 表头 -->
+                            <Border Grid.Row="0" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="排名" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="交易对" Classes="Caption" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="价格" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="3" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6">
+                                <TextBlock Text="涨幅" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            
+                            <!-- 数据行 -->
+                            <ItemsControl x:Name="TopGainersItems" Grid.Row="1" Grid.ColumnSpan="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="pages:TopGainerItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                            <Border Grid.Column="0" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Rank}" 
+                                                            Classes="Caption"
+                                                            HorizontalAlignment="Center"
+                                                            FontSize="11"/>
+                                            </Border>
+                                            <Border Grid.Column="1" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Symbol}" Classes="Body" FontSize="12"/>
+                                            </Border>
+                                            <Border Grid.Column="2" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Price}" 
+                                                            Classes="Body"
+                                                            FontSize="12"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="3" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,0,0">
+                                                <TextBlock Text="{Binding ChangePercent}" 
+                                                            Classes="Body"
+                                                            FontSize="12"
+                                                            Foreground="{Binding ChangeColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 跌幅榜（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="24h跌幅榜" Classes="Title2"/>
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" 
+                                RowDefinitions="Auto,*"
+                                Margin="0,8,0,0"
+                                Grid.IsSharedSizeScope="True">
+                            <!-- 表头 -->
+                            <Border Grid.Row="0" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="排名" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="交易对" Classes="Caption" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="价格" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="3" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6">
+                                <TextBlock Text="跌幅" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            
+                            <!-- 数据行 -->
+                            <ItemsControl x:Name="TopLosersItems" Grid.Row="1" Grid.ColumnSpan="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="pages:TopLoserItem">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                                            <Border Grid.Column="0" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Rank}" 
+                                                            Classes="Caption"
+                                                            HorizontalAlignment="Center"
+                                                            FontSize="11"/>
+                                            </Border>
+                                            <Border Grid.Column="1" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Symbol}" Classes="Body" FontSize="12"/>
+                                            </Border>
+                                            <Border Grid.Column="2" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Price}" 
+                                                            Classes="Body"
+                                                            FontSize="12"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="3" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,0,0">
+                                                <TextBlock Text="{Binding ChangePercent}" 
+                                                            Classes="Body"
+                                                            FontSize="12"
+                                                            Foreground="{Binding ChangeColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                                
+                <!-- 综合指数交易对信息（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="2">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="综合指数交易对" Classes="Title2"/>
+                        
+                        <!-- 交易对表格 -->
+                        <Grid ColumnDefinitions="*,Auto,Auto,Auto" 
+                                RowDefinitions="Auto,*"
+                                Margin="0,8,0,0"
+                                Grid.IsSharedSizeScope="True">
+                            <!-- 表头 -->
+                            <Border Grid.Row="0" Grid.Column="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="交易对" Classes="Caption" FontWeight="SemiBold"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="价格" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="0,0,1,0">
+                                <TextBlock Text="24h涨跌" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="3" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="8,6">
+                                <TextBlock Text="24h成交量" Classes="Caption" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                            </Border>
+                            
+                            <!-- 数据行 -->
+                            <ItemsControl x:Name="IndexPairsItems" Grid.Row="1" Grid.ColumnSpan="4">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate x:DataType="pages:IndexPairItem">
+                                        <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                                            <Border Grid.Column="0" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Symbol}" Classes="Body"/>
+                                            </Border>
+                                            <Border Grid.Column="1" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Price}" 
+                                                            Classes="Body"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="2" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,1,0">
+                                                <TextBlock Text="{Binding Change24h}" 
+                                                            Classes="Body"
+                                                            Foreground="{Binding ChangeColor, Converter={StaticResource StringToBrushConverter}}"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                            <Border Grid.Column="3" 
+                                                    Padding="8,6"
+                                                    BorderBrush="{DynamicResource BorderBrush}"
+                                                    BorderThickness="0,1,0,0">
+                                                <TextBlock Text="{Binding Volume24h}" 
+                                                            Classes="Body"
+                                                            HorizontalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- 持仓量（Open Interest）（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="持仓量 (Open Interest)" Classes="Title2"/>
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12" Margin="0,8,0,0">
+                            <!-- BTC持仓量 -->
+                            <Border Grid.Row="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="BTCUSDT" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="BTCOpenInterest" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="BTCOpenInterestChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- ETH持仓量 -->
+                            <Border Grid.Row="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="ETHUSDT" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="ETHOpenInterest" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="ETHOpenInterestChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- SOL持仓量 -->
+                            <Border Grid.Row="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="SOLUSDT" Classes="Caption" Grid.Column="0"/>
+                                    <StackPanel Grid.Column="2" Spacing="2" HorizontalAlignment="Right">
+                                        <TextBlock x:Name="SOLOpenInterest" 
+                                                    Text="--" 
+                                                    Classes="Title3"
+                                                    HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="SOLOpenInterestChange" 
+                                                    Text="--" 
+                                                    Classes="Caption"
+                                                    HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 24小时爆仓数据（占2列） -->
+                <Border Classes="Card" controls:FlowGridPanel.ColumnSpan="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Text="24h爆仓数据" Classes="Title2"/>
+                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="12" Margin="0,8,0,0">
+                            <!-- 总爆仓金额 -->
+                            <Border Grid.Row="0" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="总爆仓金额" Classes="Caption" Grid.Column="0"/>
+                                    <TextBlock x:Name="TotalLiquidation" 
+                                                Text="--" 
+                                                Classes="Title3"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 多单爆仓 -->
+                            <Border Grid.Row="1" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="多单爆仓" Classes="Caption" Grid.Column="0"/>
+                                    <TextBlock x:Name="LongLiquidation" 
+                                                Text="--" 
+                                                Classes="Title3"
+                                                Foreground="{DynamicResource DangerBrush}"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- 空单爆仓 -->
+                            <Border Grid.Row="2" 
+                                    Background="{DynamicResource Background3Brush}" 
+                                    Padding="12,10"
+                                    CornerRadius="4">
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <TextBlock Text="空单爆仓" Classes="Caption" Grid.Column="0"/>
+                                    <TextBlock x:Name="ShortLiquidation" 
+                                                Text="--" 
+                                                Classes="Title3"
+                                                Foreground="{DynamicResource SuccessBrush}"
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+            </controls:FlowGridPanel>
+        </ScrollViewer>
+    </Border>
+    
+</UserControl>
+

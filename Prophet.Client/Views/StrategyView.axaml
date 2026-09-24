@@ -1,0 +1,1029 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:avaloniaEdit="using:AvaloniaEdit"
+             xmlns:vm="using:Prophet.Client.ViewModels"
+             xmlns:models="using:Prophet.Client.Models"
+             mc:Ignorable="d" d:DesignWidth="1320" d:DesignHeight="800"
+             x:Class="Prophet.Client.Views.StrategyView"
+             x:DataType="vm:StrategyListViewModel">
+
+    <UserControl.Resources>
+        <!-- TabItem 模板 -->
+        <ControlTemplate x:Key="VsCodeTabItemTemplate" TargetType="TabItem">
+            <Grid>
+                <!-- Tab 背景和边框 -->
+                <Border Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Content="{TemplateBinding Header}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Border>
+                
+                <!-- 选中时显示的底部高亮条（3px 币安黄） -->
+                <Border x:Name="AccentBar"
+                        Height="2"
+                        Background="#F0B90B"
+                        VerticalAlignment="Bottom"
+                        Margin="0"
+                        Opacity="0"/>
+            </Grid>
+        </ControlTemplate>
+        
+        <!-- TabControl 模板 - 自定义Content边框 -->
+        <ControlTemplate x:Key="VsCodeTabControlTemplate" TargetType="TabControl">
+            <Grid RowDefinitions="Auto,*" RowSpacing="0">
+                <!-- Tab栏 -->
+                <ItemsPresenter Grid.Row="0"
+                                Name="PART_ItemsPresenter"
+                                ItemsPanel="{TemplateBinding ItemsPanel}"
+                                Margin="0"/>
+                
+                <!-- Content区域（带边框） -->
+                <Border Grid.Row="1"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        Padding="0"
+                        Margin="0">
+                    <ContentPresenter Name="PART_SelectedContentHost"
+                                      Content="{TemplateBinding SelectedContent}"
+                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}"/>
+                </Border>
+            </Grid>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <!-- 搜索框文本框样式 - 覆盖默认焦点样式 -->
+        <Style Selector="TextBox#SearchTextBox">
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <Style Selector="TextBox#SearchTextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <Style Selector="TextBox#SearchTextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <!-- VS Code 风格滚动条样式 -->
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar">
+            <Setter Property="AllowAutoHide" Value="True"/>
+            <Setter Property="Opacity" Value="0.5"/>
+        </Style>
+        
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar:pointerover">
+            <Setter Property="Opacity" Value="0.8"/>
+        </Style>
+        
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar:vertical">
+            <Setter Property="Width" Value="14"/>
+        </Style>
+        
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar:horizontal">
+            <Setter Property="Height" Value="14"/>
+        </Style>
+        
+        <!-- 滚动条滑块样式 -->
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar /template/ Thumb">
+            <Setter Property="Background" Value="#424242"/>
+            <Setter Property="CornerRadius" Value="7"/>
+        </Style>
+        
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar:pointerover /template/ Thumb">
+            <Setter Property="Background" Value="#4E4E4E"/>
+        </Style>
+        
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar:pressed /template/ Thumb">
+            <Setter Property="Background" Value="#5A5A5A"/>
+        </Style>
+        
+        <!-- 滚动条轨道样式 -->
+        <Style Selector="avaloniaEdit|TextEditor ScrollBar /template/ Border#PART_Background">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        
+        <!-- Tab选项卡样式 -->
+        <Style Selector="TabControl.MainTabs">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="TabStripPlacement" Value="Top" />
+            <Setter Property="Template" Value="{StaticResource VsCodeTabControlTemplate}" />
+            <Setter Property="ItemsPanel">
+                <ItemsPanelTemplate>
+                    <WrapPanel Margin="0"/>
+                </ItemsPanelTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem">
+            <Setter Property="Margin" Value="0,0,-1,-3" />
+            <Setter Property="Padding" Value="8,0,0,0" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="MinWidth" Value="80" />
+            <Setter Property="MaxWidth" Value="150" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="{DynamicResource Background1Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Template" Value="{StaticResource VsCodeTabItemTemplate}" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+        </Style>
+        
+        <!-- 选中Tab时显示底部3px币安黄高亮条 -->
+        <Style Selector="TabControl.MainTabs > TabItem:selected /template/ Border#AccentBar">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+        
+        <!-- 策略卡片样式 -->
+        <Style Selector="Border.StrategyCard">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Border.StrategyCard:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+
+        <Style Selector="Border.StrategyCard.Selected">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="#F0B90B" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <!-- 工具按钮样式 -->
+        <Style Selector="Button.ToolbarButton">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+
+        <Style Selector="Button.ToolbarButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Button.ToolbarButton.Primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <Style Selector="Button.ToolbarButton.Primary:pointerover">
+            <Setter Property="Opacity" Value="0.9" />
+        </Style>
+
+        <!-- 状态标签样式 -->
+        <Style Selector="Border.StatusBadge">
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Running">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Draft">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Stopped">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        </Style>
+        
+        <!-- 侧边图标样式 -->
+        <Style Selector="Border.SideIcon">
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <Style Selector="Border.SideIcon:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <Style Selector="Border.SideIcon.Active">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <!-- AvaloniaEdit 编辑器样式 -->
+        <Style Selector="avaloniaEdit|TextEditor">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+        
+        <!-- 工具栏按钮统一样式 -->
+        <Style Selector="Border[Name=ToolbarButtonContainer] > Button">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+        
+        <Style Selector="Border[Name=ToolbarButtonContainer] > Button:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+        </Style>
+        
+        <!-- 从模板新建按钮 - 默认样式（与其他按钮一致，4px圆角） -->
+        <Style Selector="Button#NewFromTemplateButton">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1,1,1,1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+
+        <Style Selector="Button#NewFromTemplateButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <!-- 从模板新建按钮 - 激活状态（菜单展开时：上圆角，下直角） -->
+        <Style Selector="Button#NewFromTemplateButton.active">
+            <Setter Property="Background" Value="#34393E" />
+            <Setter Property="BorderBrush" Value="#34393E" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="4,4,0,0" />
+        </Style>
+
+        <!-- 从模板新建按钮激活状态悬停效果 -->
+        <Style Selector="Button#NewFromTemplateButton.active:pointerover">
+            <Setter Property="Background" Value="#34393E" />
+            <Setter Property="BorderBrush" Value="#34393E" />
+        </Style>
+        
+        <!-- 插入代码片段按钮 - 默认样式（与其他按钮一致，4px圆角） -->
+        <Style Selector="Button#InsertSnippetButton">
+            <Setter Property="Width" Value="34" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1,1,1,1" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="8" />
+        </Style>
+
+        <Style Selector="Button#InsertSnippetButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <!-- 插入代码片段按钮 - 激活状态（菜单展开时：上圆角，下直角） -->
+        <Style Selector="Button#InsertSnippetButton.active">
+            <Setter Property="Background" Value="#34393E" />
+            <Setter Property="BorderBrush" Value="#34393E" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="CornerRadius" Value="4,4,0,0" />
+        </Style>
+
+        <!-- 插入代码片段按钮激活状态悬停效果 -->
+        <Style Selector="Button#InsertSnippetButton.active:pointerover">
+            <Setter Property="Background" Value="#34393E" />
+            <Setter Property="BorderBrush" Value="#34393E" />
+        </Style>
+        
+        <Style Selector="MenuItem">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+            <Setter Property="Padding" Value="8,6" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        
+        <Style Selector="MenuItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        </Style>
+        
+        <Style Selector="MenuItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        </Style>
+        
+        <!-- 二级菜单项高度稍小 -->
+        <Style Selector="MenuItem MenuItem">
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="Height" Value="30" />
+        </Style>
+        
+        <Style Selector="Separator">
+            <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Margin" Value="4,2" />
+        </Style>
+    </UserControl.Styles>
+
+    <!--策略页面主布局：两列结构-->
+    <!--第一列(280px)：策略列表/索引-->
+    <!--第二列(*)：策略编辑器（占据剩余空间）-->
+    <!--注意：上下文菜单栏由 MainWindow 统一管理，根据当前页面动态显示不同功能-->
+    <Grid ColumnDefinitions="280,*">
+
+        <!-- ==================== 第一列：策略列表/索引（宽度280） ==================== -->
+        <Border Grid.Column="0" 
+                Background="{DynamicResource Background1Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,1,0">
+            <Grid RowDefinitions="Auto,Auto,*,Auto">
+                <Border Grid.Row="0"
+                        Padding="10,2,10,0"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,0,1">
+                    <!-- TextBlock 带 3px 橙黄色底部边框 -->
+                    <Border BorderBrush="{DynamicResource PrimaryBrush}"
+                            BorderThickness="0,0,0,3"
+                            Padding="6,12,6,12"
+                            HorizontalAlignment="Left">
+                        <TextBlock Grid.Row="0"
+                           Text="策略管理"
+                           Classes="Title2"
+                           Margin="0"/>
+                    </Border>
+                </Border>
+
+                <!-- 搜索和筛选 -->
+                <StackPanel Grid.Row="1" Margin="10,12,10,12" Spacing="8">
+                    <!-- 搜索框 -->
+                    <Border x:Name="SearchBoxBorder"
+                            Background="{DynamicResource Background2Brush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4"
+                            Padding="8,4,8,4">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <!-- 搜索图标 -->
+                            <Viewbox Grid.Column="0"
+                                     Width="16" 
+                                     Height="16"
+                                     Margin="0,0,8,0"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center">
+                                <Path Data="{StaticResource IconSearch}"
+                                      Fill="{DynamicResource Text2Brush}"
+                                      Stretch="Uniform"/>
+                            </Viewbox>
+                            
+                            <!-- 搜索输入框 -->
+                            <TextBox x:Name="SearchTextBox"
+                                     Grid.Column="1"
+                                     Watermark="搜索策略..."
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="0"
+                                     VerticalAlignment="Center"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalContentAlignment="Center"
+                                     GotFocus="OnSearchBoxGotFocus"
+                                     LostFocus="OnSearchBoxLostFocus"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <!-- 策略列表 -->
+                <ScrollViewer Grid.Row="2" 
+                              VerticalScrollBarVisibility="Auto"
+                              Padding="10,0,10,0">
+                    <StackPanel Spacing="0">
+                        
+                        <!-- 激活状态分组 -->
+                        <StackPanel IsVisible="{Binding ActiveCount, Converter={x:Static ObjectConverters.IsNotNull}}">
+                            <TextBlock Text="{Binding ActiveCount, StringFormat='✓ 激活 ({0})'}"
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource SuccessBrush}"
+                                       Margin="0,0,0,8"/>
+                            
+                            <ItemsControl Name="ActiveStrategiesControl" ItemsSource="{Binding ActiveStrategies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:StrategyInfo">
+                                        <Border Classes="StrategyCard" 
+                                                Classes.Selected="{Binding IsSelected}"
+                                                Name="StrategyCardBorder"
+                                                PointerPressed="OnStrategyCardClick"
+                                                DoubleTapped="OnStrategyCardDoubleClick"
+                                                Tag="{Binding}">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="📝 编辑" Click="OnEditStrategyFromCard" Tag="{Binding}" FontWeight="Bold"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="📊 激活" Click="OnActivateStrategy" Tag="{Binding}" IsEnabled="{Binding CanActivate}"/>
+                                                    <MenuItem Header="📤 共享" Click="OnShareStrategy" Tag="{Binding}" IsEnabled="{Binding CanShare}"/>
+                                                    <MenuItem Header="🔒 取消共享" Click="OnUnshareStrategy" Tag="{Binding}" IsEnabled="{Binding CanUnshare}"/>
+                                                    <MenuItem Header="⚠️ 废弃" Click="OnDeprecateStrategy" Tag="{Binding}"/>
+                                                    <MenuItem Header="📦 归档" Click="OnArchiveStrategy" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="✏️ 重命名" Click="OnRenameStrategy" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="📋 编辑信息" Click="OnEditStrategyInfo" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="🗑️ 删除" Click="OnDeleteStrategyFromCard" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="🔗 分享" Click="OnShareStrategyFromCard" Tag="{Binding}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding DisplayName}"
+                                                               Classes="Body"
+                                                               FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" Classes="StatusBadge Running">
+                                                        <TextBlock Text="{Binding StatusDisplay}" 
+                                                                   FontSize="10"
+                                                                   Foreground="White"/>
+                                                    </Border>
+                                                </Grid>
+                                                <StackPanel Grid.Row="1" Spacing="2">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Text2Brush}">
+                                                        <Run Text="版本: "/>
+                                                        <Run Text="{Binding Version}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding TimeAgo, StringFormat='🕐 {0}'}"
+                                                               Classes="Caption"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- 草稿状态分组 -->
+                        <StackPanel IsVisible="{Binding DraftCount, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,8,0,0">
+                            <TextBlock Text="{Binding DraftCount, StringFormat='📝 草稿 ({0})'}"
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,8,0,8"/>
+                            
+                            <ItemsControl Name="DraftStrategiesControl" ItemsSource="{Binding DraftStrategies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:StrategyInfo">
+                                        <Border Classes="StrategyCard"
+                                                Classes.Selected="{Binding IsSelected}"
+                                                PointerPressed="OnStrategyCardClick"
+                                                DoubleTapped="OnStrategyCardDoubleClick"
+                                                Tag="{Binding}">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="📝 编辑" Click="OnEditStrategyFromCard" Tag="{Binding}" FontWeight="Bold"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="📊 激活" Click="OnActivateStrategy" Tag="{Binding}" IsEnabled="{Binding CanActivate}"/>
+                                                    <MenuItem Header="📤 共享" Click="OnShareStrategy" Tag="{Binding}" IsEnabled="{Binding CanShare}"/>
+                                                    <MenuItem Header="🔒 取消共享" Click="OnUnshareStrategy" Tag="{Binding}" IsEnabled="{Binding CanUnshare}"/>
+                                                    <MenuItem Header="⚠️ 废弃" Click="OnDeprecateStrategy" Tag="{Binding}"/>
+                                                    <MenuItem Header="📦 归档" Click="OnArchiveStrategy" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="✏️ 重命名" Click="OnRenameStrategy" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="📋 编辑信息" Click="OnEditStrategyInfo" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="🗑️ 删除" Click="OnDeleteStrategyFromCard" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="🔗 分享" Click="OnShareStrategyFromCard" Tag="{Binding}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding DisplayName}"
+                                                               Classes="Body"
+                                                               FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" Classes="StatusBadge Draft">
+                                                        <TextBlock Text="{Binding StatusDisplay}" 
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                                    </Border>
+                                                </Grid>
+                                                <StackPanel Grid.Row="1" Spacing="2">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Text2Brush}">
+                                                        <Run Text="版本: "/>
+                                                        <Run Text="{Binding Version}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding TimeAgo, StringFormat='🕐 {0}'}"
+                                                               Classes="Caption"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- 已废弃状态分组 -->
+                        <StackPanel IsVisible="{Binding DeprecatedCount, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,8,0,0">
+                            <TextBlock Text="{Binding DeprecatedCount, StringFormat='⚠ 已废弃 ({0})'}"
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource WarningBrush}"
+                                       Margin="0,8,0,8"/>
+                            
+                            <ItemsControl Name="DeprecatedStrategiesControl" ItemsSource="{Binding DeprecatedStrategies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:StrategyInfo">
+                                        <Border Classes="StrategyCard"
+                                                Classes.Selected="{Binding IsSelected}"
+                                                PointerPressed="OnStrategyCardClick"
+                                                DoubleTapped="OnStrategyCardDoubleClick"
+                                                Tag="{Binding}">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="📝 编辑" Click="OnEditStrategyFromCard" Tag="{Binding}" FontWeight="Bold"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="📊 激活" Click="OnActivateStrategy" Tag="{Binding}" IsEnabled="{Binding CanActivate}"/>
+                                                    <MenuItem Header="📤 共享" Click="OnShareStrategy" Tag="{Binding}" IsEnabled="{Binding CanShare}"/>
+                                                    <MenuItem Header="🔒 取消共享" Click="OnUnshareStrategy" Tag="{Binding}" IsEnabled="{Binding CanUnshare}"/>
+                                                    <MenuItem Header="⚠️ 废弃" Click="OnDeprecateStrategy" Tag="{Binding}"/>
+                                                    <MenuItem Header="📦 归档" Click="OnArchiveStrategy" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="✏️ 重命名" Click="OnRenameStrategy" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="📋 编辑信息" Click="OnEditStrategyInfo" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="🗑️ 删除" Click="OnDeleteStrategyFromCard" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="🔗 分享" Click="OnShareStrategyFromCard" Tag="{Binding}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding DisplayName}"
+                                                               Classes="Body"
+                                                               FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" Classes="StatusBadge Draft">
+                                                        <TextBlock Text="{Binding StatusDisplay}" 
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource WarningBrush}"/>
+                                                    </Border>
+                                                </Grid>
+                                                <StackPanel Grid.Row="1" Spacing="2">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Text2Brush}">
+                                                        <Run Text="版本: "/>
+                                                        <Run Text="{Binding Version}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding TimeAgo, StringFormat='🕐 {0}'}"
+                                                               Classes="Caption"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- 异常状态分组 -->
+                        <StackPanel IsVisible="{Binding AnomalyCount, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,8,0,0">
+                            <TextBlock Text="{Binding AnomalyCount, StringFormat='🔴 异常 ({0})'}"
+                                       Classes="Caption"
+                                       Foreground="#F44336"
+                                       Margin="0,8,0,8"/>
+                            
+                            <ItemsControl Name="AnomalyStrategiesControl" ItemsSource="{Binding AnomalyStrategies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:StrategyInfo">
+                                        <Border Classes="StrategyCard"
+                                                Classes.Selected="{Binding IsSelected}"
+                                                PointerPressed="OnStrategyCardClick"
+                                                DoubleTapped="OnStrategyCardDoubleClick"
+                                                Tag="{Binding}">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="🔍 查看详情" Click="OnViewStrategyDetails" Tag="{Binding}" FontWeight="Bold"/>
+                                                    <MenuItem Header="🔧 尝试修复" Click="OnEditStrategyFromCard" Tag="{Binding}" IsEnabled="{Binding CanEdit}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="✅ 恢复" Click="OnRecoverStrategy" Tag="{Binding}"/>
+                                                    <MenuItem Header="📦 归档" Click="OnArchiveStrategy" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="🗑️ 删除" Click="OnDeleteStrategyFromCard" Tag="{Binding}" IsEnabled="{Binding CanDelete}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid RowDefinitions="Auto,Auto,Auto">
+                                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding Name}"
+                                                               Classes="Body"
+                                                               FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" 
+                                                            Background="#F44336"
+                                                            CornerRadius="3"
+                                                            Padding="6,2">
+                                                        <TextBlock Text="{Binding StatusDisplay}" 
+                                                                   FontSize="10"
+                                                                   Foreground="White"
+                                                                   FontWeight="SemiBold"/>
+                                                    </Border>
+                                                </Grid>
+                                                
+                                                <!-- 异常原因 -->
+                                                <Border Grid.Row="1" 
+                                                        Background="#2A1F1F"
+                                                        BorderBrush="#F44336"
+                                                        BorderThickness="1,0,0,0"
+                                                        Padding="8,4"
+                                                        Margin="0,0,0,8"
+                                                        IsVisible="{Binding AnomalyReason, Converter={x:Static ObjectConverters.IsNotNull}}">
+                                                    <TextBlock Text="{Binding AnomalyReason}" 
+                                                               FontSize="11"
+                                                               Foreground="#FFB4AB"
+                                                               TextWrapping="Wrap"/>
+                                                </Border>
+                                                
+                                                <StackPanel Grid.Row="2" Spacing="2">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Text2Brush}">
+                                                        <Run Text="版本: "/>
+                                                        <Run Text="{Binding Version}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding StatusChangedAt, StringFormat='🕐 异常检测: {0}'}"
+                                                               Classes="Caption"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                        <!-- 已归档状态分组 -->
+                        <StackPanel IsVisible="{Binding ArchivedCount, Converter={x:Static ObjectConverters.IsNotNull}}" Margin="0,8,0,0">
+                            <TextBlock Text="{Binding ArchivedCount, StringFormat='📦 已归档 ({0})'}"
+                                       Classes="Caption"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       Margin="0,8,0,8"/>
+                            
+                            <ItemsControl Name="ArchivedStrategiesControl" ItemsSource="{Binding ArchivedStrategies}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="models:StrategyInfo">
+                                        <Border Classes="StrategyCard"
+                                                Classes.Selected="{Binding IsSelected}"
+                                                PointerPressed="OnStrategyCardClick"
+                                                DoubleTapped="OnStrategyCardDoubleClick"
+                                                Tag="{Binding}">
+                                            <Border.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="📝 编辑" Click="OnEditStrategyFromCard" Tag="{Binding}" FontWeight="Bold"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="📊 激活" Click="OnActivateStrategy" Tag="{Binding}" IsEnabled="{Binding CanActivate}"/>
+                                                    <MenuItem Header="📤 共享" Click="OnShareStrategy" Tag="{Binding}" IsEnabled="{Binding CanShare}"/>
+                                                    <MenuItem Header="🔒 取消共享" Click="OnUnshareStrategy" Tag="{Binding}" IsEnabled="{Binding CanUnshare}"/>
+                                                    <MenuItem Header="⚠️ 废弃" Click="OnDeprecateStrategy" Tag="{Binding}"/>
+                                                    <MenuItem Header="📦 归档" Click="OnArchiveStrategy" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="✏️ 重命名" Click="OnRenameStrategy" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="📋 编辑信息" Click="OnEditStrategyInfo" Tag="{Binding}" IsEnabled="{Binding CanRename}"/>
+                                                    <MenuItem Header="🗑️ 删除" Click="OnDeleteStrategyFromCard" Tag="{Binding}"/>
+                                                    <Separator/>
+                                                    <MenuItem Header="🔗 分享" Click="OnShareStrategyFromCard" Tag="{Binding}"/>
+                                                </ContextMenu>
+                                            </Border.ContextMenu>
+                                            <Grid RowDefinitions="Auto,Auto">
+                                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                                                    <TextBlock Grid.Column="0" 
+                                                               Text="{Binding DisplayName}"
+                                                               Classes="Body"
+                                                               FontWeight="SemiBold"/>
+                                                    <Border Grid.Column="1" Classes="StatusBadge Draft">
+                                                        <TextBlock Text="{Binding StatusDisplay}" 
+                                                                   FontSize="10"
+                                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                                    </Border>
+                                                </Grid>
+                                                <StackPanel Grid.Row="1" Spacing="2">
+                                                    <TextBlock FontSize="11" Foreground="{DynamicResource Text2Brush}">
+                                                        <Run Text="版本: "/>
+                                                        <Run Text="{Binding Version}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding TimeAgo, StringFormat='🕐 {0}'}"
+                                                               Classes="Caption"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+                
+            </Grid>
+        </Border>
+
+        <!-- ==================== 第二列：代码编辑器 ==================== -->
+        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto">
+            
+            <!-- 第一行：上下文工具栏（紧贴上边框，宽度100%） -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    Height="52"
+                    Padding="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <!-- 新建图标 -->
+                    <Button ToolTip.Tip="新建策略" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnNewStrategy">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconNew}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+
+                    <!-- 从模板新建策略（带二级菜单） -->
+                    <Button ToolTip.Tip="从模板新建策略" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            x:Name="NewFromTemplateButton"
+                            Click="OnNewFromTemplateButtonClick">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconNewStrategyFromTemplate}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+
+                    <!-- 插入代码片段（带菜单） -->
+                    <Button ToolTip.Tip="插入代码片段" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            x:Name="InsertSnippetButton"
+                            Click="OnInsertSnippetButtonClick">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconCode}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+
+                    <!-- 保存图标 -->
+                    <Button ToolTip.Tip="保存 (Ctrl+S)" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnSaveStrategy">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconSave}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+
+                    <Separator Width="1" Height="20" Background="{DynamicResource BorderBrush}" Margin="4,0"/>
+
+                    <!-- 撤销图标 -->
+                    <Button ToolTip.Tip="撤销 (Ctrl+Z)" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnUndo">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconUndo}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+                    
+                    <!-- 重做图标 -->
+                    <Button ToolTip.Tip="重做 (Ctrl+Y)" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnRedo">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconRedo}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+                    
+                    <!-- 格式化图标 -->
+                    <Button ToolTip.Tip="格式化代码 (Shift+Alt+F)" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnFormatCode">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconFormat}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+
+                    <Separator Width="1" Height="20" Background="{DynamicResource BorderBrush}" Margin="4,0"/>
+                    <Button ToolTip.Tip="AI助手 (Ctrl+Shift+A)" 
+                            x:Name="AiAssistantButton"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnToggleAiAssistant">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconAi}"
+                                  Fill="{DynamicResource Text1Brush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+                    <Separator Width="1" Height="20" Background="{DynamicResource BorderBrush}" Margin="4,0"/>
+                    
+                    <!-- 插入代码片段图标 -->
+                    <Button ToolTip.Tip="插入代码片段 (Ctrl+Space)" 
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Padding="8"
+                            Cursor="Hand"
+                            Click="OnInsertSnippet">
+                        <Viewbox Width="18" Height="18">
+                            <Path Data="{StaticResource IconCode}"
+                                  Fill="{DynamicResource PrimaryBrush}"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                    </Button>
+                </StackPanel>
+            </Border>
+            
+            <!-- 第二行：Tab选项卡 + 编辑器内容（Margin=8px） -->
+            <TabControl Grid.Row="1"
+                        x:Name="EditorTabControl"
+                        Classes="MainTabs"
+                        Margin="8"
+                        Padding="0"
+                        BorderThickness="0"
+                        SelectionChanged="OnTabSelectionChanged">
+                
+                <!-- 空状态提示 - 当没有任何Tab时显示 -->
+                <TabControl.Styles>
+                    <Style Selector="TabControl:empty">
+                        <Setter Property="Template">
+                            <ControlTemplate>
+                                <Grid>
+                                    <Border Background="{DynamicResource Background1Brush}">
+                                        <StackPanel HorizontalAlignment="Center" 
+                                                   VerticalAlignment="Center" 
+                                                   Spacing="16"
+                                                   MaxWidth="400">
+                                            <!-- 图标 -->
+                                            <Viewbox Width="80" Height="80" Opacity="0.3">
+                                                <Path Data="{StaticResource IconNew}"
+                                                      Fill="{DynamicResource Text2Brush}"
+                                                      Stretch="Uniform"/>
+                                            </Viewbox>
+                                            
+                                            <!-- 标题 -->
+                                            <TextBlock Text="开始创建您的第一个策略"
+                                                      FontSize="18"
+                                                      FontWeight="SemiBold"
+                                                      Foreground="{DynamicResource Text1Brush}"
+                                                      HorizontalAlignment="Center"/>
+                                            
+                                            <!-- 描述 -->
+                                            <TextBlock TextWrapping="Wrap"
+                                                      TextAlignment="Center"
+                                                      Foreground="{DynamicResource Text2Brush}"
+                                                      LineHeight="22">
+                                                <Run Text="点击左上角的 "/>
+                                                <Run Text="新建" FontWeight="Bold" Foreground="{DynamicResource PrimaryBrush}"/>
+                                                <Run Text=" 按钮创建您的第一个策略"/>
+                                                <LineBreak/>
+                                                <Run Text="使用 Prophet DSL 定义您的交易逻辑"/>
+                                            </TextBlock>
+                                            
+                                            <!-- 提示 -->
+                                            <Border Background="{DynamicResource Background2Brush}"
+                                                   BorderBrush="{DynamicResource BorderBrush}"
+                                                   BorderThickness="1"
+                                                   CornerRadius="4"
+                                                   Padding="12">
+                                                <StackPanel Spacing="8">
+                                                    <TextBlock Text="💡 快速开始" 
+                                                              FontWeight="SemiBold"
+                                                              Foreground="{DynamicResource Text1Brush}"/>
+                                                    <TextBlock TextWrapping="Wrap" 
+                                                              FontSize="12"
+                                                              Foreground="{DynamicResource Text2Brush}"
+                                                              LineHeight="18">
+                                                        <Run Text="• 点击"/>
+                                                        <Run Text=" 新建 " FontWeight="Bold"/>
+                                                        <Run Text="创建策略"/>
+                                                        <LineBreak/>
+                                                        <Run Text="• 填写策略名称和交易对"/>
+                                                        <LineBreak/>
+                                                        <Run Text="• 编写DSL代码"/>
+                                                        <LineBreak/>
+                                                        <Run Text="• 点击"/>
+                                                        <Run Text=" 保存 " FontWeight="Bold"/>
+                                                        <Run Text="完成"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter>
+                    </Style>
+                </TabControl.Styles>
+            </TabControl>
+            
+            <!-- 第三行：编辑器状态栏（紧贴下边框，宽度100%） -->
+            <Border Grid.Row="2"
+                    x:Name="GlobalStatusBar"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    Margin="0"
+                    Height="24">
+                <Grid ColumnDefinitions="Auto,*,Auto" Margin="8,0">
+                    <!-- 左侧：策略信息 -->
+                    <TextBlock Grid.Column="0"
+                               x:Name="StatusBarLeftText"
+                               Text="就绪" 
+                               FontSize="11" 
+                               Foreground="{DynamicResource Text2Brush}"
+                               VerticalAlignment="Center"/>
+                    
+                    <!-- 右侧：语言信息 -->
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal"
+                                Spacing="10"
+                                VerticalAlignment="Center">
+                        <Button x:Name="DiagnosticsButton"
+                                ToolTip.Tip="打开诊断面板"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="0"
+                                Cursor="Hand"
+                                Click="OnShowDiagnostics">
+                            <TextBlock x:Name="DiagnosticsButtonText"
+                                       Text="诊断"
+                                       FontSize="11"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       VerticalAlignment="Center"/>
+                        </Button>
+                        
+                        <TextBlock x:Name="StatusBarRightText"
+                                   Text="Prophet DSL" 
+                                   FontSize="11" 
+                                   Foreground="{DynamicResource Text2Brush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>
+

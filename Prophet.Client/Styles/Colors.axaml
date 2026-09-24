@@ -1,0 +1,90 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- ==================== 币安风格暗色主题 ==================== -->
+    <Color x:Key="DarkBackground1">#0B0E11</Color>
+    <Color x:Key="DarkBackground2">#1E2329</Color>
+    <Color x:Key="DarkBackground3">#2B3139</Color>
+    <Color x:Key="DarkBorder">#2B3139</Color>
+    <Color x:Key="DarkInputBorder">#3C3E41</Color>
+    <Color x:Key="DarkInputText">#8B8D91</Color>
+    
+    <Color x:Key="DarkText1">#EAECEF</Color>
+    <Color x:Key="DarkText2">#848E9C</Color>
+    <Color x:Key="DarkTextDisabled">#474D57</Color>
+    
+    <Color x:Key="DarkPrimary">#F0B90B</Color>
+    <Color x:Key="DarkSuccess">#0ECB81</Color>
+    <Color x:Key="DarkDanger">#F6465D</Color>
+    <Color x:Key="DarkWarning">#F0B90B</Color>
+    
+    <!-- 涨跌颜色 -->
+    <Color x:Key="DarkUp">#0ECB81</Color>
+    <Color x:Key="DarkDown">#F6465D</Color>
+    
+    <!-- ==================== 亮色主题颜色 ==================== -->
+    <Color x:Key="LightBackground1">#FFFFFF</Color>
+    <Color x:Key="LightBackground2">#F3F3F3</Color>
+    <Color x:Key="LightBackground3">#ECECEC</Color>
+    <Color x:Key="LightBorder">#CCCCCC</Color>
+    
+    <Color x:Key="LightText1">#1E1E1E</Color>
+    <Color x:Key="LightText2">#616161</Color>
+    <Color x:Key="LightTextDisabled">#A0A0A0</Color>
+    
+    <Color x:Key="LightPrimary">#0066CC</Color>
+    <Color x:Key="LightSuccess">#00875A</Color>
+    <Color x:Key="LightDanger">#DE350B</Color>
+    <Color x:Key="LightWarning">#FF991F</Color>
+    
+    <!-- 涨跌颜色（默认西方习惯：绿涨红跌） -->
+    <Color x:Key="LightUp">#00875A</Color>
+    <Color x:Key="LightDown">#DE350B</Color>
+    
+    <!-- ==================== 语义化SolidColorBrush ==================== -->
+    <!-- 背景 -->
+    <SolidColorBrush x:Key="Background1Brush" Color="{DynamicResource DarkBackground1}" />
+    <SolidColorBrush x:Key="Background2Brush" Color="{DynamicResource DarkBackground2}" />
+    <SolidColorBrush x:Key="Background3Brush" Color="{DynamicResource DarkBackground3}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource DarkBorder}" />
+    <SolidColorBrush x:Key="InputBorderBrush" Color="{DynamicResource DarkInputBorder}" />
+    <SolidColorBrush x:Key="InputTextBrush" Color="{DynamicResource DarkInputText}" />
+    
+    <!-- 文字 -->
+    <SolidColorBrush x:Key="Text1Brush" Color="{DynamicResource DarkText1}" />
+    <SolidColorBrush x:Key="Text2Brush" Color="{DynamicResource DarkText2}" />
+    <SolidColorBrush x:Key="TextDisabledBrush" Color="{DynamicResource DarkTextDisabled}" />
+    
+    <!-- 强调色 -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource DarkPrimary}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{DynamicResource DarkSuccess}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DarkDanger}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource DarkWarning}" />
+    
+    <!-- 涨跌 -->
+    <SolidColorBrush x:Key="UpBrush" Color="{DynamicResource DarkUp}" />
+    <SolidColorBrush x:Key="DownBrush" Color="{DynamicResource DarkDown}" />
+    
+    <!-- ==================== 间距常量 ==================== -->
+    <x:Double x:Key="Space4">4</x:Double>
+    <x:Double x:Key="Space8">8</x:Double>
+    <x:Double x:Key="Space12">12</x:Double>
+    <x:Double x:Key="Space16">16</x:Double>
+    <x:Double x:Key="Space24">24</x:Double>
+    <x:Double x:Key="Space32">32</x:Double>
+    
+    <!-- ==================== 圆角常量 ==================== -->
+    <CornerRadius x:Key="CornerRadius2">2</CornerRadius>
+    <CornerRadius x:Key="CornerRadius4">4</CornerRadius>
+    <CornerRadius x:Key="CornerRadius8">8</CornerRadius>
+    
+    <!-- ==================== 字号常量 ==================== -->
+    <x:Double x:Key="FontSize11">11</x:Double>
+    <x:Double x:Key="FontSize12">12</x:Double>
+    <x:Double x:Key="FontSize13">13</x:Double>
+    <x:Double x:Key="FontSize14">14</x:Double>
+    <x:Double x:Key="FontSize16">16</x:Double>
+    <x:Double x:Key="FontSize18">18</x:Double>
+    
+</ResourceDictionary>
+

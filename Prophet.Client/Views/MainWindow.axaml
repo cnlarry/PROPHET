@@ -1,0 +1,715 @@
+<!--
+════════════════════════════════════════════════════════════════════════════════
+    Prophet 交易平台 - 主窗口
+════════════════════════════════════════════════════════════════════════════════
+
+    文件说明：
+    - 主窗口 UI 定义文件
+    - 采用三行布局：标题栏、内容区、状态栏
+    - 内容区分为：左侧导航栏(80px)、主工作区、右侧上下文菜单(48px)、副窗口(320px)
+    
+    窗口配置：
+    - WindowState="Maximized"          → 启动时最大化
+    - CanResize="false"                → 禁止调整大小（同时禁用最大化按钮）
+    - ExtendClientAreaTitleBarHeightHint="38" → 自定义标题栏高度38px
+    
+    样式主题：
+    - 采用币安风格：深色主题，黄色主色调(#F0B90B)
+    - 响应式设计：支持悬停、激活等交互状态
+    
+════════════════════════════════════════════════════════════════════════════════
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Prophet.Client.ViewModels"
+        xmlns:views="using:Prophet.Client.Views"
+        xmlns:pages="using:Prophet.Client.Views.Pages"
+        xmlns:contextMenus="using:Prophet.Client.Views.ContextMenus"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:animations="using:Avalonia.Animation"
+        xmlns:easings="using:Avalonia.Animation.Easings"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="900"
+        x:Class="Prophet.Client.Views.MainWindow"
+             x:DataType="vm:MainWindowViewModel"
+             Title="Prophet Trading Platform"
+             Icon="{x:Null}"
+             WindowState="Maximized"
+             CanResize="false"
+             Background="{DynamicResource Background1Brush}"
+             ExtendClientAreaToDecorationsHint="True"
+             ExtendClientAreaTitleBarHeightHint="38">
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         窗口资源：定义可重用的控件模板
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Window.Resources>
+        <!-- VSCode 风格的 Tab 项模板：带底部高亮条 -->
+        <ControlTemplate x:Key="VsCodeTabItemTemplate" TargetType="TabItem">
+            <Grid>
+                <!-- Tab 背景 -->
+                <Border x:Name="PART_TabBackground"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="8,8,0,0"
+                        Padding="{TemplateBinding Padding}">
+                    <ContentPresenter Content="{TemplateBinding Header}"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Border>
+                <!-- 选中时显示的底部高亮条（2px 币安黄） -->
+                <Border x:Name="AccentBar"
+                        Height="2"
+                        CornerRadius="0"
+                        Background="{DynamicResource PrimaryBrush}"
+                        VerticalAlignment="Bottom"
+                        Margin="12,0,12,-1"
+                        Opacity="0"/>
+            </Grid>
+        </ControlTemplate>
+    </Window.Resources>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         窗口样式：定义各类控件的外观和交互效果
+    ══════════════════════════════════════════════════════════════════════ -->
+    <Window.Styles>
+        <!-- ────────────────────────────────────────────────────────────
+             1. 窗口基础样式
+        ──────────────────────────────────────────────────────────── -->
+        <Style Selector="Window">
+            <Setter Property="Background" Value="{DynamicResource Background1Brush}" />
+        </Style>
+        
+        <!-- ────────────────────────────────────────────────────────────
+             2. 自定义标题栏按钮样式（语言、主题、通知、钱包、设置）
+             - 宽度: 32px（与原生窗口按钮一致）
+             - 高度: 37px（填充整个标题栏）
+             - 悬停效果: 背景变灰
+        ──────────────────────────────────────────────────────────── -->
+        <Style Selector="Border.TitleBarButton">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        
+        <Style Selector="Border.TitleBarButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Button.WindowButton">
+            <Setter Property="Width" Value="36" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+            <Setter Property="FontSize" Value="14" />
+        </Style>
+
+        <Style Selector="Button.WindowButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Button.WindowButton:pressed">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        </Style>
+
+        <Style Selector="Button.WindowButton.Close">
+            <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+        </Style>
+
+        <Style Selector="Button.WindowButton.Close:pointerover">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style Selector="Button.WindowButton.Close:pressed">
+            <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+            <Setter Property="Opacity" Value="0.85" />
+        </Style>
+
+        <!-- ────────────────────────────────────────────────────────────
+             3. Tab 控件样式（主工作区的标签页）
+             - 采用 VSCode 风格设计
+             - 选中时底部显示 2px 币安黄高亮条
+        ──────────────────────────────────────────────────────────── -->
+        <Style Selector="TabControl.MainTabs">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="TabStripPlacement" Value="Top" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem">
+            <Setter Property="Margin" Value="8,0,0,-2" />
+            <Setter Property="Padding" Value="16,2" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="MinHeight" Value="35" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1,1,1,0" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Template" Value="{StaticResource VsCodeTabItemTemplate}" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderThickness" Value="1,1,1,0" />
+            <Setter Property="Margin" Value="8,0,0,-2" />
+            <Setter Property="Padding" Value="16,2" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Height" Value="35" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem:selected">
+            <Setter Property="Background" Value="{DynamicResource Background1Brush}" />
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1,1,1,0" />
+            <Setter Property="Margin" Value="8,0,0,-2" />
+            <Setter Property="Padding" Value="16,2" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Height" Value="35" />
+        </Style>
+
+        <Style Selector="TabControl.MainTabs > TabItem:selected /template/ Border#AccentBar">
+            <Setter Property="Opacity" Value="1" />
+        </Style>
+
+        <!-- ────────────────────────────────────────────────────────────
+             4. 左侧主菜单项样式（首页、行情、交易、策略等）
+             - 宽度: 80px
+             - 高度: 68px
+             - 边框: 3px（选中时显示币安黄）
+             - 布局: 图标(24×24) + 文字(10px)，垂直居中
+        ──────────────────────────────────────────────────────────── -->
+        <!-- 主菜单项样式 -->
+        <Style Selector="Border.MenuItem">
+            <Setter Property="Height" Value="68" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="3,0,0,0" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Transitions">
+                <Transitions />
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.MenuItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Border.MenuItem.Selected">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+        
+        <!-- 主菜单项内的Path默认颜色 -->
+        <Style Selector="Border.MenuItem > StackPanel > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource Text2Brush}" />
+        </Style>
+        
+        <!-- 主菜单项选中时的Path颜色 -->
+        <Style Selector="Border.MenuItem.Selected > StackPanel > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+        
+        <!-- 主菜单项内的TextBlock默认颜色 -->
+        <Style Selector="Border.MenuItem > StackPanel > TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+        </Style>
+        
+        <!-- 主菜单项选中时的TextBlock颜色 -->
+        <Style Selector="Border.MenuItem.Selected > StackPanel > TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+        
+        <!-- ────────────────────────────────────────────────────────────
+             5. 右侧上下文菜单图标样式（配置、日志、性能、通知）
+             - 宽度: 45px（留出3px给左边框）
+             - 高度: 50px
+             - 左边框: 3px（激活时显示币安黄）
+             - 布局: 图标(20×20)，垂直和水平居中
+        ──────────────────────────────────────────────────────────── -->
+        <Style Selector="Border.SideIcon">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Margin" Value="0,0,3,0" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="BorderThickness" Value="3,0,0,0" />
+        </Style>
+
+        <!-- 右侧上下文菜单图标悬停样式 -->
+        <Style Selector="Border.SideIcon:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <!-- 右侧上下文菜单图标激活样式 -->
+        <Style Selector="Border.SideIcon.Active">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+        
+        <!-- 右侧上下文菜单图标内的Path默认颜色 -->
+        <Style Selector="Border.SideIcon > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource Text2Brush}" />
+        </Style>
+        
+        <!-- 右侧上下文菜单图标激活时的Path颜色 -->
+        <Style Selector="Border.SideIcon.Active > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+        
+        <!-- 通知图标的Grid容器内Path颜色 -->
+        <Style Selector="Border.SideIcon > Grid > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource Text2Brush}" />
+        </Style>
+        
+        <Style Selector="Border.SideIcon.Active > Grid > Viewbox > Path">
+            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}" />
+        </Style>
+
+        <!-- 侧边图标的ToolTip样式 - 自动应用到侧边图标 -->
+        <Style Selector="Border.SideIcon /template/ ToolTip">
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="#E0E0E0" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#333333" />
+            <Setter Property="Placement" Value="Left" />
+            <Setter Property="VerticalOffset" Value="0" />
+        </Style>
+        
+        <!-- 为ToolTip的内部Border添加圆角和阴影 -->
+        <Style Selector="Border.SideIcon /template/ ToolTip /template/ Border#PART_ContentPresenter">
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="BoxShadow" Value="0 2 8 0 #40000000" />
+        </Style>
+
+    </Window.Styles>
+
+    <!--主布局，两列布局：左侧导航栏，右侧内容区-->
+    <!-- 注意：第一列设为81px，为1px右边框留出空间 -->
+    <Grid x:Name="RootLayout"
+          ColumnDefinitions="80,*">
+        
+        <!-- 左侧导航栏（80px内容 + 1px右边框） -->
+        <Border Grid.Column="0" 
+                Classes="SideNav" 
+                ClipToBounds="False"
+                Width="80">
+                
+            <Grid RowDefinitions="*,Auto" Margin="0,0,0,0">
+                    
+                <!-- 顶部：可滚动的主菜单项 -->
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" ClipToBounds="False">
+                    <StackPanel Spacing="0" 
+                                Margin="3,0,0,0" 
+                                HorizontalAlignment="Stretch"
+                                ClipToBounds="False">
+                        
+                        <!-- 首页 -->
+                        <Border x:Name="MenuHome" Classes="MenuItem Selected" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconHome}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="首页" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- 行情 -->
+                        <Border x:Name="MenuMarket" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconMarket}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="行情" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- 实盘 -->
+                        <Border x:Name="MenuTrade" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconTrade}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="实盘" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- 策略 -->
+                        <Border x:Name="MenuStrategy" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconStrategy}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="策略" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Ai -->
+                        <Border x:Name="MenuAi" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconAi}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="Ai" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- 回测 -->
+                        <Border x:Name="MenuBacktest" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconBacktest}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="回测" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- 市场 -->
+                        <!-- 
+                        <Border x:Name="MenuMarketplace" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconShop}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="市场" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        -->
+                        
+                        <!-- 数据
+                        <Border x:Name="MenuData" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                    <Path Data="{StaticResource IconData}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="数据" FontSize="10" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
+                        -->
+                        
+                    </StackPanel>
+                </ScrollViewer>
+                
+                <!-- 底部：固定的设置菜单项 -->
+                <StackPanel Grid.Row="1" 
+                            Spacing="0" 
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Stretch">
+                    
+                    <!-- 分隔线 -->
+                    <Border Height="1" 
+                            Background="{DynamicResource BorderBrush}"
+                            Margin="0"/>
+                    
+                    <!-- 帮助 -->
+                    <Border Classes="MenuItem">
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                <Path Data="{StaticResource IconHelp}"
+                                        Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock Text="帮助" 
+                                        FontSize="10"
+                                        HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- 设置 -->
+                    <Border x:Name="MenuSettings" Classes="MenuItem" PointerPressed="MenuItem_OnPointerPressed">
+                        <StackPanel Spacing="4" VerticalAlignment="Center">
+                            <Viewbox Width="24" Height="24" HorizontalAlignment="Center">
+                                <Path Data="{StaticResource IconSettings}"
+                                        Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock Text="设置" 
+                                        FontSize="10"
+                                        HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    
+                </StackPanel>
+
+            </Grid>
+        </Border>
+
+        <!-- 右侧内容区 -->
+        <Border Grid.Column="1" Classes="MainContent">
+
+            <!-- 三行布局：第一行标题栏，第二行内容区，第三行状态栏 -->
+            <Grid RowDefinitions="Auto,*,Auto">
+
+                <!-- 第一行标题栏 -->
+                <Border Grid.Row="0" 
+                        Classes="TopBar"
+                        Height="37"
+                        Padding="12,0,150,0"
+                        IsHitTestVisible="True">
+                    
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                        IsHitTestVisible="True">
+                        <!-- 左侧：Logo 和标题 -->
+                        <Grid Grid.Column="0">
+                            <!-- 左侧：Logo 和标题 -->
+                        </Grid>
+                        
+                        <!-- 中间：预留区域（可用于搜索框、面包屑导航等） -->
+                        <Grid Grid.Column="1" />
+                        
+                        <!-- 右侧：工具图标栏（语言、主题、通知、钱包、设置） -->
+                        <StackPanel Grid.Column="2" 
+                                    Orientation="Horizontal" 
+                                    Spacing="0"
+                                    VerticalAlignment="Stretch">
+                            
+                            <!-- 语言切换 -->
+                            <Border Classes="TitleBarButton"
+                                    Width="32"
+                                    Padding="0,6,0,0"
+                                    ToolTip.Tip="语言">
+                                <Viewbox Width="15" Height="15" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                    <Path Data="{StaticResource IconLanguage}"
+                                        Fill="{DynamicResource Text2Brush}"
+                                        Stretch="Uniform"/>
+                                </Viewbox>
+                            </Border>
+                            
+                            <!-- 主题切换（深色/浅色） -->
+                            <Border Classes="TitleBarButton"
+                                    Width="32"
+                                    Padding="0,6,0,0"
+                                    ToolTip.Tip="切换主题">
+                                <Viewbox Width="15" Height="15" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                    <Path Data="{StaticResource DaytimeMode}"
+                                        Fill="{DynamicResource Text2Brush}"
+                                        Stretch="Uniform"/>
+                                </Viewbox>
+                            </Border>
+                            
+                            <!-- 通知 -->
+                            <Border Classes="TitleBarButton"
+                                    Width="32"
+                                    Padding="0,6,0,0"
+                                    ToolTip.Tip="通知">
+                                    <Viewbox Width="15" Height="15" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                    <Path Data="{StaticResource IconNotification}"
+                                        Fill="{DynamicResource Text2Brush}"
+                                        Stretch="Uniform" />
+                                </Viewbox>
+                            </Border>
+                            
+                            <!-- 钱包信息 -->
+                            <Border Classes="TitleBarButton"
+                                    Padding="8,6,8,0"
+                                    ToolTip.Tip="钱包地址">
+                                <StackPanel Orientation="Horizontal" 
+                                            Spacing="4"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="₿"
+                                            FontSize="11"
+                                            FontWeight="Light"
+                                            Foreground="{DynamicResource Text2Brush}"
+                                            VerticalAlignment="Center"/>
+                                    <TextBlock Text="0x1234...5678"
+                                            FontSize="10"
+                                            Foreground="{DynamicResource Text2Brush}"
+                                            VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- 设置 -->
+                            <Border Classes="TitleBarButton"
+                                    Width="32"
+                                    Padding="0,6,0,0"
+                                    ToolTip.Tip="设置">
+                                <Viewbox Width="15" Height="15" 
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center">
+                                    <Path Data="{StaticResource IconSettings}"
+                                        Fill="{DynamicResource Text2Brush}"
+                                        Stretch="Uniform"/>
+                                </Viewbox>
+                            </Border>
+                            
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 第二行内容区 -->
+                <Border Grid.Row="1" Classes="MainContent">
+
+                    <!-- 内容区，三列布局：左侧导航栏，信息面板（默认隐藏），右侧上下文菜单 -->
+                    <Grid ColumnDefinitions="*,Auto,52">
+
+                        <!-- 左侧内容区 -->
+                        <Border Grid.Column="0" Classes="MainContent">
+                            <Grid>
+                                <!-- 视图1：首页仪表盘（已提取为独立组件）-->
+                                <Grid x:Name="ViewHome" IsVisible="True">
+                                    <pages:HomePageView/>
+                                </Grid>
+                                
+                                <!-- 视图2：策略管理（已使用独立组件）-->
+                                <Grid x:Name="ViewStrategy" IsVisible="False">
+                                    <views:StrategyView/>
+                                </Grid>
+                                
+                                <!-- 视图3：行情数据 -->
+                                <Grid x:Name="ViewMarket" IsVisible="False">
+                                    <pages:MarketView/>
+                                </Grid>
+                                
+                                <!-- 视图4：实盘交易 -->
+                                <Grid x:Name="ViewTrade" IsVisible="False">
+                                    <pages:LiveTradingView/>
+                                </Grid>
+                                
+                                <!-- 视图5：策略回测 -->
+                                <Grid x:Name="ViewBacktest" IsVisible="False">
+                                    <pages:BacktestView/>
+                                </Grid>
+                                
+                                <!-- 视图5-1：回测任务详情 -->
+                                <Grid x:Name="ViewBacktestTask" IsVisible="False">
+                                    <pages:BacktestTaskView/>
+                                </Grid>
+                                
+                                <!-- 视图6：策略市场 -->
+                                <Grid x:Name="ViewMarketplace" IsVisible="False">
+                                    <Border Background="{DynamicResource Background1Brush}">
+                                        <TextBlock Text="市场视图 - 开发中" 
+                                                Classes="Title2"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                                
+                                <!-- 视图7：数据分析 -->
+                                <Grid x:Name="ViewData" IsVisible="False">
+                                    <Border Background="{DynamicResource Background1Brush}">
+                                        <TextBlock Text="数据视图 - 开发中" 
+                                                Classes="Title2"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <!-- 信息面板：默认隐藏 -->
+                        <Border Grid.Column="1"
+                                x:Name="InfoPanel"
+                                Background="{DynamicResource Background2Brush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1,0,0,0"
+                                Width="360"
+                                IsVisible="False">
+                            <Grid RowDefinitions="50,*">
+                                <!-- 面板标题栏 -->
+                                <Border Grid.Row="0"
+                                        Padding="10,2,10,0"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="0,0,0,1">
+                                    <!-- TextBlock 带 3px 橙黄色底部边框 -->
+                                    <Border BorderBrush="{DynamicResource PrimaryBrush}"
+                                            BorderThickness="0,0,0,3"
+                                            Padding="6,15,6,12"
+                                            HorizontalAlignment="Left">
+                                        <TextBlock x:Name="SidePanelTitle"
+                                                Text="配置"
+                                                Classes="Title3"/>
+                                    </Border>
+                                </Border>
+                                
+                                <!-- 面板内容 -->
+                                <ContentControl x:Name="SidePanelContent" Grid.Row="1"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- 右侧上下文菜单 -->
+                        <Border Grid.Column="2"
+                                Background="{DynamicResource Background2Brush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="1,0,0,0">
+                            <Grid>
+                                <!-- 首页上下文菜单 -->
+                                <contextMenus:HomeContextMenu x:Name="HomeContextMenuControl" IsVisible="True"/>
+                                
+                                <!-- 策略页面上下文菜单 -->
+                                <contextMenus:StrategyContextMenu x:Name="StrategyContextMenuControl" IsVisible="False"/>
+                                
+                                <!-- 实盘交易上下文菜单 -->
+                                <contextMenus:LiveTradingContextMenu x:Name="LiveTradingContextMenuControl" IsVisible="False"/>
+                                
+                                <!-- 其他页面的上下文菜单可以继续添加 -->
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+                
+                <!-- 第三行状态栏 -->
+                <Border Grid.Row="2" Classes="StatusBar">
+                
+                    <!-- 状态栏，三列布局：左侧连接状态，中间交易状态，右侧版本信息 -->
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                        VerticalAlignment="Center">
+                        
+                        <!-- 左侧：连接状态 -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                            <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                <Path Data="{StaticResource IconConnectionStatus}"
+                                    Fill="{DynamicResource SuccessBrush}"
+                                    Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock Text="已连接" Classes="Caption"/>
+                            <TextBlock Text="|" Classes="Caption"/>
+                            <TextBlock Text="Binance API" Classes="Caption"/>
+                        </StackPanel>
+                        
+                        <!-- 中间：交易状态 -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8" VerticalAlignment="Center">
+                            <Viewbox Width="12" Height="12" VerticalAlignment="Center">
+                                <Path x:Name="TradingStatusIcon"
+                                    Data="{StaticResource IconTradingStatus}"
+                                    Fill="{DynamicResource BorderBrush}"
+                                    Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock x:Name="TradingStatusText" Text="空闲" Classes="Caption" />
+                            <TextBlock Text="|" Classes="Caption"/>
+                            <TextBlock x:Name="TradingStatusDescription" Text="未在执行实盘" Classes="Caption" />
+                        </StackPanel>
+                        
+                        <!-- 右侧：版本信息 -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                            <TextBlock Text="Prophet v0.1.0-alpha" Classes="Caption"/>
+                            <TextBlock Text="|" Classes="Caption"/>
+                            <TextBlock Text="© 2025 Prophet Trading" Classes="Caption"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+

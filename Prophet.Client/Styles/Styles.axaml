@@ -1,0 +1,281 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 引入颜色资源 -->
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Styles/Colors.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+    
+    <!-- ==================== 卡片样式（币安风格） ==================== -->
+    <Style Selector="Border.Card">
+        <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="20" />
+    </Style>
+    
+    <Style Selector="Border.Card:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+    </Style>
+    
+    <!-- ==================== 标题文本样式（币安风格） ==================== -->
+    <Style Selector="TextBlock.Title1">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+    </Style>
+    
+    <Style Selector="TextBlock.Title2">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize16}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+    </Style>
+    
+    <Style Selector="TextBlock.Title3">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize14}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+    </Style>
+    
+    <!-- ==================== 正文文本样式 ==================== -->
+    <Style Selector="TextBlock.Body">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize14}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text1Brush}" />
+    </Style>
+    
+    <Style Selector="TextBlock.BodySecondary">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize14}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+    </Style>
+    
+    <Style Selector="TextBlock.Caption">
+        <Setter Property="FontSize" Value="{DynamicResource FontSize12}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text2Brush}" />
+    </Style>
+    
+    <!-- ==================== 按钮样式增强 ==================== -->
+    <Style Selector="Button.Primary">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="16,8" />
+    </Style>
+    
+    <Style Selector="Button.Success">
+        <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="16,8" />
+    </Style>
+    
+    <Style Selector="Button.Danger">
+        <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="16,8" />
+    </Style>
+    
+    <!-- ==================== 顶部栏样式 ==================== -->
+    <Style Selector="Border.TopBar">
+        <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="20,12,8,12" />
+    </Style>
+    
+    <!-- ==================== 侧边栏样式 ==================== -->
+    <Style Selector="Border.SideNav">
+        <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+    </Style>
+    
+    <!-- ==================== 主内容区样式 ==================== -->
+    <Style Selector="Border.MainContent">
+        <Setter Property="Background" Value="{DynamicResource Background1Brush}" />
+    </Style>
+    
+    <!-- ==================== 状态栏样式 ==================== -->
+    <Style Selector="Border.StatusBar">
+        <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="0,1,0,0" />
+        <Setter Property="Padding" Value="20,0" />     <!-- 左右内边距20px，上下0让内容自然居中 -->
+        <Setter Property="Height" Value="32" />        <!-- 固定高度32px -->
+    </Style>
+    
+    <!-- ==================== 侧边栏菜单项样式（AiCoin窄菜单风格） ==================== -->
+    <!-- MenuItem 样式已移至 MainWindow.axaml 中定义，避免样式冲突 -->
+    
+    <!-- ==================== 顶部工具栏按钮样式 ==================== -->
+    <Style Selector="Border.ToolButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Border.ToolButton:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+    </Style>
+    
+    <!-- 关闭按钮特殊样式 -->
+    <Style Selector="Border.CloseButton">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Border.CloseButton:pointerover">
+        <Setter Property="Background" Value="#F6465D" />
+    </Style>
+    
+    <Style Selector="Border.CloseButton:pointerover TextBlock">
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+    
+    <!-- 钱包信息区域样式 -->
+    <Style Selector="Border.WalletInfo">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.15"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Border.WalletInfo:pointerover">
+        <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+    </Style>
+    
+    <!-- ==================== 输入控件样式（统一边框颜色、文字颜色和字号） ==================== -->
+    <!-- NumericUpDown -->
+    <Style Selector="NumericUpDown">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+    
+    <Style Selector="NumericUpDown /template/ Border#BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="NumericUpDown:pointerover /template/ Border#BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="NumericUpDown:focus /template/ Border#BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="NumericUpDown /template/ TextBox#PART_TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+    </Style>
+    
+    <!-- ComboBox -->
+    <Style Selector="ComboBox">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+    
+    <Style Selector="ComboBox /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="ComboBox:pointerover /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="ComboBox:focus /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="ComboBox /template/ ContentControl#ContentPresenter">
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+    </Style>
+    
+    <!-- DatePicker -->
+    <Style Selector="DatePicker">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+    
+    <Style Selector="DatePicker /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="DatePicker:pointerover /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="DatePicker:focus /template/ Border#Background">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="DatePicker /template/ Button">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+    </Style>
+    
+    <!-- TextBox -->
+    <Style Selector="TextBox">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+    
+    <Style Selector="TextBox /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+    <!-- 错误文本框样式：焦点状态下保持样式不变 -->
+    <Style Selector="TextBox.error-text-box">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    
+    <Style Selector="TextBox.error-text-box:focus">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    
+    <Style Selector="TextBox.error-text-box:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    
+    <!-- CheckBox -->
+    <Style Selector="CheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource InputTextBrush}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+    
+    <Style Selector="CheckBox /template/ Border#NormalRectangle">
+        <Setter Property="BorderBrush" Value="{DynamicResource InputBorderBrush}" />
+    </Style>
+    
+</Styles>
+

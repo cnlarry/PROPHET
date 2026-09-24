@@ -1,0 +1,405 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="800"
+             x:Class="Prophet.Client.Views.StrategySidePanel">
+
+    <UserControl.Styles>
+        <Style Selector="Border.SidePanelTab">
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+
+        <Style Selector="Border.SidePanelTab:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+        </Style>
+
+        <Style Selector="Border.SidePanelTab.Selected">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,0,2" />
+        </Style>
+
+        <Style Selector="Border.StatusBadge">
+            <Setter Property="Padding" Value="6,2" />
+            <Setter Property="CornerRadius" Value="3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Running">
+            <Setter Property="Background" Value="{DynamicResource SuccessBrush}" />
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Tab内容区域 -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <!-- 配置内容 -->
+                <StackPanel x:Name="ContentConfig" Spacing="16" Margin="16" IsVisible="True">
+                    
+                    <!-- 基本信息 -->
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="基本信息" Classes="Title3"/>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="策略名称" Classes="Caption"/>
+                                <TextBox Text="趋势追踪A"
+                                         Watermark="输入策略名称..."/>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="描述" Classes="Caption"/>
+                                <TextBox Text="基于移动平均线的趋势追踪策略"
+                                         Watermark="输入策略描述..."
+                                         AcceptsReturn="True"
+                                         Height="60"/>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="状态" Classes="Caption"/>
+                                <Border Classes="StatusBadge Running"
+                                        HorizontalAlignment="Left">
+                                    <TextBlock Text="⚫ 运行中" 
+                                               Foreground="White"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 参数配置 -->
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" 
+                                           Text="参数配置" 
+                                           Classes="Title3"/>
+                                <Button Grid.Column="1" 
+                                        Content="重置"
+                                        Classes="Caption"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Cursor="Hand"/>
+                            </Grid>
+                            
+                            <StackPanel Spacing="8">
+                                <TextBlock Text="时间周期" Classes="Caption"/>
+                                <ComboBox SelectedIndex="2"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="1分钟"/>
+                                    <ComboBoxItem Content="5分钟"/>
+                                    <ComboBoxItem Content="15分钟"/>
+                                    <ComboBoxItem Content="1小时"/>
+                                    <ComboBoxItem Content="4小时"/>
+                                    <ComboBoxItem Content="1天"/>
+                                </ComboBox>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="移动平均周期" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="20" 
+                                               Classes="Caption"
+                                               Foreground="{DynamicResource PrimaryBrush}"/>
+                                </Grid>
+                                <Slider Minimum="5" 
+                                        Maximum="200" 
+                                        Value="20"
+                                        TickFrequency="5"/>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="止损比例" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="2.0%" 
+                                               Classes="Caption"
+                                               Foreground="{DynamicResource DangerBrush}"/>
+                                </Grid>
+                                <Slider Minimum="0.5" 
+                                        Maximum="10" 
+                                        Value="2"
+                                        TickFrequency="0.5"/>
+                            </StackPanel>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="止盈比例" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="5.0%" 
+                                               Classes="Caption"
+                                               Foreground="{DynamicResource SuccessBrush}"/>
+                                </Grid>
+                                <Slider Minimum="1" 
+                                        Maximum="20" 
+                                        Value="5"
+                                        TickFrequency="1"/>
+                            </StackPanel>
+                            
+                            <Button Content="应用更改"
+                                    HorizontalAlignment="Stretch"
+                                    Background="{DynamicResource PrimaryBrush}"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Padding="0,8"
+                                    CornerRadius="4"/>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+
+                <!-- 日志内容 -->
+                <StackPanel x:Name="ContentLog" Spacing="16" Margin="16" IsVisible="False">
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" 
+                                           Text="实时日志" 
+                                           Classes="Title3"/>
+                                <StackPanel Grid.Column="1" 
+                                            Orientation="Horizontal" 
+                                            Spacing="8">
+                                    <Button Content="清空"
+                                            Classes="Caption"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="{DynamicResource Text2Brush}"
+                                            Cursor="Hand"/>
+                                    <Button Content="导出"
+                                            Classes="Caption"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Foreground="{DynamicResource PrimaryBrush}"
+                                            Cursor="Hand"/>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <Border Background="{DynamicResource Background3Brush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="8"
+                                    Height="400">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="🟢" Foreground="LimeGreen"/>
+                                            <Run Text=" 11:23:45 "/>
+                                            <Run Text="买入 BTC 0.1 @ $43,256"/>
+                                        </TextBlock>
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="🔵" Foreground="DodgerBlue"/>
+                                            <Run Text=" 11:24:12 "/>
+                                            <Run Text="价格突破20日均线"/>
+                                        </TextBlock>
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="🟡" Foreground="Orange"/>
+                                            <Run Text=" 11:35:28 "/>
+                                            <Run Text="RSI指标: 45.2"/>
+                                        </TextBlock>
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="🔵" Foreground="DodgerBlue"/>
+                                            <Run Text=" 11:42:15 "/>
+                                            <Run Text="持仓盈利: +2.3%"/>
+                                        </TextBlock>
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="🟢" Foreground="LimeGreen"/>
+                                            <Run Text=" 12:01:33 "/>
+                                            <Run Text="触发止盈，卖出 BTC 0.1 @ $45,123"/>
+                                        </TextBlock>
+                                        <TextBlock Classes="Caption">
+                                            <Run Text="✓" Foreground="LimeGreen"/>
+                                            <Run Text=" 12:01:34 "/>
+                                            <Run Text="本次交易收益: +$186.70 (+4.3%)"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- 性能内容 -->
+                <StackPanel x:Name="ContentPerformance" Spacing="16" Margin="16" IsVisible="False">
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="性能指标" Classes="Title3"/>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="总收益" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="+12.5%" 
+                                               Classes="Body"
+                                               FontWeight="Bold"
+                                               Foreground="{DynamicResource SuccessBrush}"/>
+                                </Grid>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="胜率" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="68.5%" 
+                                               Classes="Body"/>
+                                </Grid>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="最大回撤" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="-5.2%" 
+                                               Classes="Body"
+                                               Foreground="{DynamicResource DangerBrush}"/>
+                                </Grid>
+                                
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="夏普比率" 
+                                               Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" 
+                                               Text="1.8" 
+                                               Classes="Body"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="交易统计" Classes="Title3"/>
+                            
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="总交易次数" Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" Text="142" Classes="Body"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="盈利次数" Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" Text="97" Classes="Body" Foreground="{DynamicResource SuccessBrush}"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="亏损次数" Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" Text="45" Classes="Body" Foreground="{DynamicResource DangerBrush}"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0" Text="平均收益" Classes="Caption"/>
+                                    <TextBlock Grid.Column="1" Text="+1.8%" Classes="Body"/>
+                                </Grid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- 通知内容 -->
+                <StackPanel x:Name="ContentNotification" Spacing="16" Margin="16" IsVisible="False">
+                    <Border Classes="Card">
+                        <StackPanel Spacing="12">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <TextBlock Grid.Column="0" Text="通知中心" Classes="Title3"/>
+                                <Button Grid.Column="1" 
+                                        Content="全部已读"
+                                        Classes="Caption"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Foreground="{DynamicResource PrimaryBrush}"
+                                        Cursor="Hand"/>
+                            </Grid>
+                            
+                            <!-- 通知列表 -->
+                            <StackPanel Spacing="8">
+                                <!-- 通知项1 -->
+                                <Border Background="{DynamicResource Background3Brush}"
+                                        BorderBrush="{DynamicResource PrimaryBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0" 
+                                                       Text="策略执行提醒"
+                                                       Classes="Body"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="2分钟前"
+                                                       Classes="Caption"
+                                                       Foreground="{DynamicResource Text2Brush}"/>
+                                        </Grid>
+                                        <TextBlock Text="趋势追踪A策略已触发买入信号，已执行订单。"
+                                                   Classes="Caption"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 通知项2 -->
+                                <Border Background="{DynamicResource Background3Brush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0" 
+                                                       Text="系统通知"
+                                                       Classes="Body"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="15分钟前"
+                                                       Classes="Caption"
+                                                       Foreground="{DynamicResource Text2Brush}"/>
+                                        </Grid>
+                                        <TextBlock Text="您的API密钥将在7天后过期，请及时更新。"
+                                                   Classes="Caption"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- 通知项3 -->
+                                <Border Background="{DynamicResource Background3Brush}"
+                                        BorderBrush="{DynamicResource BorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="4"
+                                        Padding="12">
+                                    <StackPanel Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0" 
+                                                       Text="风险提醒"
+                                                       Classes="Body"
+                                                       FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1" 
+                                                       Text="1小时前"
+                                                       Classes="Caption"
+                                                       Foreground="{DynamicResource Text2Brush}"/>
+                                        </Grid>
+                                        <TextBlock Text="网格交易B策略当前亏损已达止损线附近。"
+                                                   Classes="Caption"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource DangerBrush}"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>
+

@@ -1,0 +1,238 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Prophet DSL Code Snippets",
+    "version": "1.0.0",
+    "snippets": [
+        {
+            "id": "all-block",
+            "prefix": "all",
+            "label": "ALL{} 条件块",
+            "description": "创建 ALL 多条件组合判断块",
+            "category": "信号函数",
+            "body": [
+                "ALL {",
+                "    ${1:$(5m).MACD().trend = BULLISH};",
+                "    ${2:$(5m).RSI().value < 70};",
+                "} = ${3:BUY};"
+            ],
+            "insertTextFormat": "snippet",
+            "documentation": "ALL 函数要求所有条件必须同时满足才会触发信号。适用于严格的入场条件。"
+        },
+        {
+            "id": "any-block",
+            "prefix": "any",
+            "label": "ANY{} 条件块",
+            "description": "创建 ANY 多条件或判断块",
+            "category": "信号函数",
+            "body": [
+                "ANY {",
+                "    ${1:$(5m).MACD().crossover_type = DEATH_CROSS};",
+                "    ${2:$(5m).RSI().overbought = true};",
+                "} = ${3:SELL};"
+            ],
+            "insertTextFormat": "snippet",
+            "documentation": "ANY 函数只要有一个条件满足即会触发信号。适用于多种退出条件。"
+        },
+        {
+            "id": "weighted-block",
+            "prefix": "weighted",
+            "label": "WEIGHTED() 加权评分块",
+            "description": "创建 WEIGHTED 加权评分判断块",
+            "category": "信号函数",
+            "body": [
+                "WEIGHTED(${1:0.7}) {",
+                "    WEIGHT(${2:$(5m).MACD().trend = BULLISH}) = ${3:0.4};",
+                "    WEIGHT(${4:$(5m).RSI().value < 70}) = ${5:0.3};",
+                "    WEIGHT(${6:CURRENT().price > $(5m).EMA().value}) = ${7:0.3};",
+                "} = ${8:BUY};"
+            ],
+            "insertTextFormat": "snippet",
+            "documentation": "WEIGHTED 函数根据权重评分，当总分达到阈值时触发信号。适用于灵活的信号组合。"
+        },
+        {
+            "id": "min-block",
+            "prefix": "min",
+            "label": "MIN() 最小满足条件块",
+            "description": "创建 MIN 最小满足条件判断块",
+            "category": "信号函数",
+            "body": [
+                "MIN(${1:2}) {",
+                "    ${2:$(5m).RSI().oversold};",
+                "    ${3:$(5m).BBANDS().percent_b < 0};",
+                "    ${4:$(5m).CCI().value < -100};",
+                "} = ${5:BUY};"
+            ],
+            "insertTextFormat": "snippet",
+            "documentation": "MIN 函数要求至少 N 个条件满足才会触发信号。适用于多信号确认策略。"
+        },
+        {
+            "id": "indicator-ref",
+            "prefix": "ind",
+            "label": "$.INDICATOR() 指标引用",
+            "description": "快速插入指标引用",
+            "category": "指标",
+            "body": [
+                "$.${1:MACD}(${2:5m}).${3:trend} = ${4:BULLISH}"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "kline-ref",
+            "prefix": "kline",
+            "label": "KLINE() 数据函数",
+            "description": "快速插入K线数据引用",
+            "category": "数据函数",
+            "body": [
+                "KLINE(${1:5m}).${2:close}(${3:0}) ${4:>} ${5:value}"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "buy-signal",
+            "prefix": "buy",
+            "label": "BUY 买入信号",
+            "description": "创建买入信号（带止盈止损）",
+            "category": "信号",
+            "body": [
+                "ALL {",
+                "    ${1:condition};",
+                "} = BUY(${2:CURRENT().price + $(5m).ATR().value * 2.0}, ${3:CURRENT().price - $(5m).ATR().value * 1.0});"
+            ],
+            "insertTextFormat": "snippet",
+            "documentation": "创建带止盈止损的买入信号。参数1: 止盈价, 参数2: 止损价"
+        },
+        {
+            "id": "sell-signal",
+            "prefix": "sell",
+            "label": "SELL 卖出信号",
+            "description": "创建卖出信号",
+            "category": "信号",
+            "body": [
+                "ALL {",
+                "    ${1:condition};",
+                "} = SELL;"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "comment-header",
+            "prefix": "header",
+            "label": "策略头部注释",
+            "description": "创建策略头部说明注释",
+            "category": "注释",
+            "body": [
+                "// ========================================",
+                "// 策略名称: ${1:策略名称}",
+                "// 策略类型: ${2:趋势追踪/均值回归/动量突破}",
+                "// 适用市场: ${3:震荡/趋势}",
+                "// 时间框架: ${4:5m/15m/1h}",
+                "// 风险等级: ${5:低/中/高}",
+                "// 创建时间: ${6:2025-11-05}",
+                "// ========================================",
+                "",
+                "${0}"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "section-comment",
+            "prefix": "section",
+            "label": "区域注释",
+            "description": "创建区域分隔注释",
+            "category": "注释",
+            "body": [
+                "// ==================== ${1:买入信号} ====================",
+                "${0}"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "macd-golden-cross",
+            "prefix": "macd-golden",
+            "label": "MACD 金叉判断",
+            "description": "MACD 金叉买入模板",
+            "category": "常用模板",
+            "body": [
+                "ALL {",
+                "    $.MACD(${1:5m}).crossover_type = GOLDEN_CROSS;",
+                "    $.MACD(${1:5m}).trend = BULLISH;",
+                "    $.RSI(${1:5m}).value < ${2:70};",
+                "} = BUY;"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "rsi-oversold",
+            "prefix": "rsi-oversold",
+            "label": "RSI 超卖买入",
+            "description": "RSI 超卖区域买入模板",
+            "category": "常用模板",
+            "body": [
+                "ALL {",
+                "    $.RSI(${1:5m}).oversold;",
+                "    $.RSI(${1:5m}).value < ${2:30};",
+                "    KLINE(${1:5m}).close(0) > KLINE(${1:5m}).close(1);",
+                "} = BUY;"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "bbands-breakout",
+            "prefix": "bbands-breakout",
+            "label": "布林带突破",
+            "description": "布林带下轨突破买入模板",
+            "category": "常用模板",
+            "body": [
+                "ALL {",
+                "    $.BBANDS(${1:5m}).percent_b < 0;",
+                "    KLINE(${1:5m}).close(0) < $.BBANDS(${1:5m}).lower;",
+                "    $.RSI(${1:5m}).value < ${2:35};",
+                "} = BUY;"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "time-filter",
+            "prefix": "time-filter",
+            "label": "交易时间过滤",
+            "description": "添加交易时间限制",
+            "category": "常用模板",
+            "body": [
+                "ALL {",
+                "    CURRENT().time.hour >= ${1:9};",
+                "    CURRENT().time.hour <= ${2:16};",
+                "    CURRENT().time.week NOT IN(${3:0, 6});",
+                "    ${0:// 添加其他条件}",
+                "} = ${4:BUY};"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "volume-filter",
+            "prefix": "volume-filter",
+            "label": "成交量过滤",
+            "description": "添加成交量确认",
+            "category": "常用模板",
+            "body": [
+                "KLINE(${1:5m}).volume(0) > AVERAGE(${1:5m}).volume(${2:20}) * ${3:1.5}"
+            ],
+            "insertTextFormat": "snippet"
+        },
+        {
+            "id": "trend-confirmation",
+            "prefix": "trend-confirm",
+            "label": "趋势确认组合",
+            "description": "多周期趋势确认模板",
+            "category": "常用模板",
+            "body": [
+                "ALL {",
+                "    $.MACD(${1:5m}).trend = BULLISH;",
+                "    $.EMA(${1:5m}).trend = BULLISH;",
+                "    $.ADX(${1:5m}).trend = STRONG;",
+                "    KLINE(${1:5m}).close(0) > $.EMA(${2:1h}).value;",
+                "} = BUY;"
+            ],
+            "insertTextFormat": "snippet"
+        }
+    ]
+}

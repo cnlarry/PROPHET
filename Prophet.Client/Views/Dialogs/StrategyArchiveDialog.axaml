@@ -1,0 +1,179 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="520" d:DesignHeight="500"
+             x:Class="Prophet.Client.Views.Dialogs.StrategyArchiveDialog">
+    
+    <UserControl.Styles>
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        
+        <Style Selector="ComboBox:focus">
+            <Setter Property="BorderBrush" Value="#F0B90B"/>
+        </Style>
+        
+        <Style Selector="Button.Danger">
+            <Setter Property="Background" Value="#F44336"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+        
+        <Style Selector="Button.Danger:pointerover">
+            <Setter Property="Background" Value="#FF6659"/>
+        </Style>
+        
+        <Style Selector="Button.Secondary">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+        
+        <Style Selector="Button.Secondary:pointerover">
+            <Setter Property="Background" Value="#3A3A3A"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- 标题 -->
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="⚠️ 归档策略"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#FF9800"/>
+            <TextBlock Name="StrategyNameText"
+                       FontSize="14"
+                       Foreground="#A0A0A0"/>
+        </StackPanel>
+        
+        <!-- 主内容区域 -->
+        <ScrollViewer Grid.Row="1" Margin="0,24,0,0">
+            <StackPanel Spacing="20">
+                <!-- 说明文本 -->
+                <TextBlock TextWrapping="Wrap"
+                           Foreground="#D4D4D4"
+                           FontSize="13">
+                    确认要归档此策略吗？
+                </TextBlock>
+                
+                <!-- 警告信息 -->
+                <Border Background="#3A2A2A"
+                        BorderBrush="#FF9800"
+                        BorderThickness="2,0,0,0"
+                        CornerRadius="4"
+                        Padding="16">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="⚠️ 警告：归档操作不可撤销！"
+                                   Foreground="#FF9800"
+                                   FontSize="13"
+                                   FontWeight="Bold"/>
+                        <TextBlock Text="归档后："
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"
+                                   Margin="0,4,0,0"/>
+                        <TextBlock Text="• 所有运行中的实例将被停止"
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"/>
+                        <TextBlock Text="• 策略代码仅可查看（只读）"
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"/>
+                        <TextBlock Text="• 不可运行或交易"
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"/>
+                        <TextBlock Text="• 其他用户无法再使用"
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 归档原因选择 -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="归档原因（必填）："
+                               Foreground="#D4D4D4"
+                               FontSize="13"
+                               FontWeight="Medium"/>
+                    <ComboBox Name="ReasonComboBox"
+                              SelectedIndex="0"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="策略已过时"/>
+                        <ComboBoxItem Content="发现严重bug"/>
+                        <ComboBoxItem Content="不再需要"/>
+                        <ComboBoxItem Content="其他原因"/>
+                    </ComboBox>
+                </StackPanel>
+                
+                <!-- 运行实例警告 -->
+                <Border Background="#2A1F1F"
+                        BorderBrush="#F44336"
+                        BorderThickness="2,0,0,0"
+                        CornerRadius="4"
+                        Padding="12"
+                        Name="InstanceWarning"
+                        IsVisible="False">
+                    <StackPanel Spacing="6">
+                        <TextBlock Name="InstanceCountText"
+                                   Foreground="#FFB4AB"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="这些实例将被立即停止，无法恢复。"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 最终确认 -->
+                <Border Background="#2D2D2D"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="请仔细考虑："
+                                   Foreground="#FF9800"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="归档后，此策略将永久不可用。如果您只是暂时不需要，建议使用「废弃」功能代替。"
+                                   TextWrapping="Wrap"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12"
+                    Margin="0,24,0,0">
+            <Button Name="CancelButton"
+                    Content="取消"
+                    Width="100"
+                    Classes="Secondary"
+                    Click="OnCancelClick"/>
+            
+            <Button Name="ConfirmButton"
+                    Content="确认归档"
+                    Width="120"
+                    Classes="Danger"
+                    Click="OnConfirmClick"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

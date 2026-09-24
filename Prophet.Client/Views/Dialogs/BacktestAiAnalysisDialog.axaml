@@ -1,0 +1,245 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Prophet.Client.ViewModels"
+        xmlns:converters="using:Prophet.Client.Converters"
+        xmlns:avaloniaEdit="using:AvaloniaEdit"
+        mc:Ignorable="d"
+        x:Class="Prophet.Client.Views.Dialogs.BacktestAiAnalysisDialog"
+        x:DataType="vm:BacktestSessionViewModel"
+        Title="AI 回测分析"
+        Width="980" Height="760"
+        MinWidth="760" MinHeight="620"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource Background1Brush}"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="44">
+
+    <Grid RowDefinitions="Auto,*,Auto" Background="{DynamicResource Background1Brush}">
+        <!-- 顶部标题栏 -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="16,10">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="AI 回测分析"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource Text1Brush}"/>
+                    <TextBlock Text="{Binding SessionTitle}"
+                               FontSize="12"
+                               Foreground="{DynamicResource Text2Brush}"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Width="34"
+                        Height="34"
+                        Padding="0"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Click="OnCloseClicked"
+                        ToolTip.Tip="关闭">
+                    <PathIcon Data="{StaticResource IconClose}"
+                              Width="16" Height="16"
+                              Foreground="{DynamicResource Text1Brush}"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- 主内容（带遮罩层） -->
+        <Grid Grid.Row="1" Margin="16">
+            <Grid RowDefinitions="Auto,Auto,*,Auto,*" RowSpacing="10">
+                <!-- 回测信息概览 -->
+                <Border Grid.Row="0"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12"
+                        IsVisible="{Binding HasResult}">
+                    <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                        <Border Grid.Column="0" Background="{DynamicResource Background1Brush}" CornerRadius="6" Padding="10">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="收益率" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                <TextBlock Text="{Binding Result.TotalReturn, StringFormat='{}{0:P2}'}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="{DynamicResource SuccessBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" Background="{DynamicResource Background1Brush}" CornerRadius="6" Padding="10">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="最大回撤" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                <TextBlock Text="{Binding Result.MaxDrawdown, StringFormat='{}{0:P2}'}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="{DynamicResource DangerBrush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="2" Background="{DynamicResource Background1Brush}" CornerRadius="6" Padding="10">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="夏普比率" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                <TextBlock Text="{Binding Result.SharpeRatio, StringFormat='{}{0:F2}'}"
+                                           FontSize="16" FontWeight="Bold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="3" Background="{DynamicResource Background1Brush}" CornerRadius="6" Padding="10">
+                            <StackPanel Spacing="2">
+                                <TextBlock Text="胜率 / 交易数" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{Binding Result.WinRate, StringFormat='{}{0:P1}'}"
+                                               FontSize="16" FontWeight="Bold"
+                                               Foreground="{DynamicResource Text1Brush}"/>
+                                    <TextBlock Text="{Binding Result.TotalTrades, StringFormat='({0})'}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}"
+                                               VerticalAlignment="Bottom"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- 元信息 -->
+                <Border Grid.Row="1"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <TextBlock Text="{Binding SessionTitle}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource Text2Brush}"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding Result.VersionString, StringFormat='版本: {0}', TargetNullValue='版本: -'}"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource Text2Brush}"/>
+                    </Grid>
+                </Border>
+
+                <!-- 分析结果 -->
+                <Border Grid.Row="2"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="12">
+                    <TextBox Text="{Binding AiAnalysisResult}"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              Watermark='点击下方"开始分析/重新分析"，这里会显示 AI 对回测结果的诊断与改进建议。'
+                             Background="Transparent"
+                             BorderThickness="0"/>
+                </Border>
+
+                <Grid Grid.Row="3" ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <TextBlock Text="优化后的 DSL（AI 建议）"
+                               FontSize="12"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource Text1Brush}"/>
+                    <Button Grid.Column="1"
+                            Height="28"
+                            Padding="10,0"
+                            Click="OnCopyOptimizedCodeClicked"
+                            IsEnabled="{Binding HasAiAnalysis}">
+                        <TextBlock Text="复制DSL"/>
+                    </Button>
+                </Grid>
+
+                <!-- 优化代码（AvaloniaEdit：行号 + 语法高亮） -->
+                <Border Grid.Row="4"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="0">
+                    <avaloniaEdit:TextEditor Name="OptimizedCodeEditor"
+                                             IsReadOnly="True"
+                                             ShowLineNumbers="True"
+                                             FontFamily="Consolas"
+                                             Background="{DynamicResource Background2Brush}"
+                                             Foreground="{DynamicResource Text1Brush}"
+                                             VerticalScrollBarVisibility="Auto"
+                                             HorizontalScrollBarVisibility="Auto"/>
+                </Border>
+            </Grid>
+
+            <!-- 分析中遮罩层 -->
+            <Border IsVisible="{Binding IsAnalyzing}"
+                    Background="#80000000">
+                <Border Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="18"
+                        Width="360"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="AI 正在分析回测结果"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Text1Brush}"/>
+                        <ProgressBar IsIndeterminate="True"
+                                     Height="6"
+                                     CornerRadius="3"/>
+                        <TextBlock Text="请稍候…"
+                                   FontSize="12"
+                                   Foreground="{DynamicResource Text2Brush}"/>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </Grid>
+
+        <!-- 底部操作栏 -->
+        <Border Grid.Row="2"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="16,12">
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto" ColumnSpacing="10">
+                <Button Grid.Column="1"
+                        Classes="Primary"
+                        Height="36"
+                        Padding="16,0"
+                        Click="OnAnalyzeClicked"
+                        IsEnabled="{Binding IsAnalyzing, Converter={x:Static converters:InverseBoolConverter.Instance}}">
+                    <TextBlock Text="开始分析/重新分析"/>
+                </Button>
+
+                <Button Grid.Column="2"
+                        Height="36"
+                        Padding="16,0"
+                        Click="OnCopyAnalysisClicked"
+                        IsEnabled="{Binding HasAiAnalysis}">
+                    <TextBlock Text="复制分析结果"/>
+                </Button>
+
+                <Button Grid.Column="3"
+                        Height="36"
+                        Padding="16,0"
+                        Click="OnCopyOptimizedCodeClicked"
+                        IsEnabled="{Binding HasAiAnalysis}">
+                    <TextBlock Text="复制优化代码"/>
+                </Button>
+
+                <Button Grid.Column="4"
+                        Classes="Primary"
+                        Height="36"
+                        Padding="16,0"
+                        Click="OnSaveAndBacktestClicked"
+                        IsEnabled="{Binding HasAiAnalysis}">
+                    <TextBlock Text="保存新版本并回测"/>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
+
+

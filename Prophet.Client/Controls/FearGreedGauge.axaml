@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Prophet.Client.Controls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+             x:Class="Prophet.Client.Controls.FearGreedGauge">
+    <Grid>
+        <Canvas x:Name="GaugeCanvas" 
+                Width="280" 
+                Height="180"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Margin="0,10,0,0">
+            <!-- 仪表盘背景弧线 -->
+            <Path x:Name="BackgroundArc"
+                  Stroke="{DynamicResource Background3Brush}"
+                  StrokeThickness="12"
+                  StrokeLineCap="Round"
+                  Fill="Transparent"/>
+            
+            <!-- 仪表盘前景弧线（根据值变色） -->
+            <Path x:Name="ForegroundArc"
+                  Stroke="{DynamicResource PrimaryBrush}"
+                  StrokeThickness="12"
+                  StrokeLineCap="Round"
+                  Fill="Transparent"/>
+            
+            <!-- 刻度线和标签将通过代码动态创建 -->
+            
+            <!-- 指针 -->
+            <Path x:Name="Needle"
+                  Fill="{DynamicResource PrimaryBrush}"
+                  Stroke="{DynamicResource PrimaryBrush}"
+                  StrokeThickness="1"
+                  Data="M 140,120 L 135,100 L 145,100 Z"/>
+            
+            <!-- 中心圆点 -->
+            <Ellipse Canvas.Left="135"
+                     Canvas.Top="115"
+                     Width="10"
+                     Height="10"
+                     Fill="{DynamicResource PrimaryBrush}"/>
+        </Canvas>
+        
+        <!-- 数值显示 - 放在小黄圆下方 -->
+        <StackPanel VerticalAlignment="Top"
+                    HorizontalAlignment="Center"
+                    Margin="0,150,0,10"
+                    Spacing="4">
+            <TextBlock x:Name="ValueText"
+                       Text="--"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource PrimaryBrush}"
+                       HorizontalAlignment="Center"/>
+            <TextBlock x:Name="ClassificationText"
+                       Text="--"
+                       Classes="Caption"
+                       Foreground="{DynamicResource Text1Brush}"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

@@ -1,0 +1,764 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Prophet.Client.ViewModels"
+             xmlns:controls="using:Prophet.Client.Controls"
+             xmlns:models="using:Prophet.Client.Backtest.Models"
+             xmlns:converters="using:Prophet.Client.Converters"
+             mc:Ignorable="d"
+             d:DesignWidth="1400"
+             d:DesignHeight="900"
+             x:Class="Prophet.Client.Views.Pages.BacktestTaskView"
+             x:DataType="vm:BacktestSessionViewModel">
+
+    <UserControl.Resources>
+        <!-- 转换器实例 -->
+        <converters:ProfitToBrushConverter x:Key="ProfitToBrushConverter"/>
+        <converters:WinRateToBrushConverter x:Key="WinRateToBrushConverter"/>
+        <converters:DrawdownToBrushConverter x:Key="DrawdownToBrushConverter"/>
+        <converters:TrendToStringConverter x:Key="TrendToStringConverter"/>
+        <converters:OrderSideToStringConverter x:Key="OrderSideToStringConverter"/>
+        <converters:OrderStatusToStringConverter x:Key="OrderStatusToStringConverter"/>
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Background="{DynamicResource Background1Brush}">
+        <!-- 第一行：标题栏 -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Margin="0"
+                Padding="10">
+            <Grid ColumnDefinitions="*,Auto">
+                <StackPanel Spacing="4">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="{Binding SessionTitle}"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource Text1Brush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 控制按钮 -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                    <!-- AI分析按钮（仅回测完成后显示） -->
+                    <Button Width="100"
+                            Height="36"
+                            Padding="8,0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="OnAskAiToAnalyze"
+                            ToolTip.Tip="让AI分析回测结果"
+                            IsVisible="{Binding HasResult}"
+                            IsEnabled="{Binding IsAnalyzing, Converter={x:Static converters:InverseBoolConverter.Instance}}"
+                            Classes="Primary">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <PathIcon Data="{StaticResource IconAi}"
+                                      Width="16" Height="16"
+                                      Foreground="White"/>
+                            <TextBlock Text="AI分析" 
+                                      FontSize="13"
+                                      Foreground="White"
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <!-- 暂停/继续按钮 -->
+                    <Button Command="{Binding PauseResumeCommand}"
+                            Classes="Primary"
+                            Width="36"
+                            Height="36"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            ToolTip.Tip="{Binding PauseResumeButtonText}">
+                        <Grid>
+                            <!-- 暂停图标（IsPaused=false 时显示） -->
+                            <PathIcon Data="{StaticResource IconPause}"
+                                      Width="18" Height="18"
+                                      Foreground="{DynamicResource Text1Brush}"
+                                      IsVisible="{Binding IsPaused, Converter={x:Static converters:InverseBoolConverter.Instance}}"/>
+                            <!-- 继续图标（IsPaused=true 时显示） -->
+                            <PathIcon Data="{StaticResource IconContinue}"
+                                      Width="18" Height="18"
+                                      Foreground="{DynamicResource Text1Brush}"
+                                      IsVisible="{Binding IsPaused}"/>
+                        </Grid>
+                    </Button>
+                    
+                    <!-- 终止按钮 -->
+                    <Button Command="{Binding CancelCommand}"
+                            Classes="Danger"
+                            Width="36"
+                            Height="36"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            ToolTip.Tip="终止">
+                        <PathIcon Data="{StaticResource IconCancel}"
+                                  Width="18" Height="18"
+                                  Foreground="{DynamicResource Text1Brush}"/>
+                    </Button>
+                    
+                    <!-- 删除按钮（仅历史记录显示） -->
+                    <Button Width="36"
+                            Height="36"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="OnDeleteClicked"
+                            ToolTip.Tip="删除回测记录"
+                            IsVisible="{Binding HasResult}">
+                        <PathIcon Data="{StaticResource IconDelete}"
+                                  Width="18" Height="18"
+                                  Foreground="{DynamicResource DangerBrush}"/>
+                    </Button>
+                    
+                    <!-- 返回按钮 -->
+                    <Button Width="36"
+                            Height="36"
+                            Padding="0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="OnBackClicked"
+                            ToolTip.Tip="返回">
+                        <PathIcon Data="{StaticResource IconBack}"
+                                  Width="18" Height="18"
+                                  Foreground="{DynamicResource Text1Brush}"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 第二行：进度条 -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                Margin="10"
+                CornerRadius="4"
+                Padding="16,12">
+            <StackPanel Spacing="10">
+                <!-- 标题和百分比（含剩余时间） -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Text="回测进度"
+                               FontSize="14"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource Text1Brush}"/>
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding ProgressPercentageDisplay}"
+                               FontSize="16"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource PrimaryBrush}"/>
+                </Grid>
+                
+                <!-- 进度条本体 -->
+                <Grid Height="18">
+                    <!-- 背景：分段着色（10段均分） -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*"/>   <!-- 准备段 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段1 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段2 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段3 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段4 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段5 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段6 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段7 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段8 -->
+                            <ColumnDefinition Width="1*"/>   <!-- 时间段9 -->
+                        </Grid.ColumnDefinitions>
+                        
+                        <!-- 数据准备阶段背景 -->
+                        <Border Grid.Column="0"
+                                Background="#30FFC107"
+                                CornerRadius="8,0,0,8"
+                                BorderBrush="#60FFC107"
+                                BorderThickness="1,1,0,1"/>
+                        
+                        <!-- 回测执行阶段背景（9段） -->
+                        <Border Grid.Column="1" Grid.ColumnSpan="9"
+                                Background="{DynamicResource Background3Brush}"
+                                CornerRadius="0,8,8,0"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="0,1,1,1"/>
+                    </Grid>
+                    
+                    <!-- 进度条前景 -->
+                    <ProgressBar Value="{Binding ProgressPercentage}"
+                                 Maximum="100"
+                                 Height="18"
+                                 CornerRadius="8"
+                                 Foreground="{DynamicResource PrimaryBrush}"
+                                 Background="Transparent"
+                                 BorderThickness="0"/>
+                </Grid>
+                
+                <!-- 时间刻度线（11个刻度点，均分布局） -->
+                <Grid Margin="0,4,0,0">
+                    <Grid.ColumnDefinitions>
+                        <!-- 10个等宽列，刻度线在边界上 -->
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- 刻度标记 0% - 最左侧 -->
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[0].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 10% -->
+                    <StackPanel Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[1].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 20% -->
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[2].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 30% -->
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[3].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 40% -->
+                    <StackPanel Grid.Column="3" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[4].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 50% -->
+                    <StackPanel Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[5].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 60% -->
+                    <StackPanel Grid.Column="5" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[6].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 70% -->
+                    <StackPanel Grid.Column="6" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[7].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 80% -->
+                    <StackPanel Grid.Column="7" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[8].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 90% -->
+                    <StackPanel Grid.Column="8" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[9].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                    
+                    <!-- 刻度标记 100% - 最右侧 -->
+                    <StackPanel Grid.Column="9" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Rectangle Width="2" Height="10" Fill="{DynamicResource Text2Brush}" Opacity="0.5"/>
+                        <TextBlock Text="{Binding TimeMarkers[10].Label}" FontSize="10" 
+                                   Foreground="{DynamicResource Text2Brush}" TextAlignment="Center"
+                                   Opacity="0.75" Margin="-15,2,-15,0" Width="30"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- 第三行：任务摘要 + 收益曲线 -->
+        <Grid Grid.Row="2" Margin="10,0,10,0" ColumnDefinitions="*,*" ColumnSpacing="10" Height="315">
+            <!-- 左列：任务摘要 -->
+            <Border Grid.Column="0"
+                    Background="#1E2329"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- 标题栏 -->
+                    <Border Grid.Row="0"
+                            Background="#1A1D23"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0,0,0,1"
+                            CornerRadius="4,4,0,0"
+                            Padding="16,10">
+                        <TextBlock Text="任务摘要"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Text1Brush}"/>
+                    </Border>
+                    
+                    <!-- 内容区域 -->
+                    <Border Grid.Row="1"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Padding="15,10,15,10">
+                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+
+                            <!-- 第一列 -->
+                            <Grid Grid.Column="0"
+                                  RowDefinitions="Auto,Auto,Auto,Auto"
+                                  RowSpacing="12">
+
+                                <!-- 当前余额 -->
+                                <StackPanel Grid.Row="0" Spacing="4">
+                                    <TextBlock Text="当前余额"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding CurrentEquity, StringFormat='${0:N2}'}"
+                                            FontSize="18"
+                                            FontWeight="Bold"
+                                            Foreground="{Binding CurrentProfit, Converter={StaticResource ProfitToBrushConverter}}"/>
+                                    <TextBlock Text="{Binding CurrentProfit, StringFormat='收益：${0:N2}'}"
+                                            FontSize="11"
+                                            FontWeight="SemiBold"
+                                            Foreground="{Binding CurrentProfit, Converter={StaticResource ProfitToBrushConverter}}"/>
+                                </StackPanel>
+
+                                <!-- 当前胜率 + 交易数 -->
+                                <StackPanel Grid.Row="1" Spacing="4">
+                                    <TextBlock Text="当前胜率"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding CurrentWinRate, StringFormat='{}{0:P1}'}"
+                                            FontSize="18"
+                                            FontWeight="Bold"
+                                            Foreground="{Binding CurrentWinRate, Converter={StaticResource WinRateToBrushConverter}}"/>
+                                    <TextBlock Text="{Binding TotalTrades, StringFormat='交易数：{0}'}"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                </StackPanel>
+
+                                <!-- 单笔最大盈利 -->
+                                <StackPanel Grid.Row="2" Spacing="4">
+                                    <TextBlock Text="单笔最大盈利"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding MaxSingleProfit, StringFormat='${0:N2}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource SuccessBrush}"/>
+                                </StackPanel>
+
+                                <!-- 预计剩余 -->
+                                <StackPanel Grid.Row="3" Spacing="4">
+                                    <TextBlock Text="预计剩余"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding EstimatedTimeRemaining}"
+                                            FontSize="13"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- 第二列 -->
+                            <Grid Grid.Column="1"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                                  RowSpacing="5">
+
+                                <!-- 当前价格 -->
+                                <StackPanel Grid.Row="0" Spacing="4">
+                                    <TextBlock Text="当前价格"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding CurrentPriceDisplay}"
+                                            FontSize="18"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                    <TextBlock Text="{Binding CurrentTimeDisplay}"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                </StackPanel>
+
+                                <!-- 多单胜率 -->
+                                <StackPanel Grid.Row="1" Spacing="4">
+                                    <TextBlock Text="多单胜率"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding LongWinRate, StringFormat='{}{0:P1}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{Binding LongWinRate, Converter={StaticResource WinRateToBrushConverter}}"/>
+                                </StackPanel>
+
+                                <!-- 多单数 -->
+                                <StackPanel Grid.Row="2" Spacing="4">
+                                    <TextBlock Text="多单数"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding LongOrderCount}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+                                
+                                <!-- 单笔最大亏损 -->
+                                <StackPanel Grid.Row="3" Spacing="4">
+                                    <TextBlock Text="单笔最大亏损"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding MaxSingleLoss, StringFormat='${0:N2}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource ErrorBrush}"/>
+                                </StackPanel>
+                                
+                                <!-- 平均持仓时长 -->
+                                <StackPanel Grid.Row="4" Spacing="4">
+                                    <TextBlock Text="平均持仓时长"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding AvgHoldingTimeDisplay}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <!-- 第三列 -->
+                            <Grid Grid.Column="2"
+                                  RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                                  RowSpacing="10">
+
+                                <!-- 最大回撤 -->
+                                <StackPanel Grid.Row="0" Spacing="4">
+                                    <TextBlock Text="最大回撤"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding MaxDrawdown, StringFormat='{}{0:P2}'}"
+                                            FontSize="18"
+                                            FontWeight="SemiBold"
+                                            Foreground="{Binding MaxDrawdown, Converter={StaticResource DrawdownToBrushConverter}}"/>
+                                </StackPanel>
+
+                                <!-- 空单胜率 -->
+                                <StackPanel Grid.Row="1" Spacing="4">
+                                    <TextBlock Text="空单胜率"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding ShortWinRate, StringFormat='{}{0:P1}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{Binding ShortWinRate, Converter={StaticResource WinRateToBrushConverter}}"/>
+                                </StackPanel>
+
+                                <!-- 空单数 -->
+                                <StackPanel Grid.Row="2" Spacing="4">
+                                    <TextBlock Text="空单数"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding ShortOrderCount}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+
+                                <!-- 合计手续费 -->
+                                <StackPanel Grid.Row="3" Spacing="4">
+                                    <TextBlock Text="合计手续费"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding TotalFees, StringFormat='${0:N2}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+
+                                <!-- 日均订单数 -->
+                                <StackPanel Grid.Row="4" Spacing="4">
+                                    <TextBlock Text="日均订单数"
+                                            FontSize="11"
+                                            Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBlock Text="{Binding DailyAverageOrders, StringFormat='{}{0:N2}'}"
+                                            FontSize="16"
+                                            FontWeight="SemiBold"
+                                            Foreground="{DynamicResource Text1Brush}"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <!-- 右列：收益曲线 -->
+            <Border Grid.Column="1"
+                    Background="#1E2329"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- 标题栏 -->
+                    <Border Grid.Row="0"
+                            Background="#1A1D23"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="0,0,0,1"
+                            CornerRadius="4,4,0,0"
+                            Padding="16,10">
+                        <TextBlock Text="收益曲线"
+                                   FontSize="14"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Text1Brush}"/>
+                    </Border>
+                    
+                    <!-- 图表区域 -->
+                    <controls:EquityCurveChart Grid.Row="1"
+                                               Data="{Binding EquityCurve}"
+                                               Margin="8"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- 第四行：信号和订单Tab -->
+        <Grid Grid.Row="3" Margin="10">
+            <Border Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="0">
+                <TabControl>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="信号" FontSize="12"/>
+                        </TabItem.Header>
+                        <DataGrid x:Name="SignalsDataGrid"
+                                  ItemsSource="{Binding Signals}"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="0"
+                                  Background="{DynamicResource Background1Brush}"
+                                  Foreground="{DynamicResource Text1Brush}"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="True"
+                                  AutoGenerateColumns="False"
+                                  FontSize="11"
+                                  RowHeight="28">
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridCell">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="Padding" Value="0,4"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                </Style>
+                                <Style Selector="DataGridRow">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="MinHeight" Value="28"/>
+                                    <Setter Property="Height" Value="28"/>
+                                </Style>
+                                <Style Selector="TextBlock">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGrid.Styles>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="时间"
+                                                    Binding="{Binding Time, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}"
+                                                    Width="140"/>
+                                <DataGridTextColumn Header="动作"
+                                                    Binding="{Binding Action}"
+                                                    Width="80"/>
+                                <DataGridTextColumn Header="价格"
+                                                    Binding="{Binding SignalPrice, StringFormat='{}{0:N2}'}"
+                                                    Width="100"/>
+                                <DataGridTextColumn Header="置信度"
+                                                    Binding="{Binding Confidence, StringFormat='{}{0:P0}'}"
+                                                    Width="80"/>
+                                <DataGridTextColumn Header="趋势"
+                                                    Binding="{Binding Trend, Converter={StaticResource TrendToStringConverter}}"
+                                                    Width="90"/>
+                                <DataGridTextColumn Header="止盈"
+                                                    Binding="{Binding TakeProfit, StringFormat='{}{0:N2}'}"
+                                                    Width="100"/>
+                                <DataGridTextColumn Header="止损"
+                                                    Binding="{Binding StopLoss, StringFormat='{}{0:N2}'}"
+                                                    Width="100"/>
+                                <DataGridTemplateColumn Header="状态" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding WasExecuted, Converter={x:Static converters:BoolToStringConverter.Instance}}"
+                                                       Foreground="{DynamicResource SuccessBrush}"
+                                                       VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="指标快照"
+                                                    Binding="{Binding IndicatorSnapshotsJson}"
+                                                    Width="300"/>
+                                <DataGridTextColumn Header="K线"
+                                                    Binding="{Binding KlinesJson}"
+                                                    Width="300"/>
+                                <DataGridTextColumn Header="原因"
+                                                    Binding="{Binding Description}"
+                                                    Width="200"/>
+                                <DataGridTextColumn Header="备注"
+                                                    Binding="{Binding ReasonIfNotExecuted}"
+                                                    Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                    <TabItem>
+                        <TabItem.Header>
+                            <TextBlock Text="订单" FontSize="12"/>
+                        </TabItem.Header>
+                        <DataGrid x:Name="OrdersDataGrid"
+                                  ItemsSource="{Binding Orders}"
+                                  IsReadOnly="True"
+                                  GridLinesVisibility="Horizontal"
+                                  HeadersVisibility="Column"
+                                  BorderThickness="0"
+                                  Background="{DynamicResource Background1Brush}"
+                                  Foreground="{DynamicResource Text1Brush}"
+                                  CanUserResizeColumns="True"
+                                  CanUserSortColumns="True"
+                                  AutoGenerateColumns="False"
+                                  FontSize="11"
+                                  RowHeight="28">
+                            <DataGrid.Styles>
+                                <Style Selector="DataGridCell">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="Padding" Value="0,4"/>
+                                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                </Style>
+                                <Style Selector="DataGridRow">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="MinHeight" Value="28"/>
+                                    <Setter Property="Height" Value="28"/>
+                                </Style>
+                                <Style Selector="TextBlock">
+                                    <Setter Property="FontSize" Value="11"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                </Style>
+                            </DataGrid.Styles>
+                            <DataGrid.Columns>
+                                <!-- 时间（开仓时间） -->
+                                <DataGridTextColumn Header="时间"
+                                                    Binding="{Binding OpenTime, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}'}"
+                                                    Width="160"/>
+                                
+                                <!-- 方向（SELL/BUY） -->
+                                <DataGridTextColumn Header="方向"
+                                                    Binding="{Binding Side, Converter={StaticResource OrderSideToStringConverter}}"
+                                                    Width="80"/>
+                                
+                                <!-- 数量 -->
+                                <DataGridTextColumn Header="数量"
+                                                    Binding="{Binding Quantity, StringFormat='{}{0:N4}'}"
+                                                    Width="120"/>
+                                
+                                <!-- 开仓价 -->
+                                <DataGridTextColumn Header="开仓价"
+                                                    Binding="{Binding OpenPrice, StringFormat='{}{0:N2}'}"
+                                                    Width="120"/>
+                                
+                                <!-- 平仓价 -->
+                                <DataGridTextColumn Header="平仓价"
+                                                    Binding="{Binding ClosePrice, StringFormat='{}{0:N2}', TargetNullValue='0.00'}"
+                                                    Width="120"/>
+                                
+                                <!-- 止盈线 -->
+                                <DataGridTextColumn Header="止盈线"
+                                                    Binding="{Binding TakeProfit, StringFormat='{}{0:N2}', TargetNullValue='0.00'}"
+                                                    Width="100"/>
+                                
+                                <!-- 止损线 -->
+                                <DataGridTextColumn Header="止损线"
+                                                    Binding="{Binding StopLoss, StringFormat='{}{0:N2}', TargetNullValue='0.00'}"
+                                                    Width="100"/>
+                                
+                                <!-- 强平线 -->
+                                <DataGridTextColumn Header="强平线"
+                                                    Binding="{Binding LiquidationPrice, StringFormat='{}{0:N2}', TargetNullValue='0.00'}"
+                                                    Width="100"/>
+                                
+                                <!-- 倍率 -->
+                                <DataGridTextColumn Header="倍率"
+                                                    Binding="{Binding Leverage, StringFormat='{}{0}x'}"
+                                                    Width="80"/>
+                                
+                                <!-- 保证金 -->
+                                <DataGridTextColumn Header="保证金"
+                                                    Binding="{Binding Margin, StringFormat='{}{0:N2}'}"
+                                                    Width="120"/>
+                                
+                                <!-- 手续费 -->
+                                <DataGridTextColumn Header="手续费"
+                                                    Binding="{Binding Fee, StringFormat='{}{0:N4}'}"
+                                                    Width="100"/>
+                                
+                                <!-- 资金费 -->
+                                <DataGridTextColumn Header="资金费"
+                                                    Binding="{Binding FundingFee, StringFormat='{}{0:N2}'}"
+                                                    Width="100"/>
+                                
+                                <!-- 盈亏 -->
+                                <DataGridTemplateColumn Header="盈亏" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Profit, StringFormat='${0:N2}', TargetNullValue='-'}"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="{Binding Profit, Converter={StaticResource ProfitToBrushConverter}}"
+                                                       VerticalAlignment="Center"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                
+                                <!-- 开仓原因 -->
+                                <DataGridTextColumn Header="开仓原因"
+                                                    Binding="{Binding Remarks, TargetNullValue='-'}"
+                                                    Width="200"/>
+                                
+                                <!-- 平仓原因 -->
+                                <DataGridTextColumn Header="平仓原因"
+                                                    Binding="{Binding Remarks, TargetNullValue='-'}"
+                                                    Width="200"/>
+                                
+                                <!-- 状态（Holding/Closed） -->
+                                <DataGridTextColumn Header="状态"
+                                                    Binding="{Binding Status, Converter={StaticResource OrderStatusToStringConverter}}"
+                                                    Width="100"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

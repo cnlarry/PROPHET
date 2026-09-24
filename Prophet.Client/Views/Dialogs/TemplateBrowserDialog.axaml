@@ -1,0 +1,220 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:models="using:Prophet.Client.Models"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="650"
+        x:Class="Prophet.Client.Views.Dialogs.TemplateBrowserDialog"
+        Width="900" Height="650"
+        MinWidth="800" MinHeight="600"
+        Title="策略模板库"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource Background1Brush}"
+        Foreground="{DynamicResource Text1Brush}">
+
+    <Window.Styles>
+        <!-- 模板卡片样式 -->
+        <Style Selector="Border.TemplateCard">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,12" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style Selector="Border.TemplateCard:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+
+        <Style Selector="Border.TemplateCard.Selected">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}" />
+            <Setter Property="BorderBrush" Value="#F0B90B" />
+            <Setter Property="BorderThickness" Value="2" />
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24">
+        
+        <!-- 标题 -->
+        <StackPanel Grid.Row="0" Spacing="8" Margin="0,0,0,16">
+            <TextBlock Text="📚 策略模板库"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="{DynamicResource Text1Brush}"/>
+            <TextBlock Text="选择一个模板快速开始您的策略开发"
+                       FontSize="13"
+                       Foreground="{DynamicResource Text2Brush}"/>
+        </StackPanel>
+
+        <!-- 搜索和分类筛选 -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,0,0,16">
+            <!-- 搜索框 -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="12,8"
+                    Margin="0,0,12,0">
+                <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Grid.Column="0" 
+                               Text="🔍" 
+                               FontSize="16"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+                    <TextBox Grid.Column="1"
+                             x:Name="SearchTextBox"
+                             Watermark="搜索模板..."
+                             Background="Transparent"
+                             BorderThickness="0"
+                             VerticalAlignment="Center"
+                             TextChanged="OnSearchTextChanged"/>
+                </Grid>
+            </Border>
+
+            <!-- 分类筛选下拉框 -->
+            <ComboBox Grid.Column="1"
+                      x:Name="CategoryComboBox"
+                      Width="150"
+                      SelectedIndex="0"
+                      SelectionChanged="OnCategoryChanged">
+                <ComboBoxItem Content="全部分类"/>
+                <ComboBoxItem Content="📈 趋势跟踪"/>
+                <ComboBoxItem Content="↕️ 均值回归"/>
+                <ComboBoxItem Content="⚡ 动量突破"/>
+                <ComboBoxItem Content="🎯 SMC策略"/>
+                <ComboBoxItem Content="🔢 网格交易"/>
+                <ComboBoxItem Content="💥 波动率"/>
+            </ComboBox>
+        </Grid>
+
+        <!-- 模板列表 -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl x:Name="TemplatesItemsControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="models:StrategyTemplate">
+                        <Border Classes="TemplateCard"
+                                x:Name="TemplateCardBorder"
+                                PointerPressed="OnTemplateCardClick"
+                                DoubleTapped="OnTemplateCardDoubleClick"
+                                Tag="{Binding}">
+                            <Grid RowDefinitions="Auto,Auto,Auto,Auto">
+                                
+                                <!-- 第一行：图标 + 名称 + 评分 -->
+                                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,12">
+                                    <!-- 图标 -->
+                                    <TextBlock Grid.Column="0" 
+                                               Text="{Binding Icon}"
+                                               FontSize="32"
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,16,0"/>
+                                    
+                                    <!-- 名称 + 分类 -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="4">
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource Text1Brush}"/>
+                                        <Border Background="{DynamicResource Background3Brush}"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Padding="6,2"
+                                                HorizontalAlignment="Left">
+                                            <TextBlock Text="{Binding CategoryDisplayName}"
+                                                       FontSize="11"
+                                                       Foreground="{DynamicResource Text2Brush}"/>
+                                        </Border>
+                                    </StackPanel>
+                                    
+                                    <!-- 评分 -->
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding Rating, StringFormat='⭐ {0}/5'}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}"
+                                               VerticalAlignment="Top"/>
+                                </Grid>
+
+                                <!-- 第二行：描述 -->
+                                <TextBlock Grid.Row="1"
+                                           Text="{Binding Description}"
+                                           TextWrapping="Wrap"
+                                           FontSize="13"
+                                           Foreground="{DynamicResource Text2Brush}"
+                                           LineHeight="20"
+                                           Margin="0,0,0,12"/>
+
+                                <!-- 第三行：标签 -->
+                                <ItemsControl Grid.Row="2" ItemsSource="{Binding Tags}" Margin="0,0,0,8">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Horizontal"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{DynamicResource Background3Brush}"
+                                                    BorderBrush="{DynamicResource PrimaryBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="3"
+                                                    Padding="6,2"
+                                                    Margin="0,0,6,4">
+                                                <TextBlock Text="{Binding}"
+                                                           FontSize="11"
+                                                           Foreground="{DynamicResource PrimaryBrush}"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- 第四行：建议时间周期 -->
+                                <TextBlock Grid.Row="3"
+                                           Text="{Binding SuggestedTimeframe, StringFormat='💡 建议时间周期: {0}'}"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource Text2Brush}"
+                                           IsVisible="{Binding SuggestedTimeframe, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- 底部按钮 -->
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto" Margin="0,16,0,0">
+            <!-- 已选择提示 -->
+            <TextBlock Grid.Column="0"
+                       x:Name="SelectedTemplateText"
+                       Text="未选择模板"
+                       FontSize="13"
+                       Foreground="{DynamicResource Text2Brush}"
+                       VerticalAlignment="Center"/>
+
+            <!-- 取消按钮 -->
+            <Button Grid.Column="1"
+                    Content="取消"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,12,0"
+                    Click="OnCancel"/>
+
+            <!-- 确定按钮 -->
+            <Button Grid.Column="2"
+                    x:Name="ConfirmButton"
+                    Content="使用此模板"
+                    Width="120"
+                    Height="36"
+                    IsEnabled="False"
+                    Background="{DynamicResource PrimaryBrush}"
+                    Foreground="White"
+                    Click="OnConfirm"/>
+        </Grid>
+
+    </Grid>
+
+</Window>
+

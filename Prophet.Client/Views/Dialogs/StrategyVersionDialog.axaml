@@ -1,0 +1,171 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Prophet.Client.ViewModels"
+        xmlns:models="using:Prophet.Client.Models"
+        mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="600"
+        x:Class="Prophet.Client.Views.Dialogs.StrategyVersionDialog"
+        x:DataType="vm:StrategyVersionViewModel"
+        Title="策略版本管理"
+        Width="700" Height="600"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E"
+        Foreground="#D4D4D4">
+
+    <Window.Styles>
+        <!-- 深色主题样式 -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+        </Style>
+        
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        
+        <Style Selector="Button:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#3E3E42"/>
+        </Style>
+        
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0E639C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#1177BB"/>
+        </Style>
+        
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="#252526"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem">
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#094771"/>
+        </Style>
+        
+        <Style Selector="TextBox, ComboBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 顶部工具栏 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="8" Margin="0,0,0,12">
+            <Button Name="CreateVersionButton" Classes="primary" Click="OnCreateVersion">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="➕"/>
+                    <TextBlock Text="创建新版本"/>
+                </StackPanel>
+            </Button>
+            <Button Name="RefreshButton" Click="OnRefresh">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="🔄"/>
+                    <TextBlock Text="刷新"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- 版本列表 -->
+        <Grid Grid.Row="1">
+            <ListBox Name="VersionListBox"
+                     SelectionMode="Single"
+                     ItemsSource="{Binding Versions}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="models:VersionListItem">
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                            <!-- 版本号 -->
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding VersionString}"
+                                       FontWeight="Bold"
+                                       FontSize="14"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,16,0"/>
+                            
+                            <!-- 变更说明 -->
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding ChangeDescription}"
+                                           FontSize="13"
+                                           Foreground="#CCCCCC"/>
+                                <TextBlock Text="{Binding CreatedAt}"
+                                           FontSize="11"
+                                           Foreground="#808080"
+                                           Margin="0,2,0,0"/>
+                            </StackPanel>
+                            
+                            <!-- 状态标签 -->
+                            <Border Grid.Column="2"
+                                    Background="#094771"
+                                    CornerRadius="12"
+                                    Padding="8,4"
+                                    Margin="8,0">
+                                <TextBlock Text="{Binding StatusDisplay}"
+                                           FontSize="11"
+                                           Foreground="White"/>
+                            </Border>
+                            
+                            <!-- 用户数 -->
+                            <TextBlock Grid.Column="3"
+                                       Text="{Binding ActiveUsers, StringFormat='👥 {0}'}"
+                                       FontSize="12"
+                                       Foreground="#808080"
+                                       VerticalAlignment="Center"
+                                       Margin="8,0,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- 加载提示 -->
+            <Border IsVisible="{Binding IsLoading}"
+                    Background="#80000000"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                    <TextBlock Text="⏳" FontSize="32" HorizontalAlignment="Center"/>
+                    <TextBlock Text="加载中..." FontSize="14" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- 错误提示 -->
+            <Border IsVisible="{Binding ErrorMessage, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Background="#80CC0000"
+                    Padding="12"
+                    CornerRadius="4"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Margin="0,20,0,0">
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="White"
+                           FontWeight="Bold"/>
+            </Border>
+        </Grid>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+            <Button Name="CloseButton" Content="关闭" Click="OnClose"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

@@ -1,0 +1,182 @@
+{
+    "templates": [
+        {
+            "id": "trend_following_advanced",
+            "name": "高级趋势跟踪策略",
+            "category": "trend",
+            "icon": "📈",
+            "rating": 5,
+            "description": "结合多个时间周期和高级指标的趋势跟踪策略，使用Ichimoku、SuperTrend、ADX等",
+            "suggestedTimeframe": "5m, 15m, 1h",
+            "tags": [
+                "Ichimoku",
+                "SuperTrend",
+                "ADX",
+                "多周期"
+            ],
+            "dslFile": "trend_following_advanced.dsl",
+            "author": "Prophet System",
+            "notes": "适合中长期趋势，多周期共振确认"
+        },
+        {
+            "id": "mean_reversion_boll",
+            "name": "布林带均值回归",
+            "category": "mean_revert",
+            "icon": "↕️",
+            "rating": 4,
+            "description": "基于布林带的均值回归策略，结合RSI和CCI确认超买超卖",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "BOLL",
+                "RSI",
+                "CCI",
+                "震荡"
+            ],
+            "dslFile": "mean_reversion_boll.dsl",
+            "author": "Prophet System",
+            "notes": "适合横盘震荡行情"
+        },
+        {
+            "id": "momentum_macd_rsi",
+            "name": "MACD+RSI动量策略",
+            "category": "momentum",
+            "icon": "⚡",
+            "rating": 5,
+            "description": "双重动量确认，MACD柱状图配合RSI动量，加入成交量过滤",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "MACD",
+                "RSI",
+                "成交量",
+                "动量"
+            ],
+            "dslFile": "momentum_macd_rsi.dsl",
+            "author": "Prophet System",
+            "notes": "适合趋势启动阶段"
+        },
+        {
+            "id": "smc_fvg_advanced",
+            "name": "SMC综合策略",
+            "category": "smc",
+            "icon": "🎯",
+            "rating": 5,
+            "description": "完整的SMC策略，包含FVG、OrderBlock、BOS、Liquidity等多个概念",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "FVG",
+                "OrderBlock",
+                "BOS",
+                "Liquidity"
+            ],
+            "dslFile": "smc_fvg_advanced.dsl",
+            "author": "Prophet System",
+            "notes": "需要理解Smart Money概念"
+        },
+        {
+            "id": "volatility_atr_boll",
+            "name": "波动率突破策略",
+            "category": "volatility",
+            "icon": "💥",
+            "rating": 4,
+            "description": "利用ATR和布林带宽度捕捉波动率扩张时的突破机会",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "ATR",
+                "BOLL",
+                "波动率",
+                "突破"
+            ],
+            "dslFile": "volatility_atr_boll.dsl",
+            "author": "Prophet System",
+            "notes": "适合波动较大的交易对"
+        },
+        {
+            "id": "swing_high_low",
+            "name": "摆动高低点突破",
+            "category": "trend",
+            "icon": "🔄",
+            "rating": 4,
+            "description": "基于Swing High/Low的结构突破策略，结合BOS确认",
+            "suggestedTimeframe": "15m, 1h",
+            "tags": [
+                "Swing",
+                "BOS",
+                "结构",
+                "突破"
+            ],
+            "dslFile": "swing_high_low.dsl",
+            "author": "Prophet System",
+            "notes": "关注市场结构变化"
+        },
+        {
+            "id": "multi_timeframe_trend",
+            "name": "多周期趋势共振",
+            "category": "trend",
+            "icon": "⏰",
+            "rating": 5,
+            "description": "使用5分钟、15分钟、1小时三个周期共振确认趋势",
+            "suggestedTimeframe": "5m, 15m, 1h",
+            "tags": [
+                "多周期",
+                "EMA",
+                "MACD",
+                "共振"
+            ],
+            "dslFile": "multi_timeframe_trend.dsl",
+            "author": "Prophet System",
+            "notes": "多周期共振提高成功率"
+        },
+        {
+            "id": "volume_breakout",
+            "name": "成交量突破策略",
+            "category": "volume",
+            "icon": "📊",
+            "rating": 4,
+            "description": "基于异常成交量的突破策略，使用OBV、Volume Profile等",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "成交量",
+                "OBV",
+                "突破",
+                "VWAP"
+            ],
+            "dslFile": "volume_breakout.dsl",
+            "author": "Prophet System",
+            "notes": "大成交量确认有效突破"
+        },
+        {
+            "id": "pattern_recognition",
+            "name": "K线形态识别",
+            "category": "pattern",
+            "icon": "🕯️",
+            "rating": 3,
+            "description": "识别经典K线形态，如锤子线、吞没、启明星等",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "K线形态",
+                "反转",
+                "PATTERN"
+            ],
+            "dslFile": "pattern_recognition.dsl",
+            "author": "Prophet System",
+            "notes": "结合趋势使用效果更好"
+        },
+        {
+            "id": "stochastic_rsi",
+            "name": "随机RSI策略",
+            "category": "momentum",
+            "icon": "📉",
+            "rating": 4,
+            "description": "使用StochRSI捕捉超买超卖的精确时机",
+            "suggestedTimeframe": "5m, 15m",
+            "tags": [
+                "StochRSI",
+                "RSI",
+                "超买超卖"
+            ],
+            "dslFile": "stochastic_rsi.dsl",
+            "author": "Prophet System",
+            "notes": "StochRSI比RSI更敏感"
+        }
+    ]
+}

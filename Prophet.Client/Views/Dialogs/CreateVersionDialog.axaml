@@ -1,0 +1,116 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="450"
+        x:Class="Prophet.Client.Views.Dialogs.CreateVersionDialog"
+        Title="创建新版本"
+        Width="500" Height="450"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E"
+        Foreground="#D4D4D4">
+
+    <Window.Styles>
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+        </Style>
+        
+        <Style Selector="TextBox, ComboBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0E639C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 表单 -->
+        <StackPanel Grid.Row="0" Spacing="12">
+            <!-- 变更类型 -->
+            <StackPanel>
+                <TextBlock Text="变更类型：" Margin="0,0,0,4"/>
+                <ComboBox Name="ChangeTypeComboBox"
+                          SelectedIndex="2"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="🔴 Major - 重大变更（v1.x.x → v2.0.0）" Tag="major"/>
+                    <ComboBoxItem Content="🟡 Minor - 功能增强（v1.5.x → v1.6.0）" Tag="minor"/>
+                    <ComboBoxItem Content="🟢 Patch - 问题修复（v1.5.3 → v1.5.4）" Tag="patch"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- 变更说明 -->
+            <StackPanel>
+                <TextBlock Text="变更说明：" Margin="0,0,0,4"/>
+                <TextBox Name="ChangeDescriptionTextBox"
+                         Watermark="简要说明本次变更的内容..."
+                         Height="60"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"/>
+            </StackPanel>
+
+            <!-- 破坏性变更（仅Major版本） -->
+            <StackPanel Name="BreakingChangesPanel" IsVisible="False">
+                <TextBlock Text="⚠ 破坏性变更说明（Major版本必填）：" Margin="0,0,0,4" Foreground="#FF6B6B"/>
+                <TextBox Name="BreakingChangesTextBox"
+                         Watermark="说明不兼容的变更..."
+                         Height="60"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 提示信息 -->
+        <Border Grid.Row="1"
+                Background="#252526"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="12"
+                Margin="0,12,0,0">
+            <ScrollViewer>
+                <TextBlock TextWrapping="Wrap" LineHeight="20" Foreground="#CCCCCC">
+                    <Run Text="📌 版本号规则：" FontWeight="Bold"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="• Major: 不兼容的重大变更（完全重写、改变交易方向等）"/>
+                    <LineBreak/>
+                    <Run Text="• Minor: 向下兼容的功能增强（新增指标、新增条件等）"/>
+                    <LineBreak/>
+                    <Run Text="• Patch: 向下兼容的问题修复（修复bug、微调参数等）"/>
+                    <LineBreak/>
+                    <LineBreak/>
+                    <Run Text="💡 当前DSL代码将从编辑器自动获取。" Foreground="#FFC66D"/>
+                </TextBlock>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,12,0,0">
+            <Button Name="CancelButton" Content="取消" Click="OnCancel"/>
+            <Button Name="CreateButton" Content="创建版本" Classes="primary" Click="OnCreate"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

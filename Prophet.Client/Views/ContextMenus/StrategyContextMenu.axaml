@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Prophet.Client.Views.ContextMenus.StrategyContextMenu">
+    
+    <!--策略页面的上下文菜单项-->
+    <StackPanel VerticalAlignment="Top" 
+                Spacing="0"
+                Margin="0,0,0,0">
+        
+        <!-- 策略配置图标 -->
+        <Border x:Name="IconConfig"
+                Classes="SideIcon"
+                ToolTip.Tip="策略配置"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconSettings}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 代码片段图标 -->
+        <Border x:Name="IconCodeSnippet"
+                Classes="SideIcon"
+                ToolTip.Tip="代码片段"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconCode}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 变量查看图标 -->
+        <Border x:Name="IconVariables"
+                Classes="SideIcon"
+                ToolTip.Tip="变量查看"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconData}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 性能分析图标 -->
+        <Border x:Name="IconPerformance"
+                Classes="SideIcon"
+                ToolTip.Tip="性能分析"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconPerformance}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 分隔线 -->
+        <Border Height="1" 
+                Background="{DynamicResource BorderBrush}"
+                Margin="8,12"/>
+        
+        <!-- 帮助文档图标 -->
+        <Border x:Name="IconHelp"
+                Classes="SideIcon"
+                ToolTip.Tip="帮助文档"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconHelp2}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+    </StackPanel>
+    
+</UserControl>
+

@@ -1,0 +1,688 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Prophet.Client.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="700"
+        x:Class="Prophet.Client.Views.Dialogs.AiChatDialog"
+        x:DataType="vm:AiAssistantViewModel"
+        Title="Prophet AI 助手"
+        Width="900" Height="700"
+        MinWidth="600" MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource Background1Brush}"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="44">
+    
+    <Window.Styles>
+        <!-- 快捷按钮样式 -->
+        <Style Selector="Button.QuickAction">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12,10"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Button.QuickAction:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+        
+        <Style Selector="Button.QuickAction:pressed">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+        </Style>
+        
+        <!-- 消息气泡样式 - 用户消息 -->
+        <Style Selector="Border.UserMessage">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="CornerRadius" Value="12,12,4,12"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,4,0,4"/>
+            <Setter Property="MaxWidth" Value="520"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="BoxShadow" Value="0 2 8 0 #10000000"/>
+        </Style>
+        
+        <!-- 消息气泡样式 - AI消息 -->
+        <Style Selector="Border.AiMessage">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12,12,12,4"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="Margin" Value="0,4,0,4"/>
+            <Setter Property="MaxWidth" Value="600"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="BoxShadow" Value="0 2 8 0 #10000000"/>
+        </Style>
+        
+        <!-- 消息头像样式 -->
+        <Style Selector="Border.MessageAvatar">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="BoxShadow" Value="0 2 6 0 #15000000"/>
+        </Style>
+        
+        <!-- 用户头像 -->
+        <Style Selector="Border.UserAvatar">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+        
+        <!-- AI头像 -->
+        <Style Selector="Border.AiAvatar">
+            <Setter Property="Background">
+                <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                    <GradientStop Color="#667eea" Offset="0"/>
+                    <GradientStop Color="#764ba2" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter>
+        </Style>
+        
+        <!-- 代码预览框样式 -->
+        <Style Selector="Border.CodePreview">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="Margin" Value="0,8,0,8"/>
+        </Style>
+        
+        <!-- 操作按钮样式 -->
+        <Style Selector="Button.ActionButton">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="Padding" Value="16,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Button.ActionButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+        </Style>
+        
+        <Style Selector="Button.ActionButton.Primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        
+        <Style Selector="Button.ActionButton.Primary:pointerover">
+            <Setter Property="Opacity" Value="0.85"/>
+        </Style>
+        
+        <!-- 标签样式 -->
+        <Style Selector="Border.Tag">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Margin" Value="0,0,6,6"/>
+        </Style>
+        
+        <!-- 会话历史项样式 -->
+        <Style Selector="Border.SessionItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.15"/>
+                </Transitions>
+            </Setter>
+        </Style>
+        
+        <Style Selector="Border.SessionItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+        
+        <Style Selector="Border.SessionItem.Active">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+    </Window.Styles>
+    
+    <Grid RowDefinitions="44,*">
+        
+        <!-- 自定义标题栏 -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                IsHitTestVisible="False">
+            <Grid ColumnDefinitions="*,Auto" IsHitTestVisible="True">
+                
+                <!-- 左侧：标题和图标 -->
+                <StackPanel Grid.Column="0" 
+                           Orientation="Horizontal" 
+                           Spacing="10"
+                           VerticalAlignment="Center"
+                           Margin="16,0,0,0">
+                    <Border Width="28" Height="28" 
+                            CornerRadius="14"
+                            Background="{DynamicResource PrimaryBrush}">
+                        <TextBlock Text="🤖" 
+                                  FontSize="16"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel Spacing="0" VerticalAlignment="Center">
+                        <TextBlock x:Name="DialogTitle"
+                                  Text="Prophet AI 助手" 
+                                  FontSize="14"
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource Text1Brush}"/>
+                        <TextBlock Text="智能策略生成与优化" 
+                                  FontSize="11"
+                                  Foreground="{DynamicResource Text2Brush}"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 右侧：窗口控制按钮 -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           Spacing="0"
+                           VerticalAlignment="Center"
+                           Margin="0,0,0,0">
+                    
+                    <!-- 最小化按钮 -->
+                    <Button Width="44" Height="44"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnMinimizeWindow"
+                            ToolTip.Tip="最小化">
+                        <Path Data="M 0,0 L 10,0" 
+                              Stroke="{DynamicResource Text2Brush}"
+                              StrokeThickness="1.5"
+                              Stretch="Uniform"
+                              Width="12" Height="12"/>
+                    </Button>
+                    
+                    <!-- 最大化/还原按钮 -->
+                    <Button x:Name="MaximizeButton"
+                            Width="44" Height="44"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnMaximizeWindow"
+                            ToolTip.Tip="最大化">
+                        <Path x:Name="MaximizeIcon"
+                              Data="M 0,0 L 10,0 L 10,10 L 0,10 Z" 
+                              Stroke="{DynamicResource Text2Brush}"
+                              StrokeThickness="1.5"
+                              Stretch="Uniform"
+                              Width="12" Height="12"/>
+                    </Button>
+                    
+                    <!-- 关闭按钮 -->
+                    <Button Width="44" Height="44"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="OnCloseWindow"
+                            ToolTip.Tip="关闭">
+                        <Button.Styles>
+                            <Style Selector="Button:pointerover">
+                                <Setter Property="Background" Value="#E81123"/>
+                            </Style>
+                            <Style Selector="Button:pointerover Path">
+                                <Setter Property="Stroke" Value="White"/>
+                            </Style>
+                        </Button.Styles>
+                        <Panel>
+                            <Path Data="M 0,0 L 10,10 M 0,10 L 10,0" 
+                                  Stroke="{DynamicResource Text2Brush}"
+                                  StrokeThickness="1.5"
+                                  Stretch="Uniform"
+                                  Width="12" Height="12"/>
+                        </Panel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- 主内容区 -->
+        <Grid Grid.Row="1" ColumnDefinitions="240,*">
+            
+            <!-- 左侧边栏：会话历史和快捷操作 -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,1,0"
+                    Padding="12">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    
+                    <!-- 新建会话按钮 -->
+                    <Button Grid.Row="0"
+                            Classes="ActionButton Primary"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,16"
+                            Click="OnNewSession">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="➕" FontSize="14" VerticalAlignment="Center"/>
+                            <TextBlock Text="新建会话" FontSize="13" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    
+                    <!-- 会话历史列表 -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="0">
+                            <TextBlock Text="会话历史" 
+                                      FontSize="11"
+                                      FontWeight="SemiBold"
+                                      Foreground="{DynamicResource Text2Brush}"
+                                      Margin="8,0,0,8"/>
+                            
+                            <!-- 会话列表（数据绑定） -->
+                            <ItemsControl ItemsSource="{Binding Sessions}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Classes="SessionItem"
+                                                Classes.Active="{Binding IsActive}">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="{Binding Title}" 
+                                                              FontSize="12"
+                                                              FontWeight="Medium"
+                                                              Foreground="{DynamicResource Text1Brush}"
+                                                              TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding LastMessageTime, StringFormat='{}{0:MM/dd HH:mm}'}" 
+                                                              FontSize="10"
+                                                              Foreground="{DynamicResource Text3Brush}"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1"
+                                                        Width="24" Height="24"
+                                                        Background="Transparent"
+                                                        BorderThickness="0"
+                                                        Padding="0"
+                                                        ToolTip.Tip="删除会话">
+                                                    <TextBlock Text="🗑️" FontSize="11"/>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </ScrollViewer>
+                    
+                    <!-- 快捷模板区 -->
+                    <StackPanel Grid.Row="2" Spacing="8" Margin="0,12,0,0">
+                        <TextBlock Text="⚡ 快捷模板" 
+                                  FontSize="11"
+                                  FontWeight="SemiBold"
+                                  Foreground="{DynamicResource Text2Brush}"
+                                  Margin="8,0,0,8"/>
+                        
+                        <Button Classes="QuickAction" Click="OnQuickTemplate_Trend">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="📈" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="趋势跟踪" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="QuickAction" Click="OnQuickTemplate_StopLoss">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="🛡️" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="止损止盈" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="QuickAction" Click="OnQuickTemplate_Optimize">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="⚙️" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="优化策略" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                        
+                        <Button Classes="QuickAction" Click="OnQuickTemplate_Explain">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="💡" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="解释代码" VerticalAlignment="Center" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+            
+            <!-- 右侧：对话区 -->
+            <Grid Grid.Column="1" RowDefinitions="*,Auto">
+                
+                <!-- 对话历史区（可滚动） -->
+                <ScrollViewer Grid.Row="0" 
+                             x:Name="ChatScrollViewer"
+                             VerticalScrollBarVisibility="Auto"
+                             Padding="24,16"
+                             Background="{DynamicResource Background1Brush}">
+                    <StackPanel x:Name="ChatHistoryPanel" Spacing="12">
+                        
+                        <!-- 欢迎消息 -->
+                        <Grid IsVisible="{Binding !HasMessages}" 
+                              Margin="0,20,0,0"
+                              HorizontalAlignment="Center"
+                              MaxWidth="500">
+                            <StackPanel Spacing="16" HorizontalAlignment="Center">
+                                <Border Width="80" Height="80" 
+                                        CornerRadius="40"
+                                        HorizontalAlignment="Center">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                                            <GradientStop Color="#667eea" Offset="0"/>
+                                            <GradientStop Color="#764ba2" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                    <TextBlock Text="🤖" 
+                                              FontSize="40"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                </Border>
+                                
+                                <TextBlock Text="Prophet AI 助手" 
+                                          FontSize="20"
+                                          FontWeight="SemiBold"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          HorizontalAlignment="Center"/>
+                                
+                                <TextBlock TextWrapping="Wrap" 
+                                          FontSize="13" 
+                                          Foreground="{DynamicResource Text2Brush}"
+                                          LineHeight="22"
+                                          TextAlignment="Center">
+                                    <Run Text="你好！我是 Prophet AI 策略助手。"/>
+                                    <LineBreak/>
+                                    <LineBreak/>
+                                    <Run Text="我可以帮你："/>
+                                    <LineBreak/>
+                                    <Run Text="• 用自然语言生成交易策略"/>
+                                    <LineBreak/>
+                                    <Run Text="• 优化和审查现有策略"/>
+                                    <LineBreak/>
+                                    <Run Text="• 解释策略逻辑和指标"/>
+                                    <LineBreak/>
+                                    <Run Text="• 添加技术指标和风险控制"/>
+                                    <LineBreak/>
+                                    <LineBreak/>
+                                    <Run Text="直接告诉我你的需求，或使用左侧的快捷模板开始！"/>
+                                </TextBlock>
+                                
+                                <!-- 常用标签 -->
+                                <WrapPanel Margin="0,8,0,0" HorizontalAlignment="Center">
+                                    <Border Classes="Tag">
+                                        <TextBlock Text="#趋势策略" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    </Border>
+                                    <Border Classes="Tag">
+                                        <TextBlock Text="#技术指标" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    </Border>
+                                    <Border Classes="Tag">
+                                        <TextBlock Text="#风险管理" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    </Border>
+                                    <Border Classes="Tag">
+                                        <TextBlock Text="#代码优化" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    </Border>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Grid>
+                        
+                        <!-- 对话消息列表 -->
+                        <ItemsControl ItemsSource="{Binding Messages}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <!-- 用户消息 -->
+                                        <Grid Margin="0,6,0,6" 
+                                              IsVisible="{Binding IsUser}"
+                                              ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="1" 
+                                                       Orientation="Horizontal" 
+                                                       Spacing="12"
+                                                       HorizontalAlignment="Right">
+                                                <Border Classes="UserMessage">
+                                                    <TextBlock Text="{Binding Content}" 
+                                                              TextWrapping="Wrap"
+                                                              FontSize="13"
+                                                              Foreground="White"
+                                                              LineHeight="22"/>
+                                                </Border>
+                                                <Border Classes="MessageAvatar UserAvatar">
+                                                    <TextBlock Text="👤" 
+                                                              FontSize="20"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </Grid>
+                                        
+                                        <!-- AI消息 -->
+                                        <Grid Margin="0,6,0,6"
+                                              IsVisible="{Binding !IsUser}"
+                                              ColumnDefinitions="Auto,*">
+                                            <StackPanel Grid.Column="0" 
+                                                       Orientation="Horizontal" 
+                                                       Spacing="12"
+                                                       HorizontalAlignment="Left">
+                                                <Border Classes="MessageAvatar AiAvatar">
+                                                    <TextBlock Text="🤖" 
+                                                              FontSize="20"
+                                                              HorizontalAlignment="Center"
+                                                              VerticalAlignment="Center"/>
+                                                </Border>
+                                                <StackPanel Spacing="8" MaxWidth="600">
+                                                    <Border Classes="AiMessage">
+                                                        <StackPanel Spacing="8">
+                                                            <TextBlock Text="{Binding Content}" 
+                                                                      TextWrapping="Wrap"
+                                                                      FontSize="13"
+                                                                      Foreground="{DynamicResource Text1Brush}"
+                                                                      LineHeight="22"/>
+                                                            
+                                                            <!-- 代码预览（如果有） -->
+                                                            <Border Classes="CodePreview" 
+                                                                    IsVisible="{Binding HasCode}">
+                                                                <StackPanel Spacing="10">
+                                                                    <Grid ColumnDefinitions="*,Auto">
+                                                                        <TextBlock Grid.Column="0"
+                                                                                  Text="生成的代码" 
+                                                                                  FontSize="11"
+                                                                                  FontWeight="SemiBold"
+                                                                                  Foreground="{DynamicResource Text2Brush}"/>
+                                                                        <TextBlock Grid.Column="1"
+                                                                                  Text="Prophet DSL" 
+                                                                                  FontSize="10"
+                                                                                  Foreground="{DynamicResource Text3Brush}"
+                                                                                  VerticalAlignment="Center"/>
+                                                                    </Grid>
+                                                                    
+                                                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                                                 VerticalScrollBarVisibility="Auto"
+                                                                                 MaxHeight="300">
+                                                                        <TextBlock Text="{Binding Code}" 
+                                                                                  FontFamily="Consolas, Courier New, monospace"
+                                                                                  FontSize="12"
+                                                                                  Foreground="{DynamicResource Text1Brush}"
+                                                                                  TextWrapping="NoWrap"
+                                                                                  Padding="4"/>
+                                                                    </ScrollViewer>
+                                                                    
+                                                                    <!-- 操作按钮 -->
+                                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                                        <Button Classes="ActionButton Primary" 
+                                                                                Content="应用代码" 
+                                                                                Click="OnApplyCode"
+                                                                                Tag="{Binding}"/>
+                                                                        <Button Classes="ActionButton" 
+                                                                                Content="复制" 
+                                                                                Click="OnCopyCode"
+                                                                                Tag="{Binding}"/>
+                                                                        <Button Classes="ActionButton" 
+                                                                                Content="重新生成" 
+                                                                                Click="OnRegenerateCode"
+                                                                                Tag="{Binding}"/>
+                                                                    </StackPanel>
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
+                        <!-- 加载中指示器 -->
+                        <Grid IsVisible="{Binding IsLoading}" 
+                              Margin="0,6,0,6"
+                              ColumnDefinitions="Auto,*">
+                            <StackPanel Grid.Column="0" 
+                                       Orientation="Horizontal" 
+                                       Spacing="12"
+                                       HorizontalAlignment="Left">
+                                <Border Classes="MessageAvatar AiAvatar">
+                                    <TextBlock Text="🤖" 
+                                              FontSize="20"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                                </Border>
+                                <Border Classes="AiMessage">
+                                    <StackPanel Spacing="6" Orientation="Horizontal">
+                                        <TextBlock Text="正在思考" 
+                                                  FontSize="13" 
+                                                  Foreground="{DynamicResource Text2Brush}"
+                                                  VerticalAlignment="Center"/>
+                                        <TextBlock Text="..." 
+                                                  FontSize="13" 
+                                                  Foreground="{DynamicResource Text2Brush}"
+                                                  VerticalAlignment="Center"
+                                                  x:Name="LoadingDots"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+                
+                <!-- 底部：输入区 -->
+                <Border Grid.Row="1" 
+                        Padding="24,16"
+                        BorderBrush="{DynamicResource BorderBrush}" 
+                        BorderThickness="0,1,0,0"
+                        Background="{DynamicResource Background2Brush}">
+                    <Grid RowDefinitions="Auto,*,Auto">
+                        
+                        <!-- 上下文标签 -->
+                        <WrapPanel Grid.Row="0" 
+                                  Margin="0,0,0,8"
+                                  IsVisible="{Binding HasContext}">
+                            <Border Classes="Tag">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="📎" FontSize="11" VerticalAlignment="Center"/>
+                                    <TextBlock Text="{Binding ContextInfo}" 
+                                              FontSize="11" 
+                                              Foreground="{DynamicResource Text2Brush}"
+                                              VerticalAlignment="Center"/>
+                                    <Button Width="16" Height="16"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            VerticalAlignment="Center"
+                                            ToolTip.Tip="移除上下文">
+                                        <TextBlock Text="✕" FontSize="10" Foreground="{DynamicResource Text3Brush}"/>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+                        
+                        <!-- 多行输入框 -->
+                        <Border Grid.Row="1"
+                                BorderThickness="1"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                Background="{DynamicResource Background1Brush}"
+                                CornerRadius="8">
+                            <TextBox x:Name="InputTextBox"
+                                     Watermark="告诉我你想要什么策略... (Ctrl+Enter 发送)"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"
+                                     MinHeight="80"
+                                     MaxHeight="200"
+                                     Padding="12"
+                                     BorderThickness="0"
+                                     Background="Transparent"
+                                     FontSize="13"
+                                     Text="{Binding InputText}"
+                                     KeyDown="OnInputKeyDown"/>
+                        </Border>
+                        
+                        <!-- 操作按钮 -->
+                        <Grid Grid.Row="2" 
+                              ColumnDefinitions="*,Auto"
+                              Margin="0,12,0,0">
+                            <StackPanel Grid.Column="0"
+                                       Orientation="Horizontal" 
+                                       Spacing="8">
+                                <Button Classes="ActionButton" Click="OnAttachContext">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="📎" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Text="添加上下文" FontSize="12" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Classes="ActionButton" Click="OnClearChat">
+                                    <StackPanel Orientation="Horizontal" Spacing="4">
+                                        <TextBlock Text="🗑️" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Text="清空对话" FontSize="12" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                            
+                            <Button Grid.Column="1"
+                                    Classes="ActionButton Primary"
+                                    Width="120" Height="40"
+                                    Click="OnSendMessage"
+                                    IsEnabled="{Binding CanSend}">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="发送" FontSize="13" VerticalAlignment="Center"/>
+                                    <TextBlock Text="↵" FontSize="14" VerticalAlignment="Center" FontWeight="Bold"/>
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Border>
+                
+            </Grid>
+        </Grid>
+    </Grid>
+    
+</Window>
+

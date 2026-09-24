@@ -1,0 +1,44 @@
+# 自动检测文本文件并规范化换行符
+* text=auto
+
+# 源代码文件使用 LF
+*.cs text eol=lf
+*.cpp text eol=lf
+*.h text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+
+# XAML/AXAML 文件使用 LF
+*.xaml text eol=lf
+*.axaml text eol=lf
+
+# XML/JSON/YAML 配置文件使用 LF
+*.xml text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+
+# Markdown 文档使用 LF
+*.md text eol=lf
+
+# Windows 特定文件使用 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# 二进制文件
+*.dll binary
+*.exe binary
+*.pyd binary
+*.lib binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.db binary
+*.sqlite binary
+*.zip binary
+*.7z binary
+

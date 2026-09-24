@@ -1,0 +1,474 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Prophet.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="320" d:DesignHeight="800"
+             x:Class="Prophet.Client.Views.ContextMenus.AiAssistantPanel"
+             x:DataType="vm:AiAssistantViewModel">
+    
+    <UserControl.Styles>
+        <!-- 快捷按钮样式 -->
+        <Style Selector="Button.QuickAction">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.QuickAction:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+        
+        <!-- 消息气泡样式 - 用户消息（参考微信样式） -->
+        <Style Selector="Border.UserMessage">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,6,0,6"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        
+        <!-- 消息气泡样式 - AI消息（参考微信样式） -->
+        <Style Selector="Border.AiMessage">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,6,0,6"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        
+        <!-- 箭头样式 - 用户消息箭头（指向右，指向用户头像） -->
+        <Style Selector="Path.UserMessageArrow">
+            <Setter Property="Fill" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+        </Style>
+        
+        <!-- 箭头样式 - AI消息箭头（指向左，指向AI头像） -->
+        <Style Selector="Path.AiMessageArrow">
+            <Setter Property="Fill" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="Stroke" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="StrokeThickness" Value="1"/>
+            <Setter Property="Width" Value="6"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+        </Style>
+        
+        <!-- 消息头像样式 -->
+        <Style Selector="Border.MessageAvatar">
+            <Setter Property="Width" Value="32"/>
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="0"/>
+        </Style>
+        
+        <!-- 用户头像 -->
+        <Style Selector="Border.UserAvatar">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+        
+        <!-- AI头像 -->
+        <Style Selector="Border.AiAvatar">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+        </Style>
+        
+        <!-- 代码预览框样式 -->
+        <Style Selector="Border.CodePreview">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="0,8,0,8"/>
+        </Style>
+        
+        <!-- 操作按钮样式 -->
+        <Style Selector="Button.ActionButton">
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Foreground" Value="{DynamicResource Text1Brush}"/>
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+        
+        <Style Selector="Button.ActionButton:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+        </Style>
+        
+        <Style Selector="Button.ActionButton.Primary">
+            <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        
+        <Style Selector="Button.ActionButton.Primary:pointerover">
+            <Setter Property="Opacity" Value="0.9"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- 顶部：快捷模板区 -->
+        <Border Grid.Row="0" 
+                Padding="12" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1"
+                Background="{DynamicResource Background1Brush}">
+            <StackPanel Spacing="8">
+                <TextBlock Text="⚡ 快捷操作" 
+                           Classes="Caption" 
+                           Foreground="{DynamicResource Text2Brush}"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,4"/>
+                
+                <Button Classes="QuickAction" Click="OnQuickTemplate_Trend">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="📈" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="生成趋势跟踪策略" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button Classes="QuickAction" Click="OnQuickTemplate_StopLoss">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="🛡️" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="添加止损止盈逻辑" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button Classes="QuickAction" Click="OnQuickTemplate_Optimize">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="⚙️" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="优化入场条件" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button Classes="QuickAction" Click="OnQuickTemplate_Explain">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="💡" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="解释当前代码" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+        
+        <!-- 中间：对话历史区（可滚动） -->
+        <ScrollViewer Grid.Row="1" 
+                      x:Name="ChatScrollViewer"
+                      VerticalScrollBarVisibility="Auto"
+                      Padding="8"
+                      Background="{DynamicResource Background1Brush}">
+            <StackPanel x:Name="ChatHistoryPanel" Spacing="0">
+                
+                <!-- 欢迎消息 -->
+                <Grid IsVisible="{Binding !HasMessages}" 
+                      Margin="0,0,0,8"
+                      Grid.ColumnDefinitions="44,8,6,*">
+                    <!-- AI头像 -->
+                    <Border Classes="MessageAvatar AiAvatar" 
+                            Grid.Column="0"
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <TextBlock Text="🤖" 
+                                  FontSize="18"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <!-- 间距列（8px） -->
+                    <Border Grid.Column="1" Width="8"/>
+                    
+                    <!-- AI消息箭头（指向左，指向AI头像） -->
+                    <Path Classes="AiMessageArrow"
+                          Grid.Column="2"
+                          Data="M 6,0 L 0,5 L 6,10 Z"
+                          HorizontalAlignment="Right"
+                          Margin="0,17,0,0"/>
+                    
+                    <!-- 欢迎消息气泡 -->
+                    <Border Classes="AiMessage" 
+                            Grid.Column="3">
+                        <StackPanel Spacing="6">
+                            <TextBlock TextWrapping="Wrap" 
+                                      FontSize="11" 
+                                      Foreground="{DynamicResource Text1Brush}"
+                                      LineHeight="20">
+                                <Run Text="你好！我是 Prophet AI 策略助手。"/>
+                                <LineBreak/>
+                                <LineBreak/>
+                                <Run Text="我可以帮你："/>
+                                <LineBreak/>
+                                <Run Text="• 用自然语言生成交易策略"/>
+                                <LineBreak/>
+                                <Run Text="• 优化现有策略代码"/>
+                                <LineBreak/>
+                                <Run Text="• 解释策略逻辑"/>
+                                <LineBreak/>
+                                <Run Text="• 添加技术指标"/>
+                                <LineBreak/>
+                                <LineBreak/>
+                                <Run Text="直接告诉我你的需求，或点击上方的快捷操作开始！"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                
+                <!-- 对话消息列表 -->
+                <ItemsControl ItemsSource="{Binding Messages}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,0,8" HorizontalAlignment="Stretch">
+                                <!-- 用户消息 -->
+                                <Grid IsVisible="{Binding IsUser}"
+                                      Grid.ColumnDefinitions="*,6,8,44">
+                                    <!-- 消息气泡 -->
+                                    <Border Classes="UserMessage" 
+                                            Grid.Column="0">
+                                        <TextBlock Text="{Binding Content}" 
+                                                  TextWrapping="Wrap"
+                                                  FontSize="13"
+                                                  Foreground="White"
+                                                  LineHeight="20"/>
+                                    </Border>
+                                    
+                                    <!-- 用户消息箭头（指向右，指向用户头像） -->
+                                    <Path Classes="UserMessageArrow"
+                                          Grid.Column="1"
+                                          Data="M 0,0 L 6,5 L 0,10 Z"
+                                          HorizontalAlignment="Left"
+                                          Margin="0,17,0,0"/>
+                                    
+                                    <!-- 间距列（8px） -->
+                                    <Border Grid.Column="2" Width="8"/>
+                                    
+                                    <!-- 用户头像 -->
+                                    <Border Classes="MessageAvatar UserAvatar" 
+                                            Grid.Column="3"
+                                            Margin="0,6,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="👤" 
+                                                  FontSize="18"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                                
+                                <!-- AI消息 -->
+                                <Grid IsVisible="{Binding !IsUser}"
+                                      Grid.ColumnDefinitions="44,8,6,*">
+                                    <!-- AI头像 -->
+                                    <Border Classes="MessageAvatar AiAvatar" 
+                                            Grid.Column="0"
+                                            Margin="0,6,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="🤖" 
+                                                  FontSize="18"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
+                                    </Border>
+                                    
+                                    <!-- 间距列（8px，箭头与头像之间的间距） -->
+                                    <Border Grid.Column="1" Width="8"/>
+                                    
+                                    <!-- AI消息箭头（指向左，指向AI头像） -->
+                                    <Path Classes="AiMessageArrow"
+                                          Grid.Column="2"
+                                          Data="M 6,0 L 0,5 L 6,10 Z"
+                                          HorizontalAlignment="Right"
+                                          Margin="0,17,0,0"/>
+                                    
+                                    <!-- 消息气泡 -->
+                                    <Border Classes="AiMessage" 
+                                            Grid.Column="3">
+                                        <StackPanel Spacing="8">
+                                            <TextBlock Text="{Binding Content}" 
+                                                      TextWrapping="Wrap"
+                                                      FontSize="13"
+                                                      Foreground="{DynamicResource Text1Brush}"
+                                                      LineHeight="20"/>
+                                            
+                                            <!-- 代码预览（如果有） -->
+                                            <Border Classes="CodePreview" 
+                                                    IsVisible="{Binding HasCode}"
+                                                    Margin="0,4,0,0">
+                                                <StackPanel Spacing="8">
+                                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                                                  VerticalScrollBarVisibility="Auto"
+                                                                  MaxHeight="300">
+                                                        <TextBlock Text="{Binding Code}" 
+                                                                  FontFamily="Consolas, Courier New"
+                                                                  FontSize="11"
+                                                                  Foreground="{DynamicResource Text1Brush}"
+                                                                  TextWrapping="Wrap"/>
+                                                    </ScrollViewer>
+                                                    
+                                                    <!-- 操作按钮 -->
+                                                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0">
+                                                        <!-- 场景1：创建新Tab -->
+                                                        <Button Classes="ActionButton Primary" 
+                                                                Content="创建新Tab" 
+                                                                Click="OnCreateNewTab"
+                                                                Tag="{Binding}"/>
+                                                        
+                                                        <!-- 场景2：替换代码 -->
+                                                        <Button Classes="ActionButton Primary" 
+                                                                Content="替换当前代码" 
+                                                                Click="OnReplaceCode"
+                                                                Tag="{Binding}"/>
+                                                        
+                                                        <!-- 场景3：保存并回测 -->
+                                                        <Button Classes="ActionButton Primary" 
+                                                                Content="保存并回测" 
+                                                                Click="OnSaveAndBacktest"
+                                                                Tag="{Binding}"/>
+                                                        
+                                                        <!-- 默认操作按钮（无特定操作类型时） -->
+                                                        <Button Classes="ActionButton Primary" 
+                                                                Content="插入到光标" 
+                                                                Click="OnInsertCode"
+                                                                Tag="{Binding}"/>
+                                                        
+                                                        <Button Classes="ActionButton" 
+                                                                Content="复制" 
+                                                                Click="OnCopyCode"
+                                                                Tag="{Binding}"/>
+                                                        <Button Classes="ActionButton" 
+                                                                Content="重新生成" 
+                                                                Click="OnRegenerateCode"
+                                                                Tag="{Binding}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <!-- 加载中指示器 -->
+                <Grid IsVisible="{Binding IsLoading}" 
+                      Margin="0,0,0,8"
+                      Grid.ColumnDefinitions="44,8,6,*">
+                    <!-- AI头像 -->
+                    <Border Classes="MessageAvatar AiAvatar" 
+                            Grid.Column="0"
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <TextBlock Text="🤖" 
+                                  FontSize="18"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                    </Border>
+                    
+                    <!-- 间距列（8px） -->
+                    <Border Grid.Column="1" Width="8"/>
+                    
+                    <!-- AI消息箭头（指向左，指向AI头像） -->
+                    <Path Classes="AiMessageArrow"
+                          Grid.Column="2"
+                          Data="M 6,0 L 0,5 L 6,10 Z"
+                          HorizontalAlignment="Right"
+                          Margin="0,17,0,0"/>
+                    
+                    <!-- 加载中气泡 -->
+                    <Border Classes="AiMessage" 
+                            Grid.Column="3">
+                        <StackPanel Spacing="6" Orientation="Horizontal">
+                            <TextBlock Text="正在思考" 
+                                      FontSize="11" 
+                                      Foreground="{DynamicResource Text2Brush}"
+                                      VerticalAlignment="Center"/>
+                            <TextBlock Text="..." 
+                                      FontSize="11" 
+                                      Foreground="{DynamicResource Text2Brush}"
+                                      VerticalAlignment="Center"
+                                      x:Name="LoadingDots"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+                
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- 底部：输入区 -->
+        <Border Grid.Row="2" 
+                Padding="12" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,1,0,0"
+                Background="{DynamicResource Background2Brush}">
+            <Grid RowDefinitions="*,Auto">
+                <!-- 多行输入框 -->
+                <TextBox Grid.Row="0"
+                         x:Name="InputTextBox"
+                         Watermark="告诉我你想要什么策略..."
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         MinHeight="60"
+                         MaxHeight="120"
+                         Padding="10"
+                         BorderThickness="1"
+                         BorderBrush="{DynamicResource BorderBrush}"
+                         Background="{DynamicResource Background1Brush}"
+                         CornerRadius="4"
+                         FontSize="12"
+                         Text="{Binding InputText}"
+                         KeyDown="OnInputKeyDown"/>
+                
+                <!-- 操作按钮 -->
+                <StackPanel Grid.Row="1" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Right"
+                           Spacing="8"
+                           Margin="0,8,0,0">
+                    <Button Classes="ActionButton">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="📎" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="上下文" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ActionButton" Click="OnClearChat">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="🗑️" FontSize="12" VerticalAlignment="Center"/>
+                            <TextBlock Text="清空" FontSize="11" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ActionButton Primary" 
+                            Click="OnSendMessage"
+                            IsEnabled="{Binding CanSend}">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <TextBlock Text="发送" FontSize="11" VerticalAlignment="Center"/>
+                            <TextBlock Text="↵" FontSize="12" VerticalAlignment="Center" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+    </Grid>
+    
+</UserControl>
+

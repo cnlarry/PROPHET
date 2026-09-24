@@ -1,0 +1,94 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Prophet.Client.Views.ContextMenus.LiveTradingContextMenu">
+    
+    <!--实盘交易的上下文菜单项-->
+    <StackPanel VerticalAlignment="Top" 
+                Spacing="0"
+                Margin="0,0,0,0">
+        
+        <!-- 刷新图标 -->
+        <Border x:Name="IconRefresh"
+                Classes="SideIcon"
+                ToolTip.Tip="刷新实例列表"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconRefresh}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 监控图标 -->
+        <Border x:Name="IconMonitor"
+                Classes="SideIcon"
+                ToolTip.Tip="实时监控"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconPerformance}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 配置图标 -->
+        <Border x:Name="IconConfig"
+                Classes="SideIcon"
+                ToolTip.Tip="全局配置"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconConfigs}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 日志图标 -->
+        <Border x:Name="IconLog"
+                Classes="SideIcon"
+                ToolTip.Tip="交易日志"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconLog}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 通知图标 -->
+        <Border x:Name="IconNotification"
+                Classes="SideIcon"
+                ToolTip.Tip="交易通知"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Grid>
+                <Viewbox Width="20" Height="20">
+                    <Path Data="{StaticResource IconNotification}"
+                          Fill="{DynamicResource Text2Brush}"
+                          Stretch="Uniform"/>
+                </Viewbox>
+                <!-- 通知徽章 -->
+                <Border Background="{DynamicResource DangerBrush}"
+                        CornerRadius="8"
+                        Padding="4,2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,2,4,0"
+                        IsVisible="False"
+                        x:Name="NotificationBadge">
+                    <TextBlock Text="0" 
+                               FontSize="9"
+                               Foreground="White"
+                               FontWeight="Bold"/>
+                </Border>
+            </Grid>
+        </Border>
+        
+    </StackPanel>
+    
+</UserControl>
+

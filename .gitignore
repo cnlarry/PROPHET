@@ -1,0 +1,119 @@
+# 数据目录
+/data/
+
+# 构建输出
+build/
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio 缓存和用户特定文件
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# 工具缓存目录
+Prophet.Core/.cache/
+
+# .NET 构建结果
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.lib
+*.iobj
+*.ipdb
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# 数据库文件（如果不需要版本控制）
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# IDE 配置
+.vscode/
+.trae/
+.cursor/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# 临时文件
+*.tmp
+*.temp
+*.log
+*.tlog
+
+# 备份文件
+backup/
+*.bak
+*.backup
+*.orig
+
+# Node modules (if any)
+node_modules/
+
+# 分析文件
+analysis/
+
+# 开源协作：内部交接文档与临时提交草稿永不入库
+HANDOFF.md
+temp_commit*.txt
+compile_output.txt
+
+# Python 扩展模块（显式声明，避免依赖 *.py[cod] 误匹配）
+*.pyd
+*.pyo
+
+# 本地密钥与敏感配置（永不入库）
+.env
+*.pem
+*.key
+*.pfx
+*.p12
+secrets.json
+appsettings.*.json
+*.db-journal
+*.sqlite-journal
+
+# 数据目录（含嵌套）
+data/

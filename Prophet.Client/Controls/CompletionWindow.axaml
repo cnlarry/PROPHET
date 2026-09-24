@@ -1,0 +1,259 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:Prophet.Client.Controls"
+        mc:Ignorable="d" d:DesignWidth="720" d:DesignHeight="300"
+        x:Class="Prophet.Client.Controls.CompletionWindow"
+        WindowStartupLocation="Manual"
+        CanResize="False"
+        ShowInTaskbar="False"
+        SystemDecorations="None"
+        TransparencyLevelHint="Transparent"
+        Background="Transparent"
+        Topmost="True"
+        Focusable="False"
+        SizeToContent="WidthAndHeight"
+        MinWidth="420"
+        MaxWidth="800">
+    <!-- VS Code 风格的补全窗口 -->
+    <Border Background="#1E1E1E"
+            BorderBrush="#3F3F46"
+            Padding="0"
+            BorderThickness="1"
+            CornerRadius="4"
+            BoxShadow="0 2 8 1 #60000000"
+            MaxHeight="242">
+        <Grid ColumnDefinitions="Auto,1,*" x:Name="RootGrid">
+            <!-- 左侧：补全列表（包括滚动条） -->
+            <Border Grid.Column="0"
+                    BorderBrush="#3F3F46"
+                    BorderThickness="0"
+                    Margin="0"
+                    Background="Transparent"
+                    MinWidth="420"
+                    MaxWidth="420">
+                <ScrollViewer x:Name="CompletionScrollViewer"
+                              VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              AllowAutoHide="False"
+                              MaxHeight="242"
+                              Background="Transparent"
+                              Focusable="False"
+                              IsHitTestVisible="True">
+                <ScrollViewer.Styles>
+                    <!-- 滚动条样式 - 强制显示 -->
+                    <Style Selector="ScrollBar:vertical">
+                        <Setter Property="AllowAutoHide" Value="False"/>
+                        <Setter Property="Width" Value="12"/>
+                        <Setter Property="Background" Value="#2D2D30"/>
+                    </Style>
+                    <Style Selector="ScrollBar:vertical /template/ Thumb">
+                        <Setter Property="Background" Value="#686868"/>
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                    <Style Selector="ScrollBar:vertical:pointerover /template/ Thumb">
+                        <Setter Property="Background" Value="#9E9E9E"/>
+                    </Style>
+                </ScrollViewer.Styles>
+                    <ListBox x:Name="CompletionList"
+                             SelectionMode="Single"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Focusable="False"
+                             IsTabStop="False">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="6,3" />
+                                <Setter Property="MinHeight" Value="24" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="CornerRadius" Value="2" />
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover">
+                                <Setter Property="Background" Value="#2A2D2E" />
+                            </Style>
+                            <Style Selector="ListBoxItem:selected">
+                                <Setter Property="Background" Value="#094771" />
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate x:DataType="controls:PopupItemViewModel">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                                    <!-- 类型图标 -->
+                                    <Viewbox Grid.Column="0"
+                                             Width="12"
+                                             Height="12"
+                                             VerticalAlignment="Center"
+                                             IsVisible="{Binding HasTypeIcon}">
+                                        <Path Data="{Binding TypeIconGeometry}"
+                                              Fill="{Binding TypeLabelColor}"
+                                              Stretch="Uniform" />
+                                    </Viewbox>
+                                    <!-- 标签和描述 -->
+                                    <StackPanel Grid.Column="1"
+                                                Orientation="Horizontal"
+                                                Spacing="6"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Label}"
+                                                   Foreground="White"
+                                                   FontFamily="Consolas"
+                                                   FontSize="13" />
+                                        <TextBlock Text="{Binding Description}"
+                                                   Foreground="#858585"
+                                                   FontSize="11"
+                                                   MaxWidth="240"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   IsVisible="{Binding HasDescription}" />
+                                    </StackPanel>
+                                    <!-- 数据类型 -->
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding DataTypeDisplay}"
+                                               Foreground="#858585"
+                                               FontFamily="Consolas"
+                                               FontSize="11"
+                                               VerticalAlignment="Center"
+                                               IsVisible="{Binding HasDataType}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </Border>
+            <!-- 中间：分隔线 -->
+            <Border Grid.Column="1"
+                    Background="#3F3F46"
+                    Width="1"
+                    x:Name="Separator"
+                    IsVisible="False" />
+            
+            <!-- 右侧：文档预览面板 -->
+            <Border Grid.Column="2"
+                    Background="#252526"
+                    x:Name="DocPanel"
+                    IsVisible="False"
+                    MinWidth="300"
+                    MaxWidth="400"
+                    CornerRadius="0,4,4,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                             HorizontalScrollBarVisibility="Disabled"
+                             Focusable="False"
+                             IsTabStop="False">
+                    <StackPanel Margin="12" Spacing="8">
+                        <!-- 标题 -->
+                        <TextBlock x:Name="DocTitle"
+                                  Text="MACD"
+                                  FontSize="16"
+                                  FontWeight="Bold"
+                                  Foreground="#4EC9B0"
+                                  TextWrapping="Wrap" />
+                        
+                        <!-- 分类和类型 -->
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border Background="#3E3E42"
+                                   Padding="4,2"
+                                   CornerRadius="3"
+                                   x:Name="DocCategoryBadge">
+                                <TextBlock x:Name="DocCategory"
+                                          Text="动量指标"
+                                          FontSize="11"
+                                          Foreground="#D4D4D4" />
+                            </Border>
+                            <Border Background="#3E3E42"
+                                   Padding="4,2"
+                                   CornerRadius="3"
+                                   x:Name="DocTypeBadge">
+                                <TextBlock x:Name="DocType"
+                                          Text="Indicator"
+                                          FontSize="11"
+                                          Foreground="#569CD6" />
+                            </Border>
+                        </StackPanel>
+                        
+                        <!-- 描述 -->
+                        <TextBlock x:Name="DocDescription"
+                                  Text="移动平均收敛发散指标，用于判断趋势强度和方向"
+                                  FontSize="13"
+                                  Foreground="#CCCCCC"
+                                  TextWrapping="Wrap"
+                                  LineHeight="20" />
+                        
+                        <!-- 返回类型/数据类型 -->
+                        <StackPanel x:Name="DocDataTypePanel"
+                                   IsVisible="False"
+                                   Spacing="4">
+                            <TextBlock Text="数据类型"
+                                      FontSize="12"
+                                      FontWeight="SemiBold"
+                                      Foreground="#9CDCFE" />
+                            <TextBlock x:Name="DocDataType"
+                                      Text="Double"
+                                      FontFamily="Consolas"
+                                      FontSize="12"
+                                      Foreground="#D4D4D4" />
+                        </StackPanel>
+                        
+                        <!-- 字段列表（用于指标） -->
+                        <StackPanel x:Name="DocFieldsPanel"
+                                   IsVisible="False"
+                                   Spacing="4" />
+                        
+                        <!-- 参数列表（用于函数） -->
+                        <StackPanel x:Name="DocParametersPanel"
+                                   IsVisible="False"
+                                   Spacing="4" />
+                        
+                        <!-- 示例代码 -->
+                        <StackPanel x:Name="DocExamplePanel"
+                                   IsVisible="False"
+                                   Spacing="4">
+                            <TextBlock Text="示例"
+                                      FontSize="12"
+                                      FontWeight="SemiBold"
+                                      Foreground="#9CDCFE" />
+                            <Border Background="#1E1E1E"
+                                   Padding="8"
+                                   CornerRadius="3"
+                                   BorderBrush="#3F3F46"
+                                   BorderThickness="1">
+                                <TextBlock x:Name="DocExample"
+                                          Text="$(15m).MACD().macd > 0"
+                                          FontFamily="Consolas"
+                                          FontSize="11"
+                                          Foreground="#CE9178"
+                                          TextWrapping="Wrap" />
+                            </Border>
+                        </StackPanel>
+                        
+                        <!-- 枚举值（用于枚举类型） -->
+                        <StackPanel x:Name="DocEnumValuesPanel"
+                                   IsVisible="False"
+                                   Spacing="4">
+                            <TextBlock Text="可选值"
+                                      FontSize="12"
+                                      FontWeight="SemiBold"
+                                      Foreground="#9CDCFE" />
+                            <ItemsControl x:Name="DocEnumValues">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#1E1E1E"
+                                               Padding="6,3"
+                                               Margin="0,1"
+                                               CornerRadius="3">
+                                            <TextBlock Text="{Binding}"
+                                                      FontFamily="Consolas"
+                                                      FontSize="12"
+                                                      Foreground="#CE9178" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

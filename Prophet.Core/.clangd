@@ -1,0 +1,27 @@
+CompileFlags:
+  Add:
+    # 项目 Include 路径（相对路径，便于开源协作）
+    - -I${workspaceFolder}/Prophet.Core/include
+    # C++ 标准
+    - -std=c++17
+    # MSVC 兼容性（让 clangd 理解 MSVC 特性）
+    - -fms-compatibility
+    - -fms-extensions
+    # Windows 定义
+    - -D_WIN32
+    - -D_WINDOWS
+  Remove:
+    # 移除 clangd 不支持的 MSVC 编译选项
+    - /arch:AVX2
+    - /W4
+    - /utf-8
+    - /we4100
+    - /we4101
+    - /we4189
+    - /wd4251
+    - /wd4275
+
+Diagnostics:
+  # 诊断级别
+  UnusedIncludes: None
+  MissingIncludes: None

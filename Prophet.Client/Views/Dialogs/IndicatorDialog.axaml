@@ -1,0 +1,1251 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="550"
+             x:Class="Prophet.Client.Views.Dialogs.IndicatorDialog">
+    
+    <Border Background="{DynamicResource Background2Brush}"
+            BorderBrush="Transparent"
+            BorderThickness="0"
+            CornerRadius="8"
+            Padding="0">
+        
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 标题栏 -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0"
+                    Padding="20,10">
+                <Grid ColumnDefinitions="*,Auto">
+                    <!-- 标题和图标 -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{StaticResource IconIndicator}" 
+                                  Width="18" 
+                                  Height="18" 
+                                  Foreground="{DynamicResource Text1Brush}"
+                                  VerticalAlignment="Center"/>
+                        <TextBlock Text="主图指标"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Text1Brush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- 关闭按钮 -->
+                    <Button Grid.Column="1"
+                            x:Name="CloseButton"
+                            Content="✕"
+                            Width="28"
+                            Height="28"
+                            Padding="0"
+                            FontSize="16"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{DynamicResource Text2Brush}"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Cursor="Hand"
+                            Click="CloseButton_OnClick"/>
+                </Grid>
+            </Border>
+            
+            <!-- 内容区域：左右分栏布局 -->
+            <Grid Grid.Row="1" ColumnDefinitions="150,*" Margin="0">
+                
+                <!-- 左侧：指标列表 -->
+                <Border Grid.Column="0"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,1,0"
+                        CornerRadius="0"
+                        Padding="0"
+                        Margin="0">
+                    <ScrollViewer>
+                        <StackPanel Spacing="0">
+                            <!-- MA -->
+                            <Border x:Name="BtnMA"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkMA"
+                                          Content="MA"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"/>
+                            </Border>
+                            
+                            <!-- EMA -->
+                            <Border x:Name="BtnEMA"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkEMA"
+                                          Content="EMA"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"
+                                          />
+                            </Border>
+                            
+                            <!-- WMA -->
+                            <Border x:Name="BtnWMA"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkWMA"
+                                          Content="WMA"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"
+                                          />
+                            </Border>
+                            
+                            <!-- BOLL -->
+                            <Border x:Name="BtnBOLL"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkBOLL"
+                                          Content="BOLL"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- VWAP -->
+                            <Border x:Name="BtnVWAP"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkVWAP"
+                                          Content="VWAP"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- DEMA -->
+                            <Border x:Name="BtnDEMA"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkDEMA"
+                                          Content="DEMA"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- TEMA -->
+                            <Border x:Name="BtnTEMA"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkTEMA"
+                                          Content="TEMA"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- Keltner Channel -->
+                            <Border x:Name="BtnKeltner"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkKeltner"
+                                          Content="Keltner"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- Ichimoku Cloud -->
+                            <Border x:Name="BtnIchimoku"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkIchimoku"
+                                          Content="Ichimoku"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                            
+                            <!-- SAR -->
+                            <Border x:Name="BtnSAR"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkSAR"
+                                          Content="SAR"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          />
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                
+                <!-- 右侧：参数配置区 -->
+                <Border Grid.Column="1"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        Padding="20">
+                    <ScrollViewer>
+                        <StackPanel x:Name="ConfigPanel" Spacing="16">
+                            <!-- 动态内容区域，根据选中的指标显示不同的配置 -->
+                            <TextBlock x:Name="NoSelectionText"
+                                       Text="← 请在左侧选择一个指标进行配置"
+                                       FontSize="13"
+                                       Foreground="{DynamicResource Text3Brush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="0,40,0,0"/>
+                            
+                            <!-- MA配置面板 -->
+                            <StackPanel x:Name="MAConfigPanel" Spacing="10" IsVisible="True">
+                                <TextBlock Text="MA - 移动平均线"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="15">
+                                    <!-- MA1 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA1" Grid.Column="0" Content="MA1" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA1Period" Grid.Column="1" Text="7" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA1Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/>
+                                            <ComboBoxItem Content="最高"/>
+                                            <ComboBoxItem Content="最低"/>
+                                            <ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA1Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem>
+                                                <Canvas Width="60" Height="16">
+                                                    <Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/>
+                                                </Canvas>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem>
+                                                <Canvas Width="60" Height="16">
+                                                    <Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/>
+                                                </Canvas>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem>
+                                                <Canvas Width="60" Height="16">
+                                                    <Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/>
+                                                </Canvas>
+                                            </ComboBoxItem>
+                                            <ComboBoxItem>
+                                                <Canvas Width="60" Height="16">
+                                                    <Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/>
+                                                </Canvas>
+                                            </ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA1Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FFFFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    
+                                    <!-- MA2 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA2" Grid.Column="0" Content="MA2" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA2Period" Grid.Column="1" Text="25" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA2Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA2Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA2Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FFD700" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA3 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA3" Grid.Column="0" Content="MA3" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA3Period" Grid.Column="1" Text="99" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA3Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA3Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA3Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FF00FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA4 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA4" Grid.Column="0" Content="MA4" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA4Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA4Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA4Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA4Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#00FFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA5 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA5" Grid.Column="0" Content="MA5" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA5Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA5Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA5Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA5Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FFA500" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA6 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA6" Grid.Column="0" Content="MA6" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA6Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA6Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA6Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA6Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#00FF00" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA7 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA7" Grid.Column="0" Content="MA7" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA7Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA7Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA7Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA7Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FF1493" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- MA8 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkMA8" Grid.Column="0" Content="MA8" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtMA8Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbMA8Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbMA8Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnMA8Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#1E90FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- EMA配置面板 -->
+                            <StackPanel x:Name="EMAConfigPanel" Spacing="10" IsVisible="False">
+                                <TextBlock Text="EMA - 指数移动平均线"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="15">
+                                    <!-- EMA1 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA1" Grid.Column="0" Content="EMA1" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA1Period" Grid.Column="1" Text="7" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA1Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA1Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA1Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#FFFFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA2 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA2" Grid.Column="0" Content="EMA2" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA2Period" Grid.Column="1" Text="25" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA2Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA2Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA2Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#FFD700" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA3 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA3" Grid.Column="0" Content="EMA3" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA3Period" Grid.Column="1" Text="99" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA3Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA3Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA3Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#FF00FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA4 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA4" Grid.Column="0" Content="EMA4" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA4Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA4Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA4Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA4Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#00FFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA5 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA5" Grid.Column="0" Content="EMA5" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA5Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA5Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA5Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA5Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#FFA500" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA6 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA6" Grid.Column="0" Content="EMA6" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA6Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA6Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA6Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA6Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#00FF00" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA7 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA7" Grid.Column="0" Content="EMA7" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA7Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA7Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA7Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA7Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#FF1493" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- EMA8 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkEMA8" Grid.Column="0" Content="EMA8" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtEMA8Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbEMA8Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbEMA8Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnEMA8Color" Grid.Column="4" Width="50" Height="26" Padding="0" Background="#1E90FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- WMA配置面板 -->
+                            <StackPanel x:Name="WMAConfigPanel" Spacing="10" IsVisible="False">
+                                <TextBlock Text="WMA - 加权移动平均线"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="15">
+                                    <!-- WMA1 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA1" Grid.Column="0" Content="WMA1" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA1Period" Grid.Column="1" Text="7" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA1Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA1Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA1Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#FFFFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA2 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA2" Grid.Column="0" Content="WMA2" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA2Period" Grid.Column="1" Text="25" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA2Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA2Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA2Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#FFD700" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA3 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA3" Grid.Column="0" Content="WMA3" IsChecked="True" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA3Period" Grid.Column="1" Text="99" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA3Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA3Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA3Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#FF00FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA4 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA4" Grid.Column="0" Content="WMA4" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA4Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA4Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA4Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA4Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#00FFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA5 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA5" Grid.Column="0" Content="WMA5" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA5Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA5Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA5Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA5Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#FFA500" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA6 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA6" Grid.Column="0" Content="WMA6" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA6Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA6Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA6Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA6Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#00FF00" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA7 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA7" Grid.Column="0" Content="WMA7" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA7Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA7Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA7Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA7Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#FF1493" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    <!-- WMA8 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkWMA8" Grid.Column="0" Content="WMA8" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtWMA8Period" Grid.Column="1" Text="0" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbWMA8Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbWMA8Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnWMA8Color" Grid.Column="4" Width="46" Height="26" Padding="0" Background="#1E90FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- BOLL配置面板 -->
+                            <StackPanel x:Name="BOLLConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="BOLL - 布林带"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="周期:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="60"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtBOLLPeriod"
+                                                 Text="20"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="标准差:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="60"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtBOLLStdDev"
+                                                 Text="2"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <TextBlock Text="颜色配置"
+                                               FontSize="13"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Text1Brush}"
+                                               Margin="0,8,0,4"/>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="上轨:"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Border Grid.Column="1"
+                                                Width="60"
+                                                Height="20"
+                                                Background="#EF5350"
+                                                CornerRadius="4"
+                                                HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="中轨:"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Border Grid.Column="1"
+                                                Width="60"
+                                                Height="20"
+                                                Background="#FFD700"
+                                                CornerRadius="4"
+                                                HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="下轨:"
+                                                   FontSize="12"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Border Grid.Column="1"
+                                                Width="60"
+                                                Height="20"
+                                                Background="#26A69A"
+                                                CornerRadius="4"
+                                                HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- VWAP配置面板 -->
+                            <StackPanel x:Name="VWAPConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="VWAP - 成交量加权平均价"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="周期:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="60"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtVWAPPeriod"
+                                                 Text="14"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="颜色:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Button x:Name="BtnVWAPColor"
+                                                Width="60"
+                                                Height="26"
+                                                Padding="0"
+                                                Background="#2196F3"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Left"
+                                                Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- AVL配置面板 -->
+                            <StackPanel x:Name="AVLConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="AVL - 平均线"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="周期:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="60"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtAVLPeriod"
+                                                 Text="20"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="颜色:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Button x:Name="BtnAVLColor"
+                                                Width="60"
+                                                Height="26"
+                                                Padding="0"
+                                                Background="#9C27B0"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Left"
+                                                Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- TRIX配置面板 -->
+                            <StackPanel x:Name="TRIXConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="TRIX - 三重指数平滑移动平均"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="周期:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="60"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtTRIXPeriod"
+                                                 Text="12"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="颜色:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="60"/>
+                                        <Button x:Name="BtnTRIXColor"
+                                                Width="60"
+                                                Height="26"
+                                                Padding="0"
+                                                Background="#FF9800"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Left"
+                                                Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- SAR配置面板 -->
+                            <StackPanel x:Name="SARConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="SAR - 抛物线转向指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="加速因子:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="80"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtSARAcceleration"
+                                                 Text="0.02"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="最大加速:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,12,0"
+                                                   Width="80"/>
+                                        <TextBox Grid.Column="1"
+                                                 x:Name="TxtSARMaxAcceleration"
+                                                 Text="0.20"
+                                                 FontSize="13"
+                                                 Height="32"
+                                                 Padding="8,6"
+                                                 MaxWidth="120"
+                                                 HorizontalAlignment="Left"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="上涨颜色:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="80"/>
+                                        <Button x:Name="BtnSARUpColor"
+                                                Width="60"
+                                                Height="26"
+                                                Padding="0"
+                                                Background="#26A69A"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Left"
+                                                Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0"
+                                                   Text="下跌颜色:"
+                                                   FontSize="13"
+                                                   Foreground="{DynamicResource Text2Brush}"
+                                                   VerticalAlignment="Center"
+                                                   Width="80"/>
+                                        <Button x:Name="BtnSARDownColor"
+                                                Width="60"
+                                                Height="26"
+                                                Padding="0"
+                                                Background="#EF5350"
+                                                BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="1"
+                                                CornerRadius="3"
+                                                Cursor="Hand"
+                                                HorizontalAlignment="Left"
+                                                Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- DEMA配置面板 -->
+                            <StackPanel x:Name="DEMAConfigPanel" Spacing="10" IsVisible="False">
+                                <TextBlock Text="DEMA - 双重指数移动平均"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="15">
+                                    <!-- DEMA1 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkDEMA1" Grid.Column="0" Content="DEMA1" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtDEMA1Period" Grid.Column="1" Text="7" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbDEMA1Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbDEMA1Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnDEMA1Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FFD700" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    
+                                    <!-- DEMA2 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkDEMA2" Grid.Column="0" Content="DEMA2" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtDEMA2Period" Grid.Column="1" Text="25" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbDEMA2Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbDEMA2Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnDEMA2Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FF1493" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- DEMA3 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkDEMA3" Grid.Column="0" Content="DEMA3" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtDEMA3Period" Grid.Column="1" Text="99" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbDEMA3Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbDEMA3Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnDEMA3Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#00BFFF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- TEMA配置面板 -->
+                            <StackPanel x:Name="TEMAConfigPanel" Spacing="10" IsVisible="False">
+                                <TextBlock Text="TEMA - 三重指数移动平均"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <StackPanel Spacing="15">
+                                    <!-- TEMA1 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkTEMA1" Grid.Column="0" Content="TEMA1" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtTEMA1Period" Grid.Column="1" Text="7" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbTEMA1Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbTEMA1Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnTEMA1Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FF0000" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Margin="15,0,0,0" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                    
+                                    <!-- TEMA2 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkTEMA2" Grid.Column="0" Content="TEMA2" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtTEMA2Period" Grid.Column="1" Text="25" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbTEMA2Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbTEMA2Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnTEMA2Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FFD700" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                    
+                                    <!-- TEMA3 -->
+                                    <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+                                        <CheckBox x:Name="ChkTEMA3" Grid.Column="0" Content="TEMA3" IsChecked="False" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtTEMA3Period" Grid.Column="1" Text="99" FontSize="11" Height="26" Padding="8,0" VerticalContentAlignment="Center" Margin="12,0,0,0" Width="70"/>
+                                        <ComboBox x:Name="CmbTEMA3Field" Grid.Column="2" FontSize="11" Height="26" SelectedIndex="3" Margin="12,0,0,0" Width="90">
+                                            <ComboBoxItem Content="开盘"/><ComboBoxItem Content="最高"/><ComboBoxItem Content="最低"/><ComboBoxItem Content="收盘"/>
+                                        </ComboBox>
+                                        <ComboBox x:Name="CmbTEMA3Style" Grid.Column="3" FontSize="11" Height="26" SelectedIndex="0" Margin="12,0,0,0" Width="120">
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="2,2"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="4,3"/></Canvas></ComboBoxItem>
+                                            <ComboBoxItem><Canvas Width="60" Height="16"><Line StartPoint="0,8" EndPoint="60,8" Stroke="{DynamicResource Text1Brush}" StrokeThickness="2" StrokeDashArray="1,1"/></Canvas></ComboBoxItem>
+                                        </ComboBox>
+                                        <Button x:Name="BtnTEMA3Color" Grid.Column="4" Width="56" Height="26" Padding="0" Background="#FF00FF" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="15,0,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- Keltner配置面板 -->
+                            <StackPanel x:Name="KeltnerConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="Keltner Channel - 肯特纳通道"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <TextBlock Text="基于ATR的波动通道，显示上轨、中线、下轨。与布林带搭配使用效果更佳。"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource Text2Brush}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,-8,0,0"/>
+                                
+                                <!-- 周期 -->
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="周期" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBox x:Name="TxtKeltnerPeriod" Text="20" FontSize="12" Height="30" Padding="10,0" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <!-- ATR倍数 -->
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="ATR倍数" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    <TextBox x:Name="TxtKeltnerMultiplier" Text="2.0" FontSize="12" Height="30" Padding="10,0" VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                                
+                                <!-- 颜色配置 -->
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="颜色配置" FontSize="11" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto">
+                                        <!-- 上轨 -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="上轨：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <Button x:Name="BtnKeltnerUpperColor" Grid.Row="0" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#26A69A" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="0,0,0,8"/>
+                                        
+                                        <!-- 中线 -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="中线：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <Button x:Name="BtnKeltnerMiddleColor" Grid.Row="1" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#2196F3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="0,0,0,8"/>
+                                        
+                                        <!-- 下轨 -->
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="下轨：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <Button x:Name="BtnKeltnerLowerColor" Grid.Row="2" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#EF5350" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- Ichimoku配置面板 -->
+                            <StackPanel x:Name="IchimokuConfigPanel" Spacing="16" IsVisible="False">
+                                <TextBlock Text="Ichimoku Cloud - 一目均衡表"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <TextBlock Text="专业级综合指标，包含转换线、基准线、先行带A/B、延迟线和云图。"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource Text2Brush}"
+                                           TextWrapping="Wrap"
+                                           Margin="0,-8,0,0"/>
+                                
+                                <TextBlock Text="组成: 转换线(9)、基准线(26)、先行带A/B、延迟线、云图填充"
+                                           FontSize="11"
+                                           Foreground="{DynamicResource Text2Brush}"
+                                           TextWrapping="Wrap"/>
+                                
+                                <!-- 周期配置 -->
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="周期配置" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto">
+                                        <!-- 转换线周期 -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="转换线周期：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="TxtIchimokuTenkan" Grid.Row="0" Grid.Column="1" Text="9" FontSize="12" Height="30" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,8" Width="120" HorizontalAlignment="Left"/>
+                                        
+                                        <!-- 基准线周期 -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="基准线周期：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <TextBox x:Name="TxtIchimokuKijun" Grid.Row="1" Grid.Column="1" Text="26" FontSize="12" Height="30" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,8" Width="120" HorizontalAlignment="Left"/>
+                                        
+                                        <!-- 先行带B周期 -->
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="先行带B周期：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtIchimokuSenkouB" Grid.Row="2" Grid.Column="1" Text="52" FontSize="12" Height="30" Padding="10,0" VerticalContentAlignment="Center" Width="120" HorizontalAlignment="Left"/>
+                                    </Grid>
+                                </StackPanel>
+                                
+                                <!-- 颜色配置 -->
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="颜色配置" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                                        <!-- 转换线 -->
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="转换线：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <Button x:Name="BtnIchimokuTenkanColor" Grid.Row="0" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#F44336" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="0,0,0,8"/>
+                                        
+                                        <!-- 基准线 -->
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="基准线：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <Button x:Name="BtnIchimokuKijunColor" Grid.Row="1" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#2196F3" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="0,0,0,8"/>
+                                        
+                                        <!-- 看涨云图 -->
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="看涨云图：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center" Margin="0,0,0,8"/>
+                                        <Button x:Name="BtnIchimokuCloudBullishColor" Grid.Row="2" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#4CAF50" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick" Margin="0,0,0,8"/>
+                                        
+                                        <!-- 看跌云图 -->
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="看跌云图：" FontSize="11" Foreground="{DynamicResource Text1Brush}" VerticalAlignment="Center"/>
+                                        <Button x:Name="BtnIchimokuCloudBearishColor" Grid.Row="3" Grid.Column="2" Width="70" Height="26" Padding="0" Background="#EF5350" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="3" Cursor="Hand" Click="OnColorButtonClick"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+            
+            <!-- 底部按钮 -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,8,8"
+                    Padding="20,10">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                    <Button Grid.Column="1"
+                            x:Name="CancelButton"
+                            Content="取消"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Margin="0,0,10,0"
+                            Background="{DynamicResource Background2Brush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="CancelButton_OnClick"/>
+                    <Button Grid.Column="2"
+                            x:Name="ResetButton"
+                            Content="重置"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Margin="0,0,10,0"
+                            Background="{DynamicResource Background2Brush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="ResetButton_OnClick"/>
+                    <Button Grid.Column="3"
+                            x:Name="ConfirmButton"
+                            Content="确定"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Background="#F0B90B"
+                            Foreground="#FFFFFF"
+                            BorderThickness="0"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="ConfirmButton_OnClick"/>
+                </Grid>
+            </Border>
+            
+        </Grid>
+    </Border>
+</UserControl>
+
+

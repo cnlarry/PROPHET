@@ -1,0 +1,116 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="400"
+        x:Class="Prophet.Client.Views.Dialogs.CreateStrategyDialog"
+        Title="新建策略"
+        Width="500" Height="400"
+        WindowStartupLocation="CenterOwner"
+        Background="#1E1E1E"
+        Foreground="#D4D4D4">
+
+    <Window.Styles>
+        <Style Selector="TextBlock.Label">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        
+        <Style Selector="TextBox, ComboBox">
+            <Setter Property="Background" Value="#3C3C3C"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#2D2D30"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0E639C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 表单 -->
+        <StackPanel Grid.Row="0" Spacing="16">
+            <!-- 策略名称 -->
+            <StackPanel>
+                <TextBlock Text="策略名称：" Classes="Label"/>
+                <TextBox Name="NameTextBox"
+                         Watermark="输入策略名称，例如：趋势追踪策略"/>
+            </StackPanel>
+
+            <!-- 交易对 -->
+            <StackPanel>
+                <TextBlock Text="交易对：" Classes="Label"/>
+                <ComboBox Name="SymbolComboBox"
+                          SelectedIndex="0">
+                    <ComboBoxItem Content="BTCUSDT"/>
+                    <ComboBoxItem Content="ETHUSDT"/>
+                    <ComboBoxItem Content="BNBUSDT"/>
+                    <ComboBoxItem Content="SOLUSDT"/>
+                    <ComboBoxItem Content="ADAUSDT"/>
+                </ComboBox>
+            </StackPanel>
+
+            <!-- 备注 -->
+            <StackPanel>
+                <TextBlock Text="备注（可选）：" Classes="Label"/>
+                <TextBox Name="RemarksTextBox"
+                         Watermark="简要描述策略用途..."
+                         Height="60"
+                         TextWrapping="Wrap"
+                         AcceptsReturn="True"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- 提示信息 -->
+        <Border Grid.Row="1"
+                Background="#252526"
+                BorderBrush="#3F3F46"
+                BorderThickness="1"
+                CornerRadius="4"
+                Padding="16"
+                Margin="0,16,0,0">
+            <TextBlock TextWrapping="Wrap" LineHeight="22" Foreground="#CCCCCC">
+                <Run Text="💡 提示：" FontWeight="Bold" Foreground="#FFC66D"/>
+                <LineBreak/>
+                <LineBreak/>
+                <Run Text="• 点击「下一步」将创建新的编辑器标签页"/>
+                <LineBreak/>
+                <Run Text="• 在编辑器中编写完DSL代码后点击「保存」"/>
+                <LineBreak/>
+                <Run Text="• 保存时会自动创建初始版本 v1.0.0"/>
+                <LineBreak/>
+                <Run Text="• 策略将保存到您的账户下"/>
+            </TextBlock>
+        </Border>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,16,0,0">
+            <Button Name="CancelButton" Content="取消" Click="OnCancel"/>
+            <Button Name="CreateButton" Content="下一步" Classes="primary" Click="OnCreate"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

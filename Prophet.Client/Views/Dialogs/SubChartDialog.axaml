@@ -1,0 +1,913 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="660" d:DesignHeight="550"
+             x:Class="Prophet.Client.Views.Dialogs.SubChartDialog">
+    
+    <Border Background="{DynamicResource Background2Brush}"
+            BorderBrush="Transparent"
+            BorderThickness="0"
+            CornerRadius="8"
+            Padding="0">
+        
+        <Grid RowDefinitions="Auto,*,Auto">
+            
+            <!-- 第一行：标题栏 -->
+            <Border Grid.Row="0"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="8,8,0,0"
+                    Padding="20,10">
+                <Grid ColumnDefinitions="*,Auto">
+                    <!-- 标题和图标 -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+                        <PathIcon Data="{StaticResource IconSubChart}" 
+                                  Width="18" 
+                                  Height="18" 
+                                  Foreground="{DynamicResource Text1Brush}"
+                                  VerticalAlignment="Center"/>
+                        <TextBlock Text="副图指标"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource Text1Brush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <!-- 关闭按钮 -->
+                    <Button Grid.Column="1"
+                            x:Name="CloseButton"
+                            Content="✕"
+                            Width="28"
+                            Height="28"
+                            Padding="0"
+                            FontSize="16"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="{DynamicResource Text2Brush}"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Cursor="Hand"
+                            Click="CloseButton_OnClick"/>
+                </Grid>
+            </Border>
+            
+            <!-- 第二行：左右分栏布局 -->
+            <Grid Grid.Row="1" ColumnDefinitions="180,*" Margin="0">
+                
+                <!-- 左侧：副图指标列表 -->
+                <Border Grid.Column="0"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0,0,1,0"
+                        CornerRadius="0"
+                        Padding="0"
+                        Margin="0">
+                    <ScrollViewer>
+                        <StackPanel Spacing="0">
+                            <!-- 已实现的指标 -->
+                            
+                            <!-- Volume -->
+                            <Border x:Name="BtnVolume"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkVolume"
+                                          Content="Volume"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"/>
+                            </Border>
+                            
+                            <!-- MACD -->
+                            <Border x:Name="BtnMACD"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkMACD"
+                                          Content="MACD"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"/>
+                            </Border>
+                            
+                            <!-- RSI -->
+                            <Border x:Name="BtnRSI"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkRSI"
+                                          Content="RSI"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"/>
+                            </Border>
+                            
+                            <!-- ATR -->
+                            <Border x:Name="BtnATR"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkATR"
+                                          Content="ATR"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="True"/>
+                            </Border>
+                            
+                            <!-- MFI -->
+                            <Border x:Name="BtnMFI"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkMFI"
+                                          Content="MFI"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- OBV -->
+                            <Border x:Name="BtnOBV"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkOBV"
+                                          Content="OBV"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- KDJ -->
+                            <Border x:Name="BtnKDJ"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkKDJ"
+                                          Content="KDJ"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- StochRSI -->
+                            <Border x:Name="BtnStochRSI"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkStochRSI"
+                                          Content="StochRSI"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- CCI -->
+                            <Border x:Name="BtnCCI"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkCCI"
+                                          Content="CCI"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- DMI -->
+                            <Border x:Name="BtnDMI"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkDMI"
+                                          Content="DMI"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- WR -->
+                            <Border x:Name="BtnWR"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkWR"
+                                          Content="WR"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- CMF -->
+                            <Border x:Name="BtnCMF"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkCMF"
+                                          Content="CMF"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- ROC -->
+                            <Border x:Name="BtnROC"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkROC"
+                                          Content="ROC"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- EMV -->
+                            <Border x:Name="BtnEMV"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkEMV"
+                                          Content="EMV"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- MTM -->
+                            <Border x:Name="BtnMTM"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkMTM"
+                                          Content="MTM"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- CMO -->
+                            <Border x:Name="BtnCMO"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkCMO"
+                                          Content="CMO"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                            <!-- Aroon -->
+                            <Border x:Name="BtnAroon"
+                                    Background="Transparent"
+                                    Padding="16,5"
+                                    Cursor="Hand"
+                                    PointerPressed="OnIndicatorSelected">
+                                <CheckBox x:Name="ChkAroon"
+                                          Content="Aroon"
+                                          FontSize="13"
+                                          Foreground="{DynamicResource Text1Brush}"
+                                          IsChecked="False"/>
+                            </Border>
+                            
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                
+                <!-- 右侧：参数配置区 -->
+                <Border Grid.Column="1"
+                        Background="{DynamicResource Background2Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="0"
+                        CornerRadius="0"
+                        Padding="20">
+                    <ScrollViewer>
+                        <StackPanel x:Name="ConfigPanel" Spacing="16">
+                            <!-- 快速配置工具栏 -->
+                            <Border Background="{DynamicResource Background3Brush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="12"
+                                    Margin="0,0,0,10">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="⚡ 快速配置" FontSize="12" FontWeight="SemiBold" Foreground="{DynamicResource Text1Brush}"/>
+                                    <WrapPanel>
+                                        <Button Content="保守型 (5,10,20)" FontSize="11" Padding="8,4" Margin="0,0,6,0" Click="OnQuickConfig_Conservative"/>
+                                        <Button Content="激进型 (3,7,14)" FontSize="11" Padding="8,4" Margin="0,0,6,0" Click="OnQuickConfig_Aggressive"/>
+                                        <Button Content="长线型 (10,20,30)" FontSize="11" Padding="8,4" Margin="0,0,6,0" Click="OnQuickConfig_LongTerm"/>
+                                        <Button Content="自定义..." FontSize="11" Padding="8,4" Click="OnQuickConfig_Custom"/>
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- 默认提示 -->
+                            <TextBlock x:Name="NoSelectionText"
+                                       Text="← 请在左侧选择一个指标进行配置"
+                                       FontSize="13"
+                                       Foreground="{DynamicResource Text3Brush}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="0,40,0,0"
+                                       IsVisible="False"/>
+                            
+                            <!-- Volume配置面板 -->
+                            <StackPanel x:Name="VolumeConfigPanel" Spacing="15" IsVisible="True">
+                                <TextBlock Text="Volume - 成交量"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 是否显示MAVOL -->
+                                <CheckBox x:Name="ChkShowVolumeMA"
+                                          Content="显示成交量均线（MAVOL）"
+                                          FontSize="12"
+                                          Foreground="{DynamicResource Text2Brush}"
+                                          IsChecked="True"/>
+                                
+                                <!-- MA1配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线1"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkVolumeMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumVolumeMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorVolumeMA1" Background="#FFD700" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                
+                                <!-- MA2配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线2"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkVolumeMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumVolumeMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorVolumeMA2" Background="#00FFFF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                
+                                <!-- MA3配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线3"
+                                               FontSize="11"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkVolumeMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumVolumeMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorVolumeMA3" Background="#FF00FF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- MACD配置面板 -->
+                            <StackPanel x:Name="MACDConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="MACD - 指数平滑移动平均"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 快线周期 -->
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="快线周期" 
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}" 
+                                               VerticalAlignment="Center"
+                                               Width="80"/>
+                                    <NumericUpDown Grid.Column="1" 
+                                                   x:Name="NumMACDFast" 
+                                                   Value="12" 
+                                                   Minimum="1" 
+                                                   Maximum="100"
+                                                   Height="32"
+                                                   Margin="10,0,0,0"/>
+                                </Grid>
+                                
+                                <!-- 慢线周期 -->
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="慢线周期" 
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}" 
+                                               VerticalAlignment="Center"
+                                               Width="80"/>
+                                    <NumericUpDown Grid.Column="1" 
+                                                   x:Name="NumMACDSlow" 
+                                                   Value="26" 
+                                                   Minimum="1" 
+                                                   Maximum="100"
+                                                   Height="32"
+                                                   Margin="10,0,0,0"/>
+                                </Grid>
+                                
+                                <!-- 信号线周期 -->
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="信号线周期" 
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}" 
+                                               VerticalAlignment="Center"
+                                               Width="80"/>
+                                    <NumericUpDown Grid.Column="1" 
+                                                   x:Name="NumMACDSignal" 
+                                                   Value="9" 
+                                                   Minimum="1" 
+                                                   Maximum="100"
+                                                   Height="32"
+                                                   Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- RSI配置面板 -->
+                            <StackPanel x:Name="RSIConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="RSI - 相对强弱指标（多周期对比）"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 多周期配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="RSI周期1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkRSIPeriod1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumRSIPeriod1" Value="7" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorRSIPeriod1" Background="#FFD700" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="RSI周期2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkRSIPeriod2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumRSIPeriod2" Value="14" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorRSIPeriod2" Background="#00FFFF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="RSI周期3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkRSIPeriod3" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumRSIPeriod3" Value="21" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorRSIPeriod3" Background="#FF00FF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- ATR配置面板 -->
+                            <StackPanel x:Name="ATRConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="ATR - 平均真实波幅"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 周期 -->
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" 
+                                               Text="周期" 
+                                               FontSize="12"
+                                               Foreground="{DynamicResource Text2Brush}" 
+                                               VerticalAlignment="Center"
+                                               Width="80"/>
+                                    <NumericUpDown Grid.Column="1" 
+                                                   x:Name="NumATRPeriod" 
+                                                   Value="14" 
+                                                   Minimum="1" 
+                                                   Maximum="100"
+                                                   Height="32"
+                                                   Margin="10,0,0,0"/>
+                                </Grid>
+                                
+                                <!-- ATR MA配置 -->
+                                <CheckBox x:Name="ChkShowATRMA" Content="显示ATR均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkATRMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumATRMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorATRMA1" Background="#FFD700" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkATRMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumATRMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorATRMA2" Background="#00FFFF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkATRMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumATRMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorATRMA3" Background="#FF00FF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- 新增指标配置面板 -->
+                            
+                            <!-- MFI配置面板 -->
+                            <StackPanel x:Name="MFIConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="MFI - 资金流量指标（多周期对比）"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 多周期配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MFI周期1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkMFIPeriod1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumMFIPeriod1" Value="7" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorMFIPeriod1" Background="#FFD700" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MFI周期2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkMFIPeriod2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumMFIPeriod2" Value="14" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorMFIPeriod2" Background="#00FFFF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="MFI周期3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkMFIPeriod3" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumMFIPeriod3" Value="21" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorMFIPeriod3" Background="#FF00FF" CornerRadius="4" Height="28" Cursor="Hand" ToolTip.Tip="点击选择颜色"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- OBV配置面板 -->
+                            <StackPanel x:Name="OBVConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="OBV - 能量潮"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <TextBlock Text="OBV无需配置参数"
+                                           FontSize="12"
+                                           Foreground="{DynamicResource Text3Brush}"
+                                           Margin="0,10,0,0"/>
+                                <CheckBox x:Name="ChkShowOBVMA" Content="显示OBV均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkOBVMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumOBVMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorOBVMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkOBVMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumOBVMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorOBVMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkOBVMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumOBVMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorOBVMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- KDJ配置面板 -->
+                            <StackPanel x:Name="KDJConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="KDJ - 随机指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="RSV周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumKDJPeriod" Value="9" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="K平滑" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumKDJKPeriod" Value="3" Minimum="1" Maximum="20" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="D平滑" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumKDJDPeriod" Value="3" Minimum="1" Maximum="20" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- StochRSI配置面板 -->
+                            <StackPanel x:Name="StochRSIConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="StochRSI - 随机RSI"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="RSI周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumStochRSIPeriod" Value="14" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="K平滑" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumStochRSIKPeriod" Value="3" Minimum="1" Maximum="20" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="D平滑" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumStochRSIDPeriod" Value="3" Minimum="1" Maximum="20" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- CCI配置面板 -->
+                            <StackPanel x:Name="CCIConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="CCI - 商品通道指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 多周期对比配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkCCIPeriod1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumCCIPeriod1" Value="14" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorCCIPeriod1" Background="#FFD700" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkCCIPeriod2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumCCIPeriod2" Value="20" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorCCIPeriod2" Background="#00FFFF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkCCIPeriod3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumCCIPeriod3" Value="50" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorCCIPeriod3" Background="#FF00FF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- DMI配置面板 -->
+                            <StackPanel x:Name="DMIConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="DMI - 趋向指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumDMIPeriod" Value="14" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                            <!-- WR配置面板 -->
+                            <StackPanel x:Name="WRConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="WR - 威廉指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                
+                                <!-- 多周期对比配置 -->
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkWRPeriod1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumWRPeriod1" Value="9" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorWRPeriod1" Background="#FFD700" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkWRPeriod2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumWRPeriod2" Value="14" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorWRPeriod2" Background="#00FFFF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="周期3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/>
+                                    <Grid ColumnDefinitions="Auto,*,80">
+                                        <CheckBox Grid.Column="0" x:Name="ChkWRPeriod3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/>
+                                        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0">
+                                            <TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                            <NumericUpDown Grid.Column="1" x:Name="NumWRPeriod3" Value="21" Minimum="1" Maximum="200" Height="28"/>
+                                        </Grid>
+                                        <Border Grid.Column="2" x:Name="ColorWRPeriod3" Background="#FF00FF" CornerRadius="4" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                            
+                            <!-- CMF配置面板 -->
+                            <StackPanel x:Name="CMFConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="CMF - 蔡金资金流量"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumCMFPeriod" Value="20" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="ChkShowCMFMA" Content="显示CMF均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMFMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMFMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMFMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMFMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMFMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMFMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMFMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMFMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMFMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- ROC配置面板 -->
+                            <StackPanel x:Name="ROCConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="ROC - 变动率指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumROCPeriod" Value="12" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="ChkShowROCMA" Content="显示ROC均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkROCMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumROCMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorROCMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkROCMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumROCMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorROCMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkROCMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumROCMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorROCMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- EMV配置面板 -->
+                            <StackPanel x:Name="EMVConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="EMV - 简易波动指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumEMVPeriod" Value="14" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="ChkShowEMVMA" Content="显示EMV均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkEMVMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumEMVMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorEMVMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkEMVMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumEMVMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorEMVMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkEMVMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumEMVMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorEMVMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- MTM配置面板 -->
+                            <StackPanel x:Name="MTMConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="MTM - 动量指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumMTMPeriod" Value="12" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="ChkShowMTMMA" Content="显示MTM均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkMTMMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumMTMMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorMTMMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkMTMMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumMTMMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorMTMMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkMTMMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumMTMMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorMTMMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- CMO配置面板 -->
+                            <StackPanel x:Name="CMOConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="CMO - Chande动量振荡器"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumCMOPeriod" Value="14" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                                <CheckBox x:Name="ChkShowCMOMA" Content="显示CMO均线" FontSize="12" Foreground="{DynamicResource Text2Brush}" IsChecked="False"/>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线1" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMOMA1" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMOMA1Period" Value="5" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMOMA1" Background="#FFD700" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线2" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMOMA2" IsChecked="True" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMOMA2Period" Value="10" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMOMA2" Background="#00FFFF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                                <StackPanel Spacing="8"><TextBlock Text="MA线3" FontSize="11" FontWeight="SemiBold" Foreground="{DynamicResource Text2Brush}"/><Grid ColumnDefinitions="Auto,*,80"><CheckBox Grid.Column="0" x:Name="ChkCMOMA3" IsChecked="False" Content="启用" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center"/><Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="10,0,10,0"><TextBlock Grid.Column="0" Text="周期" FontSize="11" Foreground="{DynamicResource Text3Brush}" VerticalAlignment="Center" Margin="0,0,5,0"/><NumericUpDown Grid.Column="1" x:Name="NumCMOMA3Period" Value="20" Minimum="1" Maximum="200" Height="28"/></Grid><Border Grid.Column="2" x:Name="ColorCMOMA3" Background="#FF00FF" CornerRadius="4" Height="28"/></Grid></StackPanel>
+                            </StackPanel>
+                            
+                            <!-- Aroon配置面板 -->
+                            <StackPanel x:Name="AroonConfigPanel" Spacing="15" IsVisible="False">
+                                <TextBlock Text="Aroon - 阿隆指标"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="{DynamicResource Text1Brush}"/>
+                                <Grid ColumnDefinitions="Auto,*">
+                                    <TextBlock Grid.Column="0" Text="周期" FontSize="12" Foreground="{DynamicResource Text2Brush}" VerticalAlignment="Center" Width="80"/>
+                                    <NumericUpDown Grid.Column="1" x:Name="NumAroonPeriod" Value="25" Minimum="1" Maximum="100" Height="32" Margin="10,0,0,0"/>
+                                </Grid>
+                            </StackPanel>
+                            
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+                
+            </Grid>
+            
+            <!-- 第三行：底部按钮栏 -->
+            <Border Grid.Row="2"
+                    Background="{DynamicResource Background2Brush}"
+                    BorderBrush="{DynamicResource BorderBrush}"
+                    BorderThickness="0,1,0,0"
+                    CornerRadius="0,0,8,8"
+                    Padding="20,15">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                    <Button Grid.Column="1"
+                            x:Name="CancelButton"
+                            Content="取消"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Margin="0,0,10,0"
+                            Background="{DynamicResource Background2Brush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="CancelButton_OnClick"/>
+                    <Button Grid.Column="2"
+                            x:Name="ApplyButton"
+                            Content="应用"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Margin="0,0,10,0"
+                            Background="{DynamicResource Background2Brush}"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="ApplyButton_OnClick"/>
+                    <Button Grid.Column="3"
+                            x:Name="ConfirmButton"
+                            Content="确定"
+                            Width="100"
+                            Height="36"
+                            FontSize="13"
+                            Background="#F0B90B"
+                            Foreground="#FFFFFF"
+                            BorderThickness="0"
+                            CornerRadius="6"
+                            Cursor="Hand"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Click="ConfirmButton_OnClick"/>
+                </Grid>
+            </Border>
+            
+        </Grid>
+    </Border>
+</UserControl>

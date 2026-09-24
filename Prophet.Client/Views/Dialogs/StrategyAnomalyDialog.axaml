@@ -1,0 +1,195 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="550" d:DesignHeight="550"
+             x:Class="Prophet.Client.Views.Dialogs.StrategyAnomalyDialog">
+    
+    <UserControl.Styles>
+        <Style Selector="Button.Primary">
+            <Setter Property="Background" Value="#F0B90B"/>
+            <Setter Property="Foreground" Value="#1E1E1E"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+        
+        <Style Selector="Button.Primary:pointerover">
+            <Setter Property="Background" Value="#FFD24D"/>
+        </Style>
+        
+        <Style Selector="Button.Secondary">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+        
+        <Style Selector="Button.Secondary:pointerover">
+            <Setter Property="Background" Value="#3A3A3A"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,*,Auto" Margin="24">
+        <!-- 标题 -->
+        <StackPanel Grid.Row="0" Spacing="8">
+            <TextBlock Text="🔴 策略异常"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#F44336"/>
+            <TextBlock Name="StrategyNameText"
+                       FontSize="14"
+                       Foreground="#A0A0A0"/>
+        </StackPanel>
+        
+        <!-- 主内容区域 -->
+        <ScrollViewer Grid.Row="1" Margin="0,24,0,0">
+            <StackPanel Spacing="20">
+                <!-- 异常原因 -->
+                <StackPanel Spacing="8">
+                    <TextBlock Text="异常原因："
+                               Foreground="#A0A0A0"
+                               FontSize="12"
+                               FontWeight="SemiBold"/>
+                    <Border Background="#2A1F1F"
+                            BorderBrush="#F44336"
+                            BorderThickness="2,0,0,0"
+                            CornerRadius="4"
+                            Padding="16">
+                        <TextBlock Name="AnomalyReasonText"
+                                   TextWrapping="Wrap"
+                                   Foreground="#FFB4AB"
+                                   FontSize="13"
+                                   LineHeight="20"/>
+                    </Border>
+                </StackPanel>
+                
+                <!-- 检测时间 -->
+                <StackPanel Spacing="4">
+                    <TextBlock Text="检测时间："
+                               Foreground="#A0A0A0"
+                               FontSize="12"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Name="DetectionTimeText"
+                               Foreground="#D4D4D4"
+                               FontSize="13"/>
+                </StackPanel>
+                
+                <!-- 影响的实例 -->
+                <StackPanel Spacing="4" Name="InstanceImpactPanel">
+                    <TextBlock Text="影响的实例："
+                               Foreground="#A0A0A0"
+                               FontSize="12"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Name="InstanceCountText"
+                               Foreground="#D4D4D4"
+                               FontSize="13"/>
+                </StackPanel>
+                
+                <!-- 策略信息 -->
+                <Border Background="#2D2D2D"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="16">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="策略信息"
+                                   Foreground="#A0A0A0"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                            <TextBlock Grid.Row="0" Grid.Column="0"
+                                       Text="交易对："
+                                       Foreground="#A0A0A0"
+                                       FontSize="12"
+                                       Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="0" Grid.Column="1"
+                                       Name="SymbolText"
+                                       Foreground="#D4D4D4"
+                                       FontSize="12"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0"
+                                       Text="版本："
+                                       Foreground="#A0A0A0"
+                                       FontSize="12"
+                                       Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="1" Grid.Column="1"
+                                       Name="VersionText"
+                                       Foreground="#D4D4D4"
+                                       FontSize="12"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0"
+                                       Text="订阅人数："
+                                       Foreground="#A0A0A0"
+                                       FontSize="12"
+                                       Margin="0,0,12,0"/>
+                            <TextBlock Grid.Row="2" Grid.Column="1"
+                                       Name="SubscriberText"
+                                       Foreground="#D4D4D4"
+                                       FontSize="12"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 建议操作 -->
+                <Border Background="#2A2A2A"
+                        BorderBrush="#3F3F46"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="16">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="💡 建议操作："
+                                   Foreground="#F0B90B"
+                                   FontSize="12"
+                                   FontWeight="SemiBold"/>
+                        <TextBlock Text="1. 查看最新的 DSL 函数文档"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"
+                                   Margin="8,0,0,0"/>
+                        <TextBlock Text="2. 修改代码使用正确的函数或语法"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"
+                                   Margin="8,0,0,0"/>
+                        <TextBlock Text="3. 保存新版本并进行回测验证"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"
+                                   Margin="8,0,0,0"/>
+                        <TextBlock Text="4. 如果修复成功，可以恢复策略"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"
+                                   Margin="8,0,0,0"/>
+                        <TextBlock Text="5. 如果无法修复，建议归档策略"
+                                   Foreground="#A0A0A0"
+                                   FontSize="11"
+                                   Margin="8,0,0,0"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+        
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12"
+                    Margin="0,24,0,0">
+            <Button Name="CloseButton"
+                    Content="关闭"
+                    Width="100"
+                    Classes="Secondary"
+                    Click="OnCloseClick"/>
+            
+            <Button Name="FixButton"
+                    Content="尝试修复"
+                    Width="120"
+                    Classes="Primary"
+                    Click="OnFixClick"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

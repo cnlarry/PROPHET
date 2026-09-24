@@ -1,0 +1,27 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="using:Prophet.Client.Converters"
+             x:Class="Prophet.Client.App"
+             RequestedThemeVariant="Dark">
+    <!-- 应用程序资源 -->
+    <Application.Styles>
+        <FluentTheme />
+        <!-- 关键：AvaloniaEdit 主题样式（参考 Demo） -->
+        <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
+        <!-- DataGrid 样式 -->
+        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <StyleInclude Source="/Styles/Styles.axaml" />
+    </Application.Styles>
+    
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Prophet.Client/Resources/IconPaths.axaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Converters -->
+            <converters:ProfitColorConverter x:Key="ProfitColorConverter"/>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+

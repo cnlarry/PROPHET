@@ -1,0 +1,494 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Prophet.Client.ViewModels"
+             xmlns:models="using:Prophet.Client.Backtest.Models"
+             mc:Ignorable="d"
+             d:DesignWidth="1400"
+             d:DesignHeight="900"
+             x:Class="Prophet.Client.Views.Pages.BacktestView"
+             x:DataType="vm:BacktestViewModel">
+
+    <UserControl.Styles>
+        <!-- 币安风格卡片样式 -->
+        <Style Selector="Border.BacktestCard">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.2"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.BacktestCard:pointerover">
+            <Setter Property="Background" Value="{DynamicResource Background3Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        </Style>
+
+        <!-- 进行中任务卡片样式 -->
+        <Style Selector="Border.BacktestCard.Running">
+            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- 进行中任务脉冲动画 -->
+        <Style Selector="Border.BacktestCard.Running">
+            <Style.Animations>
+                <Animation Duration="0:0:2" IterationCount="Infinite" PlaybackDirection="Alternate">
+                    <KeyFrame Cue="0%">
+                        <Setter Property="Opacity" Value="1"/>
+                    </KeyFrame>
+                    <KeyFrame Cue="100%">
+                        <Setter Property="Opacity" Value="0.85"/>
+                    </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+
+        <!-- 筛选器样式 -->
+        <Style Selector="ComboBox.Filter">
+            <Setter Property="Background" Value="{DynamicResource Background2Brush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="MinWidth" Value="150"/>
+        </Style>
+
+        <!-- 状态标签样式 -->
+        <Style Selector="Border.StatusBadge">
+            <Setter Property="CornerRadius" Value="2"/>
+            <Setter Property="Padding" Value="6,2"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Running">
+            <Setter Property="Background" Value="#1A0ECB81"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Completed">
+            <Setter Property="Background" Value="#1A848E9C"/>
+        </Style>
+
+        <Style Selector="Border.StatusBadge.Failed">
+            <Setter Property="Background" Value="#1AF6465D"/>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,Auto,*" Background="{DynamicResource Background1Brush}">
+        <!-- 顶部标题栏 -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="24,16">
+            <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="回测中心"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource Text1Brush}"/>
+                    <TextBlock Text="管理历史回测记录，分析策略表现"
+                               FontSize="13"
+                               Foreground="{DynamicResource Text2Brush}"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Width="40"
+                        Height="40"
+                        Margin="0,0,16,0"
+                        Background="{DynamicResource Background3Brush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        ToolTip.Tip="刷新"
+                        Command="{Binding LoadHistoryCommand}">
+                    <Viewbox Width="20" Height="20">
+                        <Path Data="{StaticResource IconRefresh}"
+                              Fill="{DynamicResource Text1Brush}"
+                              Stretch="Uniform"/>
+                    </Viewbox>
+                </Button>
+
+                <Button Grid.Column="2"
+                        Classes="Primary"
+                        Height="40"
+                        Padding="20,0"
+                        FontWeight="SemiBold"
+                        Click="OnCreateBacktestClicked">
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center" 
+                                Spacing="8">
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource IconBacktest}"
+                                  Fill="White"
+                                  Stretch="Uniform"/>
+                        </Viewbox>
+                        <TextBlock Text="新建回测" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- 筛选和排序栏 -->
+        <Border Grid.Row="1"
+                Background="{DynamicResource Background2Brush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                Margin="10"
+                CornerRadius="4"
+                Padding="16,12">
+            <Grid ColumnDefinitions="Auto,Auto,*">
+                <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,16,0">
+                    <ComboBox Classes="Filter"
+                              ItemsSource="{Binding FilterStrategies}"
+                              SelectedItem="{Binding SelectedFilterStrategy}"
+                              PlaceholderText="全部策略"
+                              MinWidth="180">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Spacing="4" Margin="0,0,16,0">
+                    <ComboBox Classes="Filter"
+                              ItemsSource="{Binding StatusFilters}"
+                              SelectedItem="{Binding SelectedStatusFilter}"
+                              MinWidth="120"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Spacing="4" Margin="0,0,16,0">
+                    <ComboBox Classes="Filter"
+                              ItemsSource="{Binding SortOptions}"
+                              SelectedItem="{Binding SelectedSortOption}"
+                              MinWidth="140"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 主内容区 -->
+        <Grid Grid.Row="2" Margin="10,10,10,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="10">
+                    <!-- 空状态 -->
+                    <Border Background="{DynamicResource Background2Brush}"
+                            CornerRadius="8"
+                            Padding="48,32"
+                            IsVisible="{Binding HasNoFilteredHistory}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="0,60,0,0">
+                        <StackPanel Spacing="12" HorizontalAlignment="Center">
+                            <TextBlock Text="📭"
+                                       FontSize="48"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="暂无回测记录"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Text1Brush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="点击右上角「新建回测」按钮开始第一次回测"
+                                       FontSize="13"
+                                       Foreground="{DynamicResource Text2Brush}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 进行中的任务 -->
+                    <StackPanel Spacing="10" IsVisible="{Binding HasRunningSessions}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Viewbox Width="16" Height="16" Margin="5,0,0,0">
+                                <Path Data="{StaticResource IconTradingStatus}"
+                                      Fill="{DynamicResource PrimaryBrush}"
+                                      Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock Text="进行中的任务"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource PrimaryBrush}"/>
+                        </StackPanel>
+                        
+                        <ItemsControl ItemsSource="{Binding RunningSessions}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="vm:BacktestSessionViewModel">
+                                    <Border Classes="BacktestCard Running"
+                                            Margin="0,0,10,10"
+                                            Width="300"
+                                            PointerPressed="OnRunningTaskCardClicked">
+                                        <StackPanel Spacing="10">
+                                            <!-- 头部 -->
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{Binding StrategyName}"
+                                                               FontSize="15"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                    <TextBlock Text="{Binding Symbol}"
+                                                               FontSize="12"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                </StackPanel>
+                                                <Ellipse Grid.Column="1"
+                                                         Width="8"
+                                                         Height="8"
+                                                         Fill="{DynamicResource PrimaryBrush}"
+                                                         VerticalAlignment="Top"
+                                                         Margin="0,4,0,0"/>
+                                            </Grid>
+
+                                            <!-- 进度条 -->
+                                            <StackPanel Spacing="6">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <TextBlock Text="{Binding ProgressText}"
+                                                               FontSize="12"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding ProgressPercentage, StringFormat='{}{0:F1}%'}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource PrimaryBrush}"/>
+                                                </Grid>
+                                                <ProgressBar Value="{Binding ProgressPercentage}"
+                                                             Maximum="100"
+                                                             Height="6"
+                                                             CornerRadius="3"
+                                                             Foreground="{DynamicResource PrimaryBrush}"
+                                                             Background="{DynamicResource Background3Brush}"/>
+                                            </StackPanel>
+
+                                            <!-- 实时指标 -->
+                                            <Grid ColumnDefinitions="*,*,*">
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="权益"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding CurrentEquity, StringFormat='${0:N2}'}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="2">
+                                                    <TextBlock Text="胜率"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding CurrentWinRate, StringFormat='{}{0:P0}'}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource SuccessBrush}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Spacing="2">
+                                                    <TextBlock Text="交易数"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding TotalTrades}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- 操作按钮 -->
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                <Button Grid.Column="0"
+                                                        Command="{Binding PauseResumeCommand}"
+                                                        Classes="Primary"
+                                                        HorizontalAlignment="Stretch"
+                                                        Height="32"
+                                                        FontSize="12">
+                                                    <StackPanel Orientation="Horizontal" 
+                                                                HorizontalAlignment="Center" 
+                                                                VerticalAlignment="Center" 
+                                                                Spacing="6">
+                                                        <Grid Width="14" Height="14">
+                                                            <Viewbox Width="14" Height="14"
+                                                                     IsVisible="{Binding !IsPaused}">
+                                                                <Path Data="{StaticResource IconPause}"
+                                                                      Fill="White"
+                                                                      Stretch="Uniform"/>
+                                                            </Viewbox>
+                                                            <Viewbox Width="14" Height="14"
+                                                                     IsVisible="{Binding IsPaused}">
+                                                                <Path Data="{StaticResource IconContinue}"
+                                                                      Fill="White"
+                                                                      Stretch="Uniform"/>
+                                                            </Viewbox>
+                                                        </Grid>
+                                                        <TextBlock Text="{Binding PauseResumeButtonText}" 
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
+                                                <Button Grid.Column="1"
+                                                        Command="{Binding CancelCommand}"
+                                                        Classes="Danger"
+                                                        HorizontalAlignment="Stretch"
+                                                        Height="32"
+                                                        FontSize="12">
+                                                    <StackPanel Orientation="Horizontal" 
+                                                                HorizontalAlignment="Center" 
+                                                                VerticalAlignment="Center" 
+                                                                Spacing="6">
+                                                        <Viewbox Width="14" Height="14">
+                                                            <Path Data="{StaticResource IconCancel}"
+                                                                  Fill="White"
+                                                                  Stretch="Uniform"/>
+                                                        </Viewbox>
+                                                        <TextBlock Text="终止" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Button>
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- 历史记录 -->
+                    <StackPanel Spacing="10" IsVisible="{Binding HasFilteredHistory}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Viewbox Width="16" Height="16" Margin="5,0,0,0">
+                                <Path Data="{StaticResource IconBacktestHistory}"
+                                      Fill="{DynamicResource Text1Brush}"
+                                      Stretch="Uniform"/>
+                            </Viewbox>
+                            <TextBlock Text="历史回测"
+                                       FontSize="14"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Text1Brush}"/>
+                        </StackPanel>
+
+                        <ItemsControl ItemsSource="{Binding FilteredBacktestHistory}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate x:DataType="models:BacktestResult">
+                                    <Border Classes="BacktestCard"
+                                            Margin="0,0,10,10"
+                                            Width="300"
+                                            PointerPressed="OnBacktestCardClicked">
+                                        <StackPanel Spacing="10">
+                                            <!-- 头部 -->
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{Binding StrategyName}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                                        <TextBlock Text="{Binding Symbol}"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                                        <TextBlock Text="•"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                                        <TextBlock Text="{Binding CompletedAt, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"
+                                                                   FontSize="12"
+                                                                   Foreground="{DynamicResource Text2Brush}"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <Viewbox Grid.Column="1"
+                                                         Width="16"
+                                                         Height="16"
+                                                         VerticalAlignment="Top"
+                                                         Margin="0,2,0,0">
+                                                    <Path Data="{StaticResource IconHistory}"
+                                                          Fill="{DynamicResource Text2Brush}"
+                                                          Stretch="Uniform"/>
+                                                </Viewbox>
+                                            </Grid>
+
+                                            <!-- 核心指标 -->
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
+                                                <StackPanel Grid.Column="0" Spacing="4">
+                                                    <TextBlock Text="收益率"
+                                                               FontSize="11"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding TotalReturn, StringFormat='{}{0:P2}'}"
+                                                               FontSize="18"
+                                                               FontWeight="Bold"
+                                                               Foreground="{DynamicResource SuccessBrush}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="4">
+                                                    <TextBlock Text="最大回撤"
+                                                               FontSize="11"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding MaxDrawdown, StringFormat='{}{0:P2}'}"
+                                                               FontSize="18"
+                                                               FontWeight="Bold"
+                                                               Foreground="{DynamicResource DangerBrush}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- 次要指标 -->
+                                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="胜率"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding WinRate, StringFormat='{}{0:P1}'}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="1" Spacing="2">
+                                                    <TextBlock Text="夏普"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding SharpeRatio, StringFormat='{}{0:F2}'}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2" Spacing="2">
+                                                    <TextBlock Text="交易数"
+                                                               FontSize="10"
+                                                               Foreground="{DynamicResource Text2Brush}"/>
+                                                    <TextBlock Text="{Binding TotalTrades}"
+                                                               FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource Text1Brush}"/>
+                                                </StackPanel>
+                                            </Grid>
+
+                                            <!-- 时间范围 -->
+                                            <Border Background="{DynamicResource Background1Brush}"
+                                                    CornerRadius="4"
+                                                    Padding="8">
+                                                <TextBlock FontSize="11"
+                                                           Foreground="{DynamicResource Text2Brush}">
+                                                    <Run Text="回测区间:"/>
+                                                    <Run Text="{Binding StartTime, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                                    <Run Text="至"/>
+                                                    <Run Text="{Binding EndTime, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                                </TextBlock>
+                                            </Border>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</UserControl>
+

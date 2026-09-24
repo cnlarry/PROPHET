@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Prophet.Client.Views.ContextMenus.HomeContextMenu">
+    
+    <!--首页的上下文菜单项（全局功能）-->
+    <StackPanel VerticalAlignment="Top" 
+                Spacing="0"
+                Margin="0,0,0,0">
+        
+        <!-- 配置图标 -->
+        <Border x:Name="IconConfig"
+                Classes="SideIcon"
+                ToolTip.Tip="配置"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconConfigs}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 日志图标 -->
+        <Border x:Name="IconLog"
+                Classes="SideIcon"
+                ToolTip.Tip="日志"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconLog}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 性能图标 -->
+        <Border x:Name="IconPerformance"
+                Classes="SideIcon"
+                ToolTip.Tip="性能"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Viewbox Width="20" Height="20">
+                <Path Data="{StaticResource IconPerformance}"
+                      Fill="{DynamicResource Text2Brush}"
+                      Stretch="Uniform"/>
+            </Viewbox>
+        </Border>
+        
+        <!-- 通知图标 -->
+        <Border x:Name="IconNotification"
+                Classes="SideIcon"
+                ToolTip.Tip="通知"
+                Cursor="Hand"
+                PointerPressed="OnMenuItemClick">
+            <Grid>
+                <Viewbox Width="20" Height="20">
+                    <Path Data="{StaticResource IconNotification}"
+                          Fill="{DynamicResource Text2Brush}"
+                          Stretch="Uniform"/>
+                </Viewbox>
+                <!-- 通知徽章 -->
+                <Border Background="{DynamicResource DangerBrush}"
+                        CornerRadius="8"
+                        Padding="4,2"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Margin="0,2,4,0"
+                        IsVisible="False"
+                        x:Name="NotificationBadge">
+                    <TextBlock Text="3" 
+                               FontSize="9"
+                               Foreground="White"
+                               FontWeight="Bold"/>
+                </Border>
+            </Grid>
+        </Border>
+        
+    </StackPanel>
+    
+</UserControl>
+

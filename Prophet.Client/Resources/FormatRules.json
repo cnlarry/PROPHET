@@ -1,0 +1,103 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Prophet DSL Code Formatting Rules",
+    "version": "1.0.0",
+    "description": "代码格式化规则配置文件",
+    "indentation": {
+        "size": 4,
+        "type": "spaces",
+        "description": "缩进配置：4个空格"
+    },
+    "spacing": {
+        "beforeOpenBrace": true,
+        "afterOpenBrace": false,
+        "beforeCloseBrace": false,
+        "afterCloseBrace": false,
+        "beforeSemicolon": false,
+        "afterSemicolon": true,
+        "beforeComma": false,
+        "afterComma": true,
+        "beforeColon": false,
+        "afterColon": true,
+        "aroundOperators": true,
+        "aroundAssignment": true,
+        "insideParentheses": false,
+        "description": "空格规则配置"
+    },
+    "braces": {
+        "openingOnSameLine": true,
+        "closingOnNewLine": true,
+        "emptyBlockOnOneLine": false,
+        "description": "花括号位置规则"
+    },
+    "lineBreaks": {
+        "maxEmptyLines": 1,
+        "beforeBlockComment": true,
+        "afterBlockComment": false,
+        "beforeSignal": false,
+        "afterSignal": true,
+        "betweenConditions": false,
+        "description": "换行规则"
+    },
+    "alignment": {
+        "alignComments": true,
+        "alignAssignments": false,
+        "alignParameters": false,
+        "description": "对齐规则"
+    },
+    "wrapping": {
+        "maxLineLength": 120,
+        "wrapLongConditions": true,
+        "wrapOperator": "end",
+        "description": "行长度限制和换行策略"
+    },
+    "comments": {
+        "preserveFormat": true,
+        "addSpaceAfterSlash": true,
+        "alignInlineComments": false,
+        "description": "注释格式化规则"
+    },
+    "examples": [
+        {
+            "name": "基本格式化",
+            "before": "ALL{$(5m).MACD().trend=BULLISH;$(5m).RSI().value<70;}=BUY;",
+            "after": "ALL {\n    $(5m).MACD().trend = BULLISH;\n    $(5m).RSI().value < 70;\n} = BUY;"
+        },
+        {
+            "name": "多行条件格式化",
+            "before": "ALL{$(5m).MACD().trend=BULLISH;$(5m).RSI().value<70;$(5m).ADX().value>20;KLINE(5m).close(0)>$(5m).EMA().value;}=BUY;",
+            "after": "ALL {\n    $(5m).MACD().trend = BULLISH;\n    $(5m).RSI().value < 70;\n    $(5m).ADX().value > 20;\n    KLINE(5m).close(0) > $(5m).EMA().value;\n} = BUY;"
+        },
+        {
+            "name": "加权函数格式化",
+            "before": "WEIGHTED(0.7){WEIGHT($(5m).MACD().trend=BULLISH)=0.4;WEIGHT($(5m).RSI().value<70)=0.3;}=BUY;",
+            "after": "WEIGHTED(0.7) {\n    WEIGHT($(5m).MACD().trend = BULLISH) = 0.4;\n    WEIGHT($(5m).RSI().value < 70) = 0.3;\n} = BUY;"
+        },
+        {
+            "name": "注释格式化",
+            "before": "//买入信号\nALL{$(5m).MACD().trend=BULLISH;}=BUY;//金叉买入",
+            "after": "// 买入信号\nALL {\n    $(5m).MACD().trend = BULLISH;\n} = BUY; // 金叉买入"
+        }
+    ],
+    "customRules": [
+        {
+            "name": "信号块格式化",
+            "pattern": "^(ALL|ANY|WEIGHTED|MIN)\\s*\\{",
+            "action": "ensureNewLineAfterOpenBrace",
+            "description": "确保信号块开括号后换行"
+        },
+        {
+            "name": "条件对齐",
+            "pattern": "^\\s*(\\$\\.|KLINE|HIGHEST|LOWEST|AVERAGE|STD|@)",
+            "action": "indentToLevel",
+            "level": 1,
+            "description": "条件语句缩进一级"
+        },
+        {
+            "name": "信号赋值对齐",
+            "pattern": "^\\}\\s*=\\s*(BUY|SELL|HOLD)",
+            "action": "alignWithBlock",
+            "description": "信号赋值与块开始对齐"
+        }
+    ]
+}

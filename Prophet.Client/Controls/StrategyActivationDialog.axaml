@@ -1,0 +1,282 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="Prophet.Client.Controls.StrategyActivationDialog">
+    
+    <UserControl.Styles>
+        <!-- 指标列表项样式 -->
+        <Style Selector="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:pointerover">
+            <Setter Property="Background" Value="#2A2A2A"/>
+        </Style>
+        
+        <Style Selector="ListBoxItem:selected">
+            <Setter Property="Background" Value="#3A3A3A"/>
+        </Style>
+        
+        <!-- 参数输入框样式 -->
+        <Style Selector="TextBox.param-input">
+            <Setter Property="Background" Value="#2D2D2D"/>
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="BorderBrush" Value="#3F3F46"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        
+        <Style Selector="TextBox.param-input:focus">
+            <Setter Property="BorderBrush" Value="#F0B90B"/>
+        </Style>
+        
+        <!-- 标签样式 -->
+        <Style Selector="TextBlock.param-label">
+            <Setter Property="Foreground" Value="#A0A0A0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,4"/>
+        </Style>
+        
+        <Style Selector="TextBlock.param-name">
+            <Setter Property="Foreground" Value="#D4D4D4"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+    </UserControl.Styles>
+    
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <!-- 标题 -->
+        <TextBlock Grid.Row="0" 
+                   Text="策略激活 - 配置指标参数"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Foreground="#D4D4D4"
+                   Margin="0,0,0,16"/>
+        
+        <!-- 回测数据展示区域 (🔥 P0-8 新增) -->
+        <Border Grid.Row="1"
+                Name="BacktestDataPanel"
+                Background="#1A2332"
+                BorderBrush="#2D4A6D"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="16"
+                Margin="0,0,0,16"
+                IsVisible="False">
+            <Grid ColumnDefinitions="*,*,*,*">
+                <!-- 第1列：胜率和交易次数 -->
+                <StackPanel Grid.Column="0" Spacing="12">
+                    <TextBlock Text="📊 回测统计" 
+                               FontSize="13" 
+                               FontWeight="SemiBold" 
+                               Foreground="#A0D0FF"
+                               Margin="0,0,0,8"/>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="胜率" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="WinRateText" 
+                                   Text="--" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#4CAF50"/>
+                    </StackPanel>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="总交易次数" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="TotalTradesText" 
+                                   Text="--" 
+                                   FontSize="16" 
+                                   Foreground="#D4D4D4"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 第2列：收益率和回撤 -->
+                <StackPanel Grid.Column="1" Spacing="12" Margin="16,0,0,0">
+                    <TextBlock Text="💰 收益表现" 
+                               FontSize="13" 
+                               FontWeight="SemiBold" 
+                               Foreground="#A0D0FF"
+                               Margin="0,0,0,8"/>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="总收益率" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="TotalReturnText" 
+                                   Text="--" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="#4CAF50"/>
+                    </StackPanel>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="最大回撤" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="MaxDrawdownText" 
+                                   Text="--" 
+                                   FontSize="16" 
+                                   Foreground="#F44336"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 第3列：夏普比率和盈亏比 -->
+                <StackPanel Grid.Column="2" Spacing="12" Margin="16,0,0,0">
+                    <TextBlock Text="📈 风险指标" 
+                               FontSize="13" 
+                               FontWeight="SemiBold" 
+                               Foreground="#A0D0FF"
+                               Margin="0,0,0,8"/>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="夏普比率" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="SharpeRatioText" 
+                                   Text="--" 
+                                   FontSize="16" 
+                                   Foreground="#D4D4D4"/>
+                    </StackPanel>
+                    
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="盈亏比" FontSize="11" Foreground="#808080"/>
+                        <TextBlock Name="ProfitFactorText" 
+                                   Text="--" 
+                                   FontSize="16" 
+                                   Foreground="#D4D4D4"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <!-- 第4列：质量评分 -->
+                <StackPanel Grid.Column="3" Spacing="12" Margin="16,0,0,0" HorizontalAlignment="Center">
+                    <TextBlock Text="⭐ 质量评分" 
+                               FontSize="13" 
+                               FontWeight="SemiBold" 
+                               Foreground="#A0D0FF"
+                               Margin="0,0,0,8"
+                               HorizontalAlignment="Center"/>
+                    
+                    <Border Background="#2D2D2D"
+                            BorderBrush="#F0B90B"
+                            BorderThickness="2"
+                            CornerRadius="8"
+                            Padding="20,12"
+                            HorizontalAlignment="Center">
+                        <StackPanel Spacing="4" HorizontalAlignment="Center">
+                            <TextBlock Name="QualityScoreText" 
+                                       Text="--" 
+                                       FontSize="32" 
+                                       FontWeight="Bold" 
+                                       Foreground="#F0B90B"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Name="QualityLevelText"
+                                       Text="未评分"
+                                       FontSize="11"
+                                       Foreground="#808080"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <!-- 主内容区域 -->
+        <Grid Grid.Row="2" ColumnDefinitions="250,*">
+            <!-- 左侧：指标列表 -->
+            <Border Grid.Column="0" 
+                    Background="#1A1A1A"
+                    BorderBrush="#2D2D2D"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="8">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0"
+                               Text="策略使用的指标"
+                               FontSize="13"
+                               FontWeight="Medium"
+                               Foreground="#A0A0A0"
+                               Margin="8,4,8,12"/>
+                    
+                    <ScrollViewer Grid.Row="1" 
+                                  VerticalScrollBarVisibility="Auto">
+                        <ListBox Name="IndicatorListBox"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 SelectionChanged="OnIndicatorSelectionChanged">
+                            <!-- 指标项将动态绑定 -->
+                        </ListBox>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+            
+            <!-- 右侧：参数配置 -->
+            <Border Grid.Column="1"
+                    Background="#1E1E1E"
+                    BorderBrush="#2D2D2D"
+                    BorderThickness="1"
+                    CornerRadius="4"
+                    Padding="16"
+                    Margin="12,0,0,0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Name="ParameterPanel" Spacing="16">
+                        <!-- 参数输入控件将动态生成 -->
+                        <TextBlock Name="EmptyStateText"
+                                   Text="← 请选择左侧的指标以配置参数"
+                                   Foreground="#666666"
+                                   FontSize="13"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,40,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+        
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="3"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="12"
+                    Margin="0,16,0,0">
+            <Button Name="CancelButton"
+                    Content="取消"
+                    Width="100"
+                    Height="32"
+                    Click="OnCancelClick">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="#2D2D2D"/>
+                        <Setter Property="Foreground" Value="#D4D4D4"/>
+                        <Setter Property="BorderBrush" Value="#3F3F46"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="CornerRadius" Value="4"/>
+                        <Setter Property="FontSize" Value="13"/>
+                    </Style>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#3A3A3A"/>
+                    </Style>
+                </Button.Styles>
+            </Button>
+            
+            <Button Name="ConfirmButton"
+                    Content="确认激活"
+                    Width="120"
+                    Height="32"
+                    Click="OnConfirmClick">
+                <Button.Styles>
+                    <Style Selector="Button">
+                        <Setter Property="Background" Value="#F0B90B"/>
+                        <Setter Property="Foreground" Value="#1E1E1E"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="CornerRadius" Value="4"/>
+                        <Setter Property="FontSize" Value="13"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                    </Style>
+                    <Style Selector="Button:pointerover">
+                        <Setter Property="Background" Value="#FFD24D"/>
+                    </Style>
+                </Button.Styles>
+            </Button>
+        </StackPanel>
+    </Grid>
+</UserControl>
+

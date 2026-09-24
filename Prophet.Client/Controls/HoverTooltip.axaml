@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Prophet.Client.Controls.HoverTooltip"
+             Background="Transparent"
+             Focusable="False"
+             IsHitTestVisible="False">
+    
+    <Border Background="#2D2D30"
+            BorderBrush="#3E3E42"
+            BorderThickness="1"
+            Padding="12,8"
+            MaxWidth="600"
+            BoxShadow="0 4 8 0 #40000000">
+        
+        <StackPanel>
+            <!-- 标题 -->
+            <TextBlock Name="TitleText"
+                       FontWeight="Bold"
+                       FontSize="14"
+                       Foreground="#DCDCDC"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"/>
+            
+            <!-- 分隔线 -->
+            <Border Name="Separator"
+                    Height="1"
+                    Background="#3E3E42"
+                    Margin="0,0,0,8"/>
+            
+            <!-- 内容 -->
+            <TextBlock Name="ContentText"
+                       FontSize="12"
+                       Foreground="#CCCCCC"
+                       TextWrapping="Wrap"
+                       LineHeight="18"/>
+            
+            <!-- 示例代码（可选） -->
+            <Border Name="ExampleContainer"
+                    Background="#1E1E1E"
+                    CornerRadius="2"
+                    Padding="8"
+                    Margin="0,8,0,0">
+                <TextBlock Name="ExampleText"
+                           FontFamily="Consolas,Courier New"
+                           FontSize="11"
+                           Foreground="#9CDCFE"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </StackPanel>
+    </Border>
+</UserControl>
