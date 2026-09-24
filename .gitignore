@@ -100,6 +100,9 @@ HANDOFF.md
 temp_commit*.txt
 compile_output.txt
 
+# 内部 AI 协作规范（不公开）
+.cursorrules
+
 # Python 扩展模块（显式声明，避免依赖 *.py[cod] 误匹配）
 *.pyd
 *.pyo
