@@ -29,8 +29,15 @@ public class RiskReport
     
     // 交易统计
     public int TodayTrades { get; set; }
+    public int TotalTrades { get; set; }
     public int ConsecutiveLosses { get; set; }
+    public int ConsecutiveWins { get; set; }
     public decimal WinRate { get; set; }
+
+    // 盈亏（由 RiskController 从持仓与交易统计填充）
+    public decimal UnrealizedPnL { get; set; }
+    public decimal RealizedPnL { get; set; }
+    public decimal TodayPnL { get; set; }
     
     /// <summary>
     /// 生成报告文本
@@ -68,12 +75,16 @@ public class RiskReport
 
 📦 活跃仓位: {ActivePositions}
 ⚖️ 总风险占比: {TotalRiskPercent:P2}
+💹 未实现盈亏: {UnrealizedPnL:F2} USDT
+💰 已实现盈亏: {RealizedPnL:F2} USDT
+📅 今日盈亏: {TodayPnL:F2} USDT
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
                     交易统计
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📅 今日交易: {TodayTrades}
+📊 累计交易: {TotalTrades}
 ❌ 连续亏损: {ConsecutiveLosses} {GetConsecutiveLossWarning(ConsecutiveLosses)}
 ✅ 胜率: {WinRate:P2}
 

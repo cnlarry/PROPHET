@@ -446,6 +446,18 @@ public class TradingInstanceManager : IDisposable, IAsyncDisposable
             return null;
         }
         
+        var initialCapital = 0m;
+        if (_instanceConfigs.TryGetValue(instanceId, out var cfg))
+        {
+            initialCapital = cfg.RiskConfig.InitialCapital;
+        }
+
+        var todayPnlPercent = 0m;
+        if (initialCapital > 0)
+        {
+            todayPnlPercent = riskReport.TodayPnL / initialCapital;
+        }
+
         return new TradingInstanceSnapshot
         {
             InstanceId = instanceId,
@@ -454,18 +466,20 @@ public class TradingInstanceManager : IDisposable, IAsyncDisposable
             TotalEquity = riskReport.CurrentEquity,
             AvailableBalance = riskReport.AvailableBalance,
             UsedMargin = riskReport.TotalMargin,
-            UnrealizedPnL = 0, // TODO: 从engine获取
-            TodayPnL = 0, // TODO: 计算
-            TodayPnLPercent = 0,
+            UnrealizedPnL = riskReport.UnrealizedPnL,
+            RealizedPnL = riskReport.RealizedPnL,
+            TodayPnL = riskReport.TodayPnL,
+            TodayPnLPercent = todayPnlPercent,
             PositionCount = riskReport.ActivePositions,
             CurrentDrawdown = riskReport.CurrentDrawdown,
             MaxDrawdown = riskReport.MaxDrawdown,
             RiskLevel = riskReport.RiskLevel,
             EmergencyStopActivated = riskReport.EmergencyStopActivated,
-            TotalTrades = 0, // TODO: 从统计获取
+            TotalTrades = riskReport.TotalTrades,
             TodayTrades = riskReport.TodayTrades,
             WinRate = riskReport.WinRate,
-            ConsecutiveLosses = riskReport.ConsecutiveLosses
+            ConsecutiveLosses = riskReport.ConsecutiveLosses,
+            ConsecutiveWins = riskReport.ConsecutiveWins
         };
     }
     

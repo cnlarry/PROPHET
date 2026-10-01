@@ -1102,14 +1102,20 @@ public static class SubChartCalculator
                     config.GetParameter("PERIOD", 25)
                 ),
                 
-                _ => throw new NotImplementedException($"指标 {indicatorId} 尚未实现")
+                _ => UnknownIndicator(candles, indicatorId)
             };
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"计算副图指标失败: {ex.Message}");
+            Console.WriteLine($"计算副图指标失败: {ex.Message}");
             return new List<SubChartDataPoint>();
         }
+    }
+
+    private static List<SubChartDataPoint> UnknownIndicator(List<Candlestick> candles, string indicatorId)
+    {
+        Console.WriteLine($"副图指标 {indicatorId} 尚未实现，返回空数据");
+        return CreateEmptyDataPoints(candles, "value");
     }
     
     /// <summary>
@@ -1136,7 +1142,7 @@ public static class SubChartCalculator
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"清理副图数据失败: {ex.Message}");
+                Console.WriteLine($"清理副图数据失败: {ex.Message}");
             }
         }
         

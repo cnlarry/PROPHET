@@ -19,7 +19,8 @@ public class BoolToStringConverter : IValueConverter
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
-        throw new NotImplementedException();
+        // 单向转换器：不支持回转，返回 UnsetValue 避免双向绑定误用时崩溃
+        return Avalonia.AvaloniaProperty.UnsetValue;
     }
 }
 

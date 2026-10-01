@@ -72,6 +72,23 @@ public class TradingStatistics
         var today = DateTime.UtcNow.Date;
         return _trades.Count(t => t.CloseTime.Date == today);
     }
+
+    /// <summary>
+    /// 获取累计已实现盈亏（全部已平仓交易 Profit 求和）
+    /// </summary>
+    public decimal GetTotalPnL()
+    {
+        return _trades.Sum(t => t.Profit);
+    }
+
+    /// <summary>
+    /// 获取今日已实现盈亏（按 CloseTime 落在今日 UTC 的交易求和）
+    /// </summary>
+    public decimal GetTodayPnL()
+    {
+        var today = DateTime.UtcNow.Date;
+        return _trades.Where(t => t.CloseTime.Date == today).Sum(t => t.Profit);
+    }
     
     /// <summary>
     /// 获取统计摘要

@@ -441,8 +441,13 @@ public class RiskController
             ActivePositions = positions.ActivePositionCount,
             TotalRiskPercent = positions.TotalRiskPercent,
             TodayTrades = _statistics.GetTodayTradeCount(),
+            TotalTrades = _statistics.TotalTrades,
             ConsecutiveLosses = _statistics.ConsecutiveLosses,
+            ConsecutiveWins = _statistics.ConsecutiveWins,
             WinRate = _statistics.WinRate,
+            UnrealizedPnL = positions.TotalUnrealizedPnl,
+            RealizedPnL = _statistics.GetTotalPnL(),
+            TodayPnL = _statistics.GetTodayPnL(),
             RiskLevel = CalculateOverallRiskLevel()
         };
     }

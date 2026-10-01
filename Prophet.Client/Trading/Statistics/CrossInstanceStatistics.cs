@@ -247,15 +247,85 @@ public class CrossInstanceStatistics
     }
     
     /// <summary>
-    /// 获取总权益曲线
+    /// 获取总权益曲线（从 instance_snapshots 按时间聚合所有实例的 total_equity）
     /// </summary>
     public async Task<List<EquityCurvePoint>> GetGlobalEquityCurveAsync(DateTime from, DateTime to)
     {
-        // TODO: 实现从数据库聚合所有实例的权益曲线
-        // 这需要从instance_snapshots表中按时间聚合数据
-        
-        await Task.CompletedTask;
-        return new List<EquityCurvePoint>();
+        if (to <= from)
+        {
+            return new List<EquityCurvePoint>();
+        }
+
+        try
+        {
+            const string sql = @"
+                SELECT timestamp, total_equity FROM instance_snapshots
+                WHERE timestamp >= @From AND timestamp <= @To
+                ORDER BY timestamp ASC
+                LIMIT 10000
+            ";
+            var rows = await Database.DBHelper.QueryAsync<EquityCurveRow>(sql, new
+            {
+                From = from.ToString("O"),
+                To = to.ToString("O")
+            });
+
+            var points = rows
+                .Select(r => new EquityCurvePoint
+                {
+                    Timestamp = DateTime.TryParse(r.timestamp, out var ts) ? ts : DateTime.MinValue,
+                    Equity = r.total_equity
+                })
+                .Where(p => p.Timestamp != DateTime.MinValue)
+                .OrderBy(p => p.Timestamp)
+                .ToList();
+
+            if (points.Count == 0)
+            {
+                return new List<EquityCurvePoint>();
+            }
+
+            // 同一时刻多实例快照求和，并降采样到最多 500 个点
+            var grouped = points
+                .GroupBy(p => p.Timestamp)
+                .Select(g => new EquityCurvePoint
+                {
+                    Timestamp = g.Key,
+                    Equity = g.Sum(p => p.Equity)
+                })
+                .OrderBy(p => p.Timestamp)
+                .ToList();
+
+            const int maxPoints = 500;
+            if (grouped.Count <= maxPoints)
+            {
+                return grouped;
+            }
+
+            var bucketSize = (double)grouped.Count / maxPoints;
+            var result = new List<EquityCurvePoint>(maxPoints);
+            for (var i = 0; i < maxPoints; i++)
+            {
+                var bucket = grouped
+                    .Skip((int)(i * bucketSize))
+                    .Take(Math.Max(1, (int)bucketSize));
+                if (!bucket.Any())
+                {
+                    continue;
+                }
+                result.Add(new EquityCurvePoint
+                {
+                    Timestamp = bucket.Last().Timestamp,
+                    Equity = bucket.Average(p => p.Equity)
+                });
+            }
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[CrossInstanceStatistics] 聚合全局权益曲线失败: {ex.Message}");
+            return new List<EquityCurvePoint>();
+        }
     }
     
     /// <summary>
@@ -287,6 +357,12 @@ public class CrossInstanceStatistics
         }
         
         return RiskLevel.Low;
+    }
+
+    private sealed class EquityCurveRow
+    {
+        public string timestamp { get; set; } = string.Empty;
+        public decimal total_equity { get; set; }
     }
 }
 
